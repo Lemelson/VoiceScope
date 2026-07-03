@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VoiceScope — анализ высоты и частоты голоса онлайн</title>
+<meta name="description" content="Бесплатный анализатор высоты голоса: запишите речь, узнайте частоту в герцах, ноты и изменение тона по времени. Аудио обрабатывается локально." />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<meta name="author" content="Lemelson" />
+<meta name="theme-color" content="#0d0f12" />
+<link rel="canonical" href="https://lemelson.github.io/VoiceScope/" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="ru_RU" />
+<meta property="og:site_name" content="VoiceScope" />
+<meta property="og:title" content="VoiceScope — анализ высоты и частоты голоса онлайн" />
+<meta property="og:description" content="Запишите голос и узнайте его частоту, ноты и изменение высоты по времени. Бесплатно, локально и без отправки аудио на сервер." />
+<meta property="og:url" content="https://lemelson.github.io/VoiceScope/" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="VoiceScope — анализ высоты голоса онлайн" />
+<meta name="twitter:description" content="Частота, ноты и контур высоты голоса прямо в браузере. Аудио остаётся на устройстве." />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "VoiceScope",
+  "url": "https://lemelson.github.io/VoiceScope/",
+  "description": "Бесплатный браузерный анализатор высоты и частоты голоса с визуализацией нот и изменения основного тона по времени.",
+  "applicationCategory": "MultimediaApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Современный браузер с поддержкой Web Audio API и доступом к микрофону",
+  "isAccessibleForFree": true,
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "RUB"
+  },
+  "codeRepository": "https://github.com/Lemelson/VoiceScope",
+  "inLanguage": ["ru", "en"],
+  "featureList": [
+    "Анализ основной частоты голоса в герцах",
+    "Определение нот и контура высоты по времени",
+    "Локальная обработка аудио без отправки на сервер",
+    "Воспроизведение и скачивание WAV",
+    "Локальная история записей"
+  ]
+}
+</script>
+<style>
+  :root{
+    --bg:#0d0f12; --panel:#15181d; --panel2:#1b1f26; --line:#262b33;
+    --text:#e6e8eb; --muted:#8b929c; --muted2:#5b626c;
+    --accent:#5eead4; --accent-d:#0f766e; --accent-ink:#04211c;
+    --blue:#60a5fa; --red:#f87171; --amber:#fbbf24; --stop-ink:#2a0606;
+    --radius:14px; --shadow:none; --field-bg:#1b1f26;
+  }
+  [data-theme="light"]{
+    --bg:#f5f6f7; --panel:#ffffff; --panel2:#f1f2f4; --line:#e6e8eb;
+    --text:#1b1f24; --muted:#6b7280; --muted2:#9aa1ab;
+    --accent:#0d9488; --accent-d:#0f766e; --accent-ink:#ffffff;
+    --blue:#2563eb; --red:#e11d48; --amber:#d97706; --stop-ink:#ffffff;
+    --shadow:0 1px 2px rgba(16,24,40,.04), 0 2px 6px rgba(16,24,40,.05); --field-bg:#f7f8f9;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--text);
+    font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    display:flex; flex-direction:column; align-items:center;
+    min-height:100vh; padding:32px 18px 64px;
+    transition:background .25s ease, color .25s ease;
+  }
+  .wrap{width:100%; max-width:920px}
+  header{margin-bottom:22px; display:flex; align-items:flex-start; gap:16px}
+  h1{font-size:22px; font-weight:650; margin:0 0 4px; letter-spacing:-.3px}
+  .sub{color:var(--muted); font-size:13.5px}
+  .card{
+    background:var(--panel); border:1px solid var(--line);
+    border-radius:var(--radius); padding:18px; margin-bottom:16px;
+    box-shadow:var(--shadow); transition:background .25s ease, border-color .25s ease;
+  }
+  .row{display:flex; gap:14px; align-items:center; flex-wrap:wrap}
+  .grow{flex:1 1 auto}
+  label.field{display:flex; flex-direction:column; gap:6px; font-size:12.5px; color:var(--muted)}
+  input[type=number]{
+    width:90px; background:var(--field-bg); border:1px solid var(--line); color:var(--text);
+    border-radius:9px; padding:8px 10px; font-size:15px; outline:none;
+  }
+  input[type=number]:focus{border-color:var(--accent)}
+  .check{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); cursor:pointer; user-select:none}
+  .check input{accent-color:var(--accent); width:15px; height:15px}
+  button{
+    font:inherit; cursor:pointer; border:none; border-radius:10px;
+    padding:10px 18px; font-weight:600; letter-spacing:.1px; transition:.15s ease;
+  }
+  button:disabled{opacity:.4; cursor:default}
+  .btn-rec{background:var(--accent); color:var(--accent-ink)}
+  .btn-rec:hover:not(:disabled){filter:brightness(1.06); transform:translateY(-1px)}
+  .btn-stop{background:var(--red); color:var(--stop-ink)}
+  .btn-ghost{background:transparent; color:var(--text); border:1px solid var(--line); padding:9px 15px; font-weight:500}
+  .btn-ghost:hover:not(:disabled){border-color:var(--accent); color:var(--accent)}
+  .theme-btn{margin-left:auto; background:transparent; border:1px solid var(--line); color:var(--muted);
+    width:38px; height:38px; padding:0; border-radius:10px; font-size:16px; flex:0 0 auto}
+  .theme-btn:hover{border-color:var(--accent); color:var(--accent)}
+
+  /* live panel */
+  #live{display:none}
+  #live.on{display:block}
+  .live-row{display:flex; align-items:center; gap:18px; flex-wrap:wrap}
+  .timer{font-variant-numeric:tabular-nums; font-size:30px; font-weight:600; letter-spacing:.5px}
+  .live-note{font-variant-numeric:tabular-nums; font-size:15px; color:var(--muted)}
+  .live-note b{color:var(--accent); font-size:18px}
+  .meter{flex:1 1 160px; height:10px; background:var(--panel2); border-radius:6px; overflow:hidden; min-width:120px}
+  .meter > i{display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--accent),var(--amber),var(--red)); transition:width .06s linear}
+  .live-chart-stage{display:none; margin-bottom:18px; padding-bottom:18px; border-bottom:1px solid var(--line)}
+  .live-chart-stage.on{display:block}
+  .live-chart-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:10px}
+  .live-chart-head strong{font-size:14px; font-weight:600}
+  .live-chart-head span{color:var(--muted); font-size:12px}
+  #liveChart{height:330px; background:var(--bg); cursor:default}
+
+  /* results */
+  #results{display:none}
+  #results.on{display:block}
+  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:1px; background:var(--line); border-radius:12px; overflow:hidden; border:1px solid var(--line)}
+  .stat{background:var(--panel); padding:13px 15px}
+  .stat .k{font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px}
+  .stat .v{font-size:21px; font-weight:650; margin-top:3px; font-variant-numeric:tabular-nums}
+  .stat .v small{font-size:13px; color:var(--muted); font-weight:500}
+  .stat.hero .v{color:var(--accent)}
+
+  .chart-box{position:relative; width:100%}
+  canvas{width:100%; display:block; border-radius:10px; cursor:pointer}
+  .vline{position:absolute; width:1px; pointer-events:none; display:none; z-index:2}
+  .vline.play{width:2px; background:var(--accent); box-shadow:0 0 8px var(--accent)}
+  .vline.play::before{content:''; position:absolute; top:-5px; left:-3px; width:8px; height:8px;
+    border-radius:50%; background:var(--accent); box-shadow:0 0 6px var(--accent)}
+  .vline.hover{background:var(--muted2); opacity:.6}
+  .vtip{position:absolute; transform:translateX(-50%); background:var(--text); color:var(--bg);
+    font-size:10px; font-weight:600; padding:2px 6px; border-radius:5px; pointer-events:none;
+    display:none; z-index:3; font-variant-numeric:tabular-nums; white-space:nowrap}
+  .opts{display:flex; gap:18px; flex-wrap:wrap; align-items:center; margin-top:14px; padding-top:14px; border-top:1px solid var(--line)}
+  .opts .slider{display:flex; flex-direction:column; gap:4px; font-size:12px; color:var(--muted); min-width:150px}
+  input[type=range]{accent-color:var(--accent); width:100%}
+  .legend{display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin-top:10px}
+  .legend span{display:inline-flex; align-items:center; gap:6px}
+  .swatch{width:18px; height:3px; border-radius:2px; display:inline-block}
+  .dot{width:8px; height:8px; border-radius:50%; display:inline-block}
+
+  .ref{font-size:12px; color:var(--muted2); margin-top:10px; line-height:1.6}
+  audio{width:100%; margin-top:6px; filter:saturate(.6) brightness(.95)}
+  [data-theme="light"] audio{filter:none}
+
+  /* reading material */
+  details.reader-details > summary{
+    cursor:pointer; list-style:none; user-select:none;
+    display:flex; align-items:center; gap:12px;
+  }
+  details.reader-details > summary::-webkit-details-marker{display:none}
+  details.reader-details > summary::before{content:'▸'; color:var(--accent); font-size:13px}
+  details.reader-details[open] > summary::before{content:'▾'}
+  .read-head{display:flex; align-items:center; gap:12px; width:100%}
+  .read-head strong{font-weight:600; font-size:15px}
+  .reader-body{padding-top:14px}
+  .reader-actions{display:flex; justify-content:flex-end; margin-bottom:12px}
+  .topic{border-left:3px solid var(--accent); padding:2px 0 2px 14px; margin-bottom:6px}
+  .topic-h{font-weight:600; font-size:15px; margin-bottom:8px}
+  .topic-h .pen{color:var(--muted); font-weight:500}
+  .topic ul{margin:0; padding-left:18px}
+  .topic li{margin:5px 0; font-size:13.5px; line-height:1.45}
+  .pen{color:var(--muted)}
+  .rtext{font-family:Georgia,"Times New Roman",serif; font-size:17px; line-height:1.78;
+         color:#d7dade; max-width:700px; margin-top:18px}
+  .rh{font-family:-apple-system,BlinkMacSystemFont,sans-serif; font-size:11px; font-weight:700;
+      letter-spacing:1.5px; color:var(--accent); margin-bottom:6px}
+  .sep{border:none; border-top:1px solid var(--line); margin:20px 0 0}
+
+  /* analysis settings */
+  .presets{display:flex; gap:8px; flex-wrap:wrap}
+  .preset{background:var(--panel2); border:1px solid var(--line); color:var(--text);
+          padding:7px 13px; border-radius:9px; font-size:12.5px; font-weight:500; cursor:pointer}
+  .preset:hover{border-color:var(--muted2)}
+  .preset.active{background:var(--accent); color:#04211c; border-color:var(--accent)}
+  select{background:var(--panel2); border:1px solid var(--line); color:var(--text);
+         border-radius:9px; padding:7px 10px; font-size:13px; outline:none; max-width:100%}
+  details.adv{margin-top:4px}
+  details.adv > summary{cursor:pointer; color:var(--muted); font-size:13px; list-style:none; user-select:none}
+  details.adv > summary::-webkit-details-marker{display:none}
+  details.adv > summary::before{content:'▸ '; color:var(--accent)}
+  details.adv[open] > summary::before{content:'▾ '}
+  .adv-grid{display:flex; gap:18px 24px; flex-wrap:wrap; margin-top:14px}
+  .ctl{display:flex; flex-direction:column; gap:5px; font-size:12.5px; color:var(--text); min-width:200px; max-width:280px}
+  .ctl .lab{display:flex; justify-content:space-between; gap:8px}
+  .ctl .lab b{color:var(--accent); font-variant-numeric:tabular-nums}
+  .ctl .exp{color:var(--muted2); font-size:11px; line-height:1.45}
+
+  /* reference article */
+  details.refart > summary{cursor:pointer; font-weight:600; font-size:15px; list-style:none}
+  details.refart > summary::-webkit-details-marker{display:none}
+  details.refart > summary::before{content:'▸ '; color:var(--accent)}
+  details.refart[open] > summary::before{content:'▾ '}
+  .refbody{margin-top:12px; font-size:13.5px; color:#c7ccd3; line-height:1.6}
+  .refbody h4{color:var(--text); font-size:14px; margin:18px 0 6px}
+  .refbody p{margin:6px 0}
+  .refbody ul{margin:6px 0; padding-left:20px}
+  .refbody li{margin:3px 0}
+  .reftab{border-collapse:collapse; width:100%; margin:10px 0; font-size:12.5px}
+  .reftab th,.reftab td{border:1px solid var(--line); padding:6px 9px; text-align:left}
+  .reftab th{background:var(--panel2); color:var(--muted)}
+  .refnote{color:var(--muted2); font-size:11.5px; margin-top:14px}
+
+  /* classification + scale */
+  .class-line{font-size:14.5px; margin:14px 0 2px}
+  .class-line b{color:var(--accent)}
+  .pctl{font-size:12.5px; color:var(--muted); margin:3px 0}
+  .scale{position:relative; height:42px; margin:16px 4px 30px}
+  .scale .seg{position:absolute; top:0; height:18px}
+  .scale .seg:first-of-type{border-radius:5px 0 0 5px}
+  .scale .seg:last-of-type{border-radius:0 5px 5px 0}
+  .scale .ticks{position:absolute; top:22px; left:0; width:100%; height:14px; font-size:10px; color:var(--muted2)}
+  .scale .tk{position:absolute; transform:translateX(-50%); white-space:nowrap}
+  .scale .marker{position:absolute; top:-7px; width:2px; height:26px; background:#fff; box-shadow:0 0 0 1px rgba(0,0,0,.6)}
+  .scale .marker::after{content:attr(data-l); position:absolute; top:-18px; left:50%; transform:translateX(-50%);
+        white-space:nowrap; font-size:10px; color:#fff; font-weight:700}
+
+  /* history */
+  .hist-item{display:flex; align-items:center; gap:12px; padding:10px 0; border-top:1px solid var(--line); font-size:13px; flex-wrap:wrap}
+  .hist-item:first-child{border-top:none}
+  .hist-when{color:var(--muted); font-variant-numeric:tabular-nums; min-width:104px}
+  .hist-med{font-weight:600; font-variant-numeric:tabular-nums}
+  .hist-med small{color:var(--muted); font-weight:400}
+  .hist-meta{color:var(--muted2); font-size:12px}
+  .hist-btns{display:flex; gap:6px; margin-left:auto}
+  .ibtn{background:var(--panel2); border:1px solid var(--line); color:var(--text);
+        border-radius:8px; padding:5px 10px; font-size:12px; cursor:pointer; font-weight:500}
+  .ibtn:hover{border-color:var(--accent); color:var(--accent)}
+  .ibtn.active{border-color:var(--accent); color:var(--accent)}
+  .ibtn.del:hover{border-color:var(--red); color:var(--red)}
+  .hist-empty{color:var(--muted2); font-size:13px; padding:6px 0}
+
+  .banner{background:#2a1a1a; border:1px solid #5b2a2a; color:#fca5a5; padding:12px 14px; border-radius:10px; font-size:13.5px; margin-bottom:16px; display:none}
+  .banner.on{display:block}
+  .hint{color:var(--muted2); font-size:12px; margin-top:6px}
+  a{color:var(--accent)}
+  .footnote{color:var(--muted2); font-size:12px; text-align:center; margin-top:28px}
+  .about h2{font-size:17px; font-weight:650; margin:0 0 10px; letter-spacing:-.15px}
+  .about p{color:var(--muted); font-size:13.5px; margin:7px 0; line-height:1.65}
+  .about-links{display:flex; gap:14px; flex-wrap:wrap; margin-top:12px; font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>VoiceScope</h1>
+      <div class="sub">Запиши голос — увидь, на каких нотах и в какую секунду он звучал. Локально, ничего не отправляется на сервер.</div>
+    </div>
+    <button id="themeBtn" class="theme-btn" title="Сменить тему">☀</button>
+  </header>
+
+  <div id="banner" class="banner"></div>
+
+  <!-- controls -->
+  <div class="card">
+    <div class="row">
+      <span class="pen">Запись идёт без ограничения времени — останови её вручную.</span>
+      <div class="grow"></div>
+      <button id="rec" class="btn-rec">● Записать</button>
+    </div>
+    <div class="hint">Совет: говори ровно и достаточно громко. Можно нажать стоп вручную в любой момент (или пробел).</div>
+  </div>
+
+  <!-- live -->
+  <div id="live" class="card">
+    <div class="live-row">
+      <div class="timer" id="timer">00:00</div>
+      <div class="meter"><i id="meterFill"></i></div>
+      <div class="live-note">сейчас: <b id="liveNote">—</b> <span id="liveHz"></span></div>
+      <button id="stop" class="btn-stop">■ Стоп</button>
+    </div>
+  </div>
+
+  <!-- reading material -->
+  <div id="reader" class="card">
+    <div id="liveChartStage" class="live-chart-stage">
+      <div class="live-chart-head">
+        <strong>Высота голоса в реальном времени</strong>
+        <span>график сжимается по мере записи</span>
+      </div>
+      <canvas id="liveChart"></canvas>
+    </div>
+    <details id="readerDetails" class="reader-details" open>
+      <summary>
+        <span class="read-head">
+          <strong>Материал для чтения</strong>
+          <span class="pen" style="font-size:12.5px">нажми на заголовок, чтобы свернуть</span>
+        </span>
+      </summary>
+      <div class="reader-body">
+        <div class="reader-actions"><button id="shuffle" class="btn-ghost">⟳ Другой</button></div>
+        <div id="topic" class="topic"></div>
+        <div id="textRu" class="rtext"></div>
+        <hr class="sep" />
+        <div id="textEn" class="rtext"></div>
+      </div>
+    </details>
+  </div>
+
+  <!-- results -->
+  <div id="results">
+    <div class="card">
+      <div class="stats" id="stats"></div>
+      <div id="classbox"></div>
+    </div>
+
+    <div class="card">
+      <div class="chart-box">
+        <canvas id="chart"></canvas>
+        <div id="hoverline" class="vline hover"></div>
+        <div id="playhead" class="vline play"></div>
+        <div id="hovertip" class="vtip"></div>
+      </div>
+      <div class="hint" style="margin:8px 0 0">▶ Клик по графику — слушать с этого места; клик по линии — пауза/продолжить. Наведи курсор, чтобы увидеть время.</div>
+      <div class="legend">
+        <span><i class="dot" style="background:rgba(230,232,235,.35)"></i> сырые точки</span>
+        <span><i class="dot" style="background:var(--red)"></i> обрезанные выбросы</span>
+        <span><i class="swatch" style="background:var(--accent)"></i> EMA</span>
+        <span><i class="swatch" style="background:var(--blue)"></i> MA</span>
+      </div>
+      <div class="opts" style="flex-direction:column; align-items:stretch; gap:14px">
+        <div>
+          <div class="exp" style="color:var(--muted); font-size:12px; margin-bottom:7px">Профиль обработки (быстрый выбор):</div>
+          <div class="presets" id="presets"></div>
+        </div>
+        <div class="row" style="gap:16px">
+          <label class="check"><input id="optRaw" type="checkbox" checked /> точки</label>
+          <label class="check"><input id="optEma" type="checkbox" checked /> EMA</label>
+          <label class="check"><input id="optMa" type="checkbox" /> MA</label>
+          <div class="ctl" style="min-width:260px">
+            <span class="lab">Обрезка выбросов <span id="trimDesc" class="pen"></span></span>
+            <select id="trimMode">
+              <option value="off">Выкл — показать всё как есть</option>
+              <option value="p1">Лёгкая — отсечь 1% краёв</option>
+              <option value="p3">Средняя — отсечь 3% краёв</option>
+              <option value="p5">Строгая — отсечь 5% краёв</option>
+              <option value="p10">Жёсткая — отсечь 10% краёв</option>
+              <option value="mad">Умная (гибридная MAD) — короткие ошибки</option>
+            </select>
+            <span class="exp">Перцентильная обрезка убирает заданный % самых низких и высоких значений во всей записи. «Умная» ищет короткие ошибки по соседним кадрам и дополнительно отсекает очень короткие глобальные экстремумы у пауз; устойчивое изменение высоты сохраняется.</span>
+          </div>
+        </div>
+        <details class="adv" id="adv">
+          <summary>Тонкая настройка и пояснения</summary>
+          <div class="adv-grid">
+            <div class="ctl">
+              <span class="lab">Чувствительность <b id="sensVal">0.55</b></span>
+              <input id="sens" type="range" min="0.30" max="0.90" step="0.05" value="0.55" />
+              <span class="exp">Порог «уверенности» детектора тона. <b>Ниже</b> — ловит больше тихих/неясных звуков (и шум). <b>Выше</b> — оставляет только чёткий устойчивый тон. Если голос «теряется» — понизь; если ловит лишнее — повысь.</span>
+            </div>
+            <div class="ctl">
+              <span class="lab">Окно MA <b id="maWindowVal">72 мс</b></span>
+              <input id="maWindow" type="range" min="24" max="800" step="8" value="72" />
+              <span class="exp">Сколько времени усредняет скользящее среднее MA. Окно центрировано относительно каждой точки.</span>
+            </div>
+            <div class="ctl">
+              <span class="lab">Период EMA <b id="emaSpanVal">72 мс</b></span>
+              <input id="emaSpan" type="range" min="24" max="800" step="8" value="72" />
+              <span class="exp">Эквивалентный период экспоненциального среднего EMA. Меньше — быстрее реагирует; больше — сильнее сглаживает.</span>
+            </div>
+            <div class="ctl">
+              <span class="lab"><label class="check" style="color:var(--text)"><input id="optOctave" type="checkbox" checked /> Коррекция октав</label></span>
+              <span class="exp">Исправляет ошибочные скачки ровно в 2 раза вверх/вниз, когда детектор путает октаву. Делает контур ровнее.</span>
+            </div>
+            <div class="ctl">
+              <span class="lab">Мин. длительность <b id="minRunVal">3</b></span>
+              <input id="minRun" type="range" min="0" max="12" step="1" value="3" />
+              <span class="exp">Отбрасывает совсем короткие всплески короче N кадров — обычно это щелчки, придыхания и призвуки, а не голос. 0 — не отбрасывать.</span>
+            </div>
+            <div class="ctl">
+              <span class="lab"><label class="check" style="color:var(--text)"><input id="optAdaptive" type="checkbox" checked /> Адаптивный порог тишины</label></span>
+              <span class="exp">Сам оценивает уровень фонового шума по тихим участкам и отсекает то, что тише него. Помогает в шумной комнате.</span>
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="margin-bottom:8px">
+        <strong style="font-weight:600">Запись</strong>
+        <div class="grow"></div>
+        <a id="download" class="btn-ghost" download="voicescope.wav" style="text-decoration:none">↓ Скачать WAV</a>
+      </div>
+      <audio id="player" controls></audio>
+    </div>
+  </div>
+
+  <!-- reference article -->
+  <div class="card">
+    <details class="refart">
+      <summary>📚 Ориентиры по высоте голоса — подробно</summary>
+      <div class="refbody" id="refart"></div>
+    </details>
+  </div>
+
+  <!-- history -->
+  <div class="card" id="histCard">
+    <div class="row" style="margin-bottom:6px">
+      <strong style="font-weight:600">История записей</strong>
+      <span class="pen" id="histUsage" style="font-size:12px"></span>
+      <div class="grow"></div>
+      <button id="exportData" class="btn-ghost">⤓ Экспорт данных</button>
+      <button id="clearHist" class="btn-ghost">Очистить</button>
+    </div>
+    <div class="hint" style="margin:0 0 8px">Последние 30 записей хранятся локально в браузере (до 1 ГБ), старые удаляются автоматически. Кнопка «Экспорт данных» выгружает контуры тона в JSON для анализа.</div>
+    <div id="histList"></div>
+  </div>
+
+  <section class="card about" aria-labelledby="aboutTitle">
+    <h2 id="aboutTitle">Онлайн-анализатор высоты голоса</h2>
+    <p>VoiceScope измеряет основную частоту голоса в герцах, переводит её в музыкальные ноты и показывает, как менялась высота речи по времени. Это помогает сравнивать записи, наблюдать интонацию и находить устойчивый разговорный диапазон.</p>
+    <p>Запись и анализ выполняются локально в браузере: аудио не загружается на сервер. Результаты являются справочными и не заменяют медицинскую диагностику или работу со специалистом по голосу.</p>
+    <div class="about-links">
+      <a href="https://github.com/Lemelson/VoiceScope" target="_blank" rel="noreferrer">Исходный код VoiceScope на GitHub</a>
+      <a href="https://github.com/Lemelson/VoiceScope#readme" target="_blank" rel="noreferrer">Как работает проект</a>
+    </div>
+  </section>
+
+  <div class="footnote">Высота тона измеряется алгоритмом YIN (autocorrelation). Вдохновлено voicecel.org, но без ярлыков и с визуализацией контура.</div>
+</div>
+
+<script src="content.js"></script>
+<script src="analysis-core.js"></script>
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+
+/* ---------- reading material ---------- */
+let topicIdx = -1, ruIdx = -1, enIdx = -1;
+function pickIdx(len, prev){
+  if(len <= 1) return 0;
+  let i; do { i = Math.floor(Math.random()*len); } while(i === prev);
+  return i;
+}
+function renderReading(){
+  const C = window.VS_CONTENT;
+  if(!C){ $('#reader').style.display='none'; return; }
+  topicIdx = pickIdx(C.TOPICS.length, topicIdx);
+  ruIdx = pickIdx(C.TEXTS_RU.length, ruIdx);
+  enIdx = pickIdx(C.TEXTS_EN.length, enIdx);
+  const t = C.TOPICS[topicIdx];
+  const items = t.ru.points.map((p,i)=>
+    `<li>${p} <span class="pen">— ${t.en.points[i]}</span></li>`).join('');
+  $('#topic').innerHTML =
+    `<div class="topic-h">💬 ${t.ru.title} <span class="pen">/ ${t.en.title}</span></div><ul>${items}</ul>`;
+  $('#textRu').innerHTML = `<div class="rh">RU</div>${C.TEXTS_RU[ruIdx]}`;
+  $('#textEn').innerHTML = `<div class="rh">EN</div>${C.TEXTS_EN[enIdx]}`;
+}
+
+/* ---------- note / pitch helpers ---------- */
+const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const hzToMidi = f => 69 + 12 * Math.log2(f / 440);
+const midiToHz = m => 440 * Math.pow(2, (m - 69) / 12);
+function midiName(m){
+  const n = Math.round(m);
+  const name = NOTE_NAMES[((n % 12) + 12) % 12];
+  const oct = Math.floor(n / 12) - 1;
+  return name + oct;
+}
+const isBlackKey = n => [1,3,6,8,10].includes(((n % 12) + 12) % 12);
+
+function avg(a){ return a.length ? a.reduce((s,x)=>s+x,0)/a.length : NaN; }
+function percentile(sorted, p){
+  const n = sorted.length;
+  if(!n) return NaN;
+  if(n === 1) return sorted[0];
+  const idx = (p/100)*(n-1);
+  const lo = Math.floor(idx), hi = Math.ceil(idx), frac = idx - lo;
+  return sorted[lo] + (sorted[hi]-sorted[lo])*frac;
+}
+
+/* ---------- YIN pitch detection ---------- */
+function yin(buf, rate, tauMin, tauMax, thresh){
+  const W = tauMax;
+  const d = new Float32Array(tauMax);
+  for(let tau=1; tau<tauMax; tau++){
+    let sum = 0;
+    for(let j=0; j<W; j++){
+      const diff = buf[j] - buf[j+tau];
+      sum += diff*diff;
+    }
+    d[tau] = sum;
+  }
+  // cumulative mean normalized difference
+  d[0] = 1;
+  let running = 0;
+  for(let tau=1; tau<tauMax; tau++){
+    running += d[tau];
+    d[tau] = running > 0 ? d[tau]*tau/running : 1;
+  }
+  // absolute threshold: first dip below thresh
+  let best = -1;
+  for(let tau=tauMin; tau<tauMax; tau++){
+    if(d[tau] < thresh){
+      while(tau+1 < tauMax && d[tau+1] < d[tau]) tau++;
+      best = tau; break;
+    }
+  }
+  if(best === -1){ // fallback: global min in range
+    let min = Infinity;
+    for(let tau=tauMin; tau<tauMax; tau++){
+      if(d[tau] < min){ min = d[tau]; best = tau; }
+    }
+  }
+  // parabolic interpolation
+  let betterTau = best;
+  if(best > tauMin && best < tauMax-1){
+    const s0=d[best-1], s1=d[best], s2=d[best+1];
+    const denom = 2*(2*s1 - s2 - s0);
+    if(denom !== 0) betterTau = best + (s2 - s0)/denom;
+  }
+  return { f0: rate/betterTau, conf: 1 - d[best] };
+}
+
+/* ---------- analysis params ---------- */
+function computeParams(rate){
+  const fmin = 60, fmax = 600;
+  const D = Math.max(1, Math.round(rate/16000));
+  const aRate = rate / D;
+  const tauMax = Math.round(aRate/fmin);
+  const tauMin = Math.max(2, Math.round(aRate/fmax));
+  const frameLen = 2*tauMax;
+  const hop = Math.max(1, Math.round(aRate*0.008)); // 8 ms
+  return { D, aRate, tauMin, tauMax, frameLen, hop };
+}
+function decimate(buf, D){
+  if(D <= 1) return buf;
+  const n = Math.floor(buf.length/D);
+  const out = new Float32Array(n);
+  for(let i=0;i<n;i++){
+    let s=0; const b=i*D;
+    for(let k=0;k<D;k++) s += buf[b+k];
+    out[i] = s/D;
+  }
+  return out;
+}
+
+/* ---------- state ---------- */
+let audioCtx, stream, source, processor, muteGain;
+let recording = false, recordingStarting = false, recChunks = [], recLen = 0, recRate = 44100;
+let recordedSamples = null, params = null;
+let startedAt = 0, rafId = 0;
+let lastAnalysis = null, lastDraw = null, chartGeom = null;
+let livePitchPoints = [];
+let recordingLockRelease = null, recordingLockTask = null;
+
+async function acquireRecordingLock(){
+  if(!navigator.locks) return true;
+  let reportAcquired;
+  const acquired = new Promise(resolve => { reportAcquired = resolve; });
+  recordingLockTask = navigator.locks.request('voicescope-recording', { mode:'exclusive', ifAvailable:true }, async lock => {
+    if(!lock){ reportAcquired(false); return; }
+    await new Promise(resolve => {
+      recordingLockRelease = resolve;
+      reportAcquired(true);
+    });
+  }).catch(error => {
+    console.warn('Не удалось получить межвкладочный замок записи:', error);
+    reportAcquired(false);
+  });
+  return acquired;
+}
+
+function releaseRecordingLock(){
+  if(recordingLockRelease) recordingLockRelease();
+  recordingLockRelease = null;
+  if(recordingLockTask) recordingLockTask.catch(()=>{});
+  recordingLockTask = null;
+}
+
+/* ---------- recording ---------- */
+async function startRecording(){
+  if(recording || recordingStarting) return;
+  recordingStarting = true;
+  $('#rec').disabled = true;
+  if(histAudio) histAudio.pause();
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    showBanner('Микрофон недоступен. Открой страницу через локальный сервер (см. подсказку внизу) или в Chrome/Firefox.');
+    recordingStarting = false;
+    $('#rec').disabled = false;
+    return;
+  }
+
+  const lockAcquired = await acquireRecordingLock();
+  if(!lockAcquired){
+    showBanner('Запись уже идёт в другой вкладке VoiceScope. Останови её там перед запуском новой.');
+    recordingStarting = false;
+    $('#rec').disabled = false;
+    return;
+  }
+
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({
+      audio:{ echoCancellation:false, noiseSuppression:false, autoGainControl:false }
+    });
+  }catch(e){
+    showBanner('Не удалось получить доступ к микрофону: ' + e.message);
+    releaseRecordingLock();
+    recordingStarting = false;
+    $('#rec').disabled = false;
+    return;
+  }
+  hideBanner();
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  recRate = audioCtx.sampleRate;
+  params = computeParams(recRate);
+  source = audioCtx.createMediaStreamSource(stream);
+  processor = audioCtx.createScriptProcessor(4096, 1, 1);
+  muteGain = audioCtx.createGain(); muteGain.gain.value = 0;
+
+  recChunks = []; recLen = 0; livePitchPoints = [];
+  processor.onaudioprocess = e => {
+    const ch = e.inputBuffer.getChannelData(0);
+    const copy = new Float32Array(ch.length); copy.set(ch);
+    recChunks.push(copy); recLen += copy.length;
+    liveProcess(copy);
+  };
+  source.connect(processor);
+  processor.connect(muteGain);
+  muteGain.connect(audioCtx.destination);
+
+  recording = true;
+  recordingStarting = false;
+  startedAt = performance.now();
+  $('#results').classList.remove('on');
+  $('#live').classList.add('on');
+  $('#liveChartStage').classList.add('on');
+  $('#readerDetails').open = true;
+  requestAnimationFrame(drawLiveChart);
+  tick();
+}
+
+function tick(){
+  if(!recording) return;
+  const shown = (performance.now() - startedAt)/1000;
+  const m = Math.floor(shown/60), s = Math.floor(shown%60);
+  $('#timer').textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  rafId = requestAnimationFrame(tick);
+}
+
+function liveProcess(buf){
+  // level meter
+  let rms = 0;
+  for(let i=0;i<buf.length;i++) rms += buf[i]*buf[i];
+  rms = Math.sqrt(rms/buf.length);
+  const pct = Math.min(100, Math.max(0, (20*Math.log10(rms+1e-9)+60)/60*100));
+  $('#meterFill').style.width = pct.toFixed(0)+'%';
+  // live note
+  try{
+    const sig = decimate(buf, params.D);
+    if(sig.length >= params.frameLen){
+      const chunkStart = (recLen - buf.length) / recRate;
+      let latest = null;
+      for(let i=0; i+params.frameLen<=sig.length; i+=params.hop){
+        const frame = sig.subarray(i, i+params.frameLen);
+        const r = yin(frame, params.aRate, params.tauMin, params.tauMax, 0.15);
+        const voiced = r.conf >= 0.5 && r.f0 >= 55 && r.f0 <= 600 && rms > 0.004;
+        livePitchPoints.push({
+          t: chunkStart + (i+params.frameLen/2)/params.aRate,
+          midi: voiced ? hzToMidi(r.f0) : null
+        });
+        if(voiced) latest = r;
+      }
+      $('#liveNote').textContent = latest ? midiName(hzToMidi(latest.f0)) : '—';
+      $('#liveHz').textContent = latest ? '(' + latest.f0.toFixed(0) + ' Гц)' : '';
+      drawLiveChart();
+    }
+  }catch(_){}
+}
+
+function drawLiveChart(){
+  const canvas = $('#liveChart');
+  if(!canvas || !$('#liveChartStage').classList.contains('on')) return;
+  const cssW = canvas.parentElement.clientWidth;
+  const cssH = Math.max(260, Math.min(360, Math.round(cssW * 0.38)));
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = cssW*dpr; canvas.height = cssH*dpr;
+  canvas.style.height = cssH+'px';
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,cssW,cssH);
+
+  const light = document.documentElement.getAttribute('data-theme')==='light';
+  const grid = light ? 'rgba(0,0,0,.08)' : 'rgba(255,255,255,.07)';
+  const rowShade = light ? 'rgba(0,0,0,.035)' : 'rgba(255,255,255,.025)';
+  const label = light ? '#9aa1ab' : '#5b626c';
+  const dot = light ? 'rgba(13,148,136,.55)' : 'rgba(94,234,212,.5)';
+  const padL=44, padR=12, padT=12, padB=25;
+  const plotW=cssW-padL-padR, plotH=cssH-padT-padB;
+  const elapsed = Math.max(0.1, (performance.now()-startedAt)/1000);
+  const duration = Math.max(3, elapsed);
+  const voiced = livePitchPoints.filter(p=>p.midi!=null);
+  let lo=48, hi=66;
+  if(voiced.length){
+    lo=Math.min(...voiced.map(p=>p.midi))-3;
+    hi=Math.max(...voiced.map(p=>p.midi))+3;
+    if(hi-lo<18){ const mid=(lo+hi)/2; lo=mid-9; hi=mid+9; }
+  }
+  const x=t=>padL+(t/duration)*plotW;
+  const y=m=>padT+(1-(m-lo)/(hi-lo))*plotH;
+
+  ctx.fillStyle=getCss('--bg');
+  ctx.fillRect(padL,padT,plotW,plotH);
+  ctx.font='10px ui-monospace,Menlo,monospace';
+  ctx.textBaseline='middle';
+  for(let n=Math.floor(lo);n<=Math.ceil(hi);n++){
+    if(isBlackKey(n)){
+      ctx.fillStyle=rowShade;
+      ctx.fillRect(padL,y(n+.5),plotW,y(n-.5)-y(n+.5));
+    }
+    ctx.strokeStyle=grid; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(padL,y(n-.5)); ctx.lineTo(padL+plotW,y(n-.5)); ctx.stroke();
+    if(n%2===0){
+      ctx.fillStyle=label;
+      ctx.fillText(midiName(n),5,y(n));
+    }
+  }
+  const timeSteps=[.5,1,2,5,10,15,30,60];
+  const step=timeSteps.find(s=>duration/s<=8)||60;
+  ctx.font='10px sans-serif'; ctx.textAlign='center'; ctx.fillStyle=label;
+  for(let t=0;t<=duration+.001;t+=step){
+    const px=x(t);
+    ctx.strokeStyle=grid;
+    ctx.beginPath(); ctx.moveTo(px,padT); ctx.lineTo(px,padT+plotH); ctx.stroke();
+    ctx.fillText((step<1?t.toFixed(1):Math.round(t))+'с',px,padT+plotH+14);
+  }
+  ctx.textAlign='start';
+
+  for(const p of voiced){
+    ctx.fillStyle=dot;
+    ctx.beginPath(); ctx.arc(x(p.t),y(p.midi),1.8,0,Math.PI*2); ctx.fill();
+  }
+  let prev=null, ema=null;
+  ctx.strokeStyle=getCss('--accent'); ctx.lineWidth=2.5; ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.beginPath();
+  for(const p of livePitchPoints){
+    if(p.midi==null){ prev=null; ema=null; continue; }
+    ema=ema==null?p.midi:.35*p.midi+.65*ema;
+    const px=x(p.t), py=y(ema);
+    if(prev==null) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    prev=p;
+  }
+  ctx.stroke();
+
+  ctx.strokeStyle=getCss('--accent'); ctx.lineWidth=2;
+  const nowX=x(elapsed);
+  ctx.beginPath(); ctx.moveTo(nowX,padT); ctx.lineTo(nowX,padT+plotH); ctx.stroke();
+}
+
+function stopRecording(){
+  if(!recording) return;
+  recording = false;
+  cancelAnimationFrame(rafId);
+  if(processor) processor.onaudioprocess = null;
+  try{ processor.disconnect(); source.disconnect(); muteGain.disconnect(); }catch(_){}
+  if(stream) stream.getTracks().forEach(t=>t.stop());
+  releaseRecordingLock();
+
+  recordedSamples = new Float32Array(recLen);
+  let off = 0;
+  for(const c of recChunks){ recordedSamples.set(c, off); off += c.length; }
+  recChunks = [];
+
+  $('#live').classList.remove('on');
+  $('#liveChartStage').classList.remove('on');
+  $('#rec').disabled = false;
+  $('#meterFill').style.width = '0%';
+  $('#readerDetails').open = false;
+
+  if(audioCtx) audioCtx.close();
+
+  if(recordedSamples.length < recRate*0.3){
+    showBanner('Запись слишком короткая. Попробуй ещё раз.');
+    return;
+  }
+  runAnalysis();
+}
+
+/* ---------- offline analysis ---------- */
+function runAnalysis(){
+  const p = params;
+  const sig = decimate(recordedSamples, p.D);
+  const raw = [];
+  for(let i=0; i+p.frameLen <= sig.length; i += p.hop){
+    const frame = sig.subarray(i, i+p.frameLen);
+    let rms = 0;
+    for(let k=0;k<p.frameLen;k++) rms += frame[k]*frame[k];
+    rms = Math.sqrt(rms/p.frameLen);
+    const r = yin(frame, p.aRate, p.tauMin, p.tauMax, 0.15);
+    raw.push({ t:(i + p.frameLen/2)/p.aRate, f0:r.f0, conf:r.conf, rms });
+  }
+  lastAnalysis = { raw, duration: recordedSamples.length/recRate };
+  setupPlayback();
+  $('#results').classList.add('on');
+  postProcessAndRender();
+  saveRecording();
+}
+
+function median(arr){
+  if(!arr.length) return NaN;
+  const s = [...arr].sort((a,b)=>a-b);
+  return percentile(s, 50);
+}
+function trimBand(sortedMidi, mode){
+  const n = sortedMidi.length;
+  if(mode === 'off' || n < 12) return null;
+  const pct = { p1:[1,99], p3:[3,97], p5:[5,95], p10:[10,90] }[mode];
+  if(!pct) return null;
+  return { lo: percentile(sortedMidi, pct[0]), hi: percentile(sortedMidi, pct[1]) };
+}
+
+function postProcess(){
+  const confT    = +$('#sens').value;
+  const mode     = $('#trimMode').value;
+  const useOct   = $('#optOctave').checked;
+  const minRun   = +$('#minRun').value;
+  const adaptive = $('#optAdaptive').checked;
+  const raw = lastAnalysis.raw;
+
+  // adaptive silence floor: estimate noise from quietest frames, but never let it
+  // climb into the speech level — cap it at a fraction of the median (loud) RMS.
+  let silence = 0.004;
+  if(adaptive && raw.length){
+    const rmsSorted = raw.map(p=>p.rms).sort((a,b)=>a-b);
+    const floor = percentile(rmsSorted, 5);
+    const med = percentile(rmsSorted, 50) || 0.01;
+    silence = Math.max(0.003, Math.min(floor * 2.5, med * 0.30));
+  }
+
+  const lowM = hzToMidi(55), highM = hzToMidi(600);
+  const pts = raw.map(p => {
+    const voiced = p.conf >= confT && p.f0 >= 55 && p.f0 <= 600 && p.rms >= silence;
+    return { t:p.t, f0:p.f0, conf:p.conf, voiced,
+             midi: voiced ? hzToMidi(p.f0) : null, outlier:false, kept:voiced };
+  });
+
+  // 1) median filter (window 5) — kills single-frame spikes
+  const orig = pts.map(p => p.voiced ? p.midi : null);
+  for(let i=0;i<pts.length;i++){
+    if(!pts[i].voiced) continue;
+    const vals = [];
+    for(let k=-2;k<=2;k++){ const j=i+k; if(j>=0 && j<pts.length && orig[j]!=null) vals.push(orig[j]); }
+    vals.sort((a,b)=>a-b);
+    pts[i].midi = vals[Math.floor(vals.length/2)];
+  }
+
+  // 2) octave correction against unchanged neighbours on both sides.
+  // Never feed corrected points back into the reference: that used to let one
+  // noisy burst shift the reference and double valid speech for many seconds.
+  if(useOct){
+    const corrected = window.VoiceScopeAnalysis.correctOctaveOutliers(
+      pts.map(p=>p.voiced ? p.midi : null),
+      { low:lowM, high:highM }
+    );
+    for(let i=0;i<pts.length;i++) if(pts[i].voiced) pts[i].midi = corrected[i];
+  }
+
+  // 3) min-run filtering — drop voiced runs shorter than N frames
+  if(minRun > 0){
+    let i = 0;
+    while(i < pts.length){
+      if(!pts[i].voiced){ i++; continue; }
+      let j = i; while(j < pts.length && pts[j].voiced) j++;
+      if(j - i < minRun){ for(let k=i;k<j;k++){ pts[k].voiced=false; pts[k].kept=false; pts[k].midi=null; } }
+      i = j;
+    }
+  }
+
+  // 4) outlier trimming. Percentile modes are global; smart MAD combines
+  // local context with a short-run extreme guard and preserves sustained pitch.
+  const voicedMidi = pts.filter(p=>p.voiced).map(p=>p.midi).sort((a,b)=>a-b);
+  let band = null;
+  if(mode === 'mad'){
+    const mask = window.VoiceScopeAnalysis.localMadOutlierMask(
+      pts.map(p=>p.voiced ? p.midi : null)
+    );
+    for(let i=0;i<pts.length;i++){
+      if(pts[i].voiced && mask[i]){ pts[i].outlier = true; pts[i].kept = false; }
+    }
+  }else{
+    band = trimBand(voicedMidi, mode);
+  }
+  if(band){
+    for(const p of pts){
+      if(p.voiced && (p.midi < band.lo || p.midi > band.hi)){ p.outlier = true; p.kept = false; }
+    }
+  }
+  return { pts, band };
+}
+
+/* ---------- stats + classification ---------- */
+function erf(x){
+  const t = 1/(1+0.3275911*Math.abs(x));
+  const y = 1 - (((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);
+  return x>=0 ? y : -y;
+}
+function normCdf(x, mean, sd){ return 0.5*(1+erf((x-mean)/(sd*Math.SQRT2))); }
+function classifyHz(hz){
+  const Z = (window.VS_CONTENT && window.VS_CONTENT.ZONES) || [];
+  for(const z of Z){ if(hz <= z.max) return z; }
+  return Z[Z.length-1] || { name:'—', hint:'' };
+}
+function scaleHtml(medHz){
+  const LO=70, HI=320;
+  const pos = hz => Math.max(0, Math.min(100, Math.log(hz/LO)/Math.log(HI/LO)*100));
+  const bounds = [70,80,100,132,155,185,255,320];
+  const cols = ['#3b82f6','#22d3ee','#5eead4','#a3e635','#fbbf24','#fb7185','#f472b6'];
+  let segs='';
+  for(let i=0;i<bounds.length-1;i++){
+    const l=pos(bounds[i]), r=pos(bounds[i+1]);
+    segs += `<div class="seg" style="left:${l}%; width:${r-l}%; background:${cols[i]}; opacity:.5"></div>`;
+  }
+  const ticks = [80,100,130,155,185,255].map(v=>`<span class="tk" style="left:${pos(v)}%">${v}</span>`).join('');
+  const mk = `<div class="marker" style="left:${pos(medHz)}%" data-l="${medHz.toFixed(0)} Гц"></div>`;
+  return `<div class="scale">${segs}${mk}<div class="ticks">${ticks}</div></div>`;
+}
+function renderClassBox(medHz){
+  const N = window.VS_CONTENT && window.VS_CONTENT.NORMS;
+  const z = classifyHz(medHz);
+  let html = `<div class="class-line">Ориентир F0: <b>${z.name}</b> <span class="pen">— ${z.hint}</span></div>`;
+  if(N){
+    const lowerThanMen = Math.round((1-normCdf(medHz, N.men.mean, N.men.sd))*100);
+    const lowerThanWomen = Math.round((1-normCdf(medHz, N.women.mean, N.women.sd))*100);
+    const menPercentile = Math.round(normCdf(medHz, N.men.mean, N.men.sd)*100);
+    html += `<div class="pctl">F0 ниже (голос глубже), чем примерно у ${lowerThanMen}% мужчин и ${lowerThanWomen}% женщин. В условной мужской модели это ${menPercentile}-й процентиль по F0.</div>`;
+  }
+  html += scaleHtml(medHz);
+  html += `<div class="pctl">Это статистический ориентир, а не диагноз. Подробности — в разделе «📚 Ориентиры по высоте голоса» ниже.</div>`;
+  $('#classbox').innerHTML = html;
+}
+
+let lastStats = null;
+function renderStats(pts){
+  const kept = pts.filter(p=>p.kept).map(p=>p.midi).sort((a,b)=>a-b);
+  const voicedCount = pts.filter(p=>p.voiced).length;
+  const outliers = pts.filter(p=>p.outlier).length;
+  const dur = lastAnalysis.duration;
+
+  if(!kept.length){
+    $('#stats').innerHTML = '<div class="stat"><div class="k">Результат</div><div class="v">Голос не найден</div></div>';
+    $('#classbox').innerHTML = '<div class="pctl">Понизь чувствительность или говори громче/ближе к микрофону.</div>';
+    lastStats = null;
+    return null;
+  }
+  const medMidi = percentile(kept, 50);
+  const meanMidi = avg(kept);
+  const minMidi = kept[0], maxMidi = kept[kept.length-1];
+  const medHz = midiToHz(medMidi), meanHz = midiToHz(meanMidi);
+  const voicedPct = voicedCount / pts.length * 100;
+  lastStats = { medHz, medNote: midiName(medMidi), meanHz, dur };
+
+  const cells = [
+    ['Медиана высоты', `${medHz.toFixed(0)} <small>Гц · ${midiName(medMidi)}</small>`, true],
+    ['Среднее', `${meanHz.toFixed(0)} <small>Гц · ${midiName(meanMidi)}</small>`, false],
+    ['Диапазон', `${midiName(minMidi)}–${midiName(maxMidi)}`, false],
+    ['Размах', `${(maxMidi-minMidi).toFixed(1)} <small>полутонов</small>`, false],
+    ['Озвучено', `${voicedPct.toFixed(0)}<small>%</small>`, false],
+    ['Длина', `${dur.toFixed(1)}<small> с</small>`, false],
+    ['Обрезано', `${outliers}<small> кадров</small>`, false],
+  ];
+  $('#stats').innerHTML = cells.map(([k,v,hero])=>
+    `<div class="stat${hero?' hero':''}"><div class="k">${k}</div><div class="v">${v}</div></div>`
+  ).join('');
+
+  renderClassBox(medHz);
+  return { medMidi, minMidi, maxMidi };
+}
+
+/* ---------- chart ---------- */
+function renderChart(pts, band, statRange){
+  const canvas = $('#chart');
+  const cssW = canvas.parentElement.clientWidth;
+  const cssH = Math.max(300, Math.min(460, Math.round(cssW*0.5)));
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = cssW*dpr; canvas.height = cssH*dpr;
+  canvas.style.height = cssH+'px';
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,cssW,cssH);
+
+  const light = document.documentElement.getAttribute('data-theme')==='light';
+  const P = light ? {
+    rowShade:'rgba(0,0,0,.035)', grid:'rgba(0,0,0,.07)', tgrid:'rgba(0,0,0,.05)',
+    rawDot:'rgba(30,35,42,.32)', outDot:'rgba(225,29,72,.6)',
+    noteC:'#4b5563', noteOther:'#9aa1ab', tick:'#9aa1ab', msg:'#6b7280'
+  } : {
+    rowShade:'rgba(255,255,255,.025)', grid:'rgba(255,255,255,.05)', tgrid:'rgba(255,255,255,.04)',
+    rawDot:'rgba(230,232,235,.30)', outDot:'rgba(248,113,113,.55)',
+    noteC:'#9aa2ad', noteOther:'#565d67', tick:'#565d67', msg:'#8b929c'
+  };
+
+  const padL = 46, padR = 14, padT = 14, padB = 26;
+  const plotW = cssW - padL - padR, plotH = cssH - padT - padB;
+  const dur = lastAnalysis.duration;
+  chartGeom = { padL, padT, plotW, plotH, dur, cssW };
+  positionOverlays();
+
+  // y-range from voiced data (incl outliers so they're visible)
+  const allMidi = pts.filter(p=>p.midi!=null).map(p=>p.midi);
+  if(!allMidi.length){
+    ctx.fillStyle = P.msg; ctx.font='14px sans-serif';
+    ctx.fillText('Нет озвученных кадров', padL, padT+20);
+    return;
+  }
+  let lo = Math.min(...allMidi) - 2, hi = Math.max(...allMidi) + 2;
+  if(hi - lo < 12){ const c=(hi+lo)/2; lo=c-6; hi=c+6; }
+  const loN = Math.floor(lo), hiN = Math.ceil(hi);
+
+  const x = t => padL + (dur>0 ? t/dur : 0)*plotW;
+  const y = m => padT + (1-(m-lo)/(hi-lo))*plotH;
+
+  // piano-roll rows
+  const labelEvery = (hiN-loN) <= 28;
+  ctx.textBaseline = 'middle';
+  ctx.font = '10px ui-monospace,Menlo,monospace';
+  for(let n=loN; n<=hiN; n++){
+    const yTop = y(n+0.5), yBot = y(n-0.5);
+    if(isBlackKey(n)){ ctx.fillStyle=P.rowShade; ctx.fillRect(padL,yTop,plotW,yBot-yTop); }
+    ctx.strokeStyle = P.grid;
+    ctx.beginPath(); ctx.moveTo(padL, y(n-0.5)); ctx.lineTo(padL+plotW, y(n-0.5)); ctx.stroke();
+    const show = labelEvery || (n%12===0) || !isBlackKey(n) && (hiN-loN)<=48;
+    if(show){
+      ctx.fillStyle = (n%12===0) ? P.noteC : P.noteOther;
+      ctx.fillText(midiName(n), 6, y(n));
+    }
+  }
+
+  // reference speech bands (subtle)
+  const refs = [[100,150,'rgba(96,165,250,.05)'],[185,255,'rgba(244,114,182,.05)']];
+  for(const [a,b,col] of refs){
+    const ma=hzToMidi(a), mb=hzToMidi(b);
+    if(mb<lo || ma>hi) continue;
+    const yA=y(Math.min(mb,hi)), yB=y(Math.max(ma,lo));
+    ctx.fillStyle=col; ctx.fillRect(padL,yA,plotW,yB-yA);
+  }
+
+  // trim band edges
+  if(band){
+    ctx.strokeStyle='rgba(248,113,113,.35)'; ctx.setLineDash([4,4]); ctx.lineWidth=1;
+    for(const m of [band.lo, band.hi]){
+      if(m>=lo && m<=hi){ ctx.beginPath(); ctx.moveTo(padL,y(m)); ctx.lineTo(padL+plotW,y(m)); ctx.stroke(); }
+    }
+    ctx.setLineDash([]);
+  }
+
+  // time gridlines
+  const steps = [0.5,1,2,5,10,15,30,60,120];
+  const step = steps.find(s => dur/s <= 10) || 120;
+  ctx.fillStyle=P.tick; ctx.textAlign='center'; ctx.font='10px sans-serif';
+  for(let t=0; t<=dur+1e-6; t+=step){
+    const px=x(t);
+    ctx.strokeStyle=P.tgrid;
+    ctx.beginPath(); ctx.moveTo(px,padT); ctx.lineTo(px,padT+plotH); ctx.stroke();
+    ctx.fillText(t.toFixed(step<1?1:0)+'с', px, padT+plotH+13);
+  }
+  ctx.textAlign='start';
+
+  // raw dots
+  if($('#optRaw').checked){
+    for(const p of pts){
+      if(p.midi==null) continue;
+      ctx.fillStyle = p.outlier ? P.outDot : P.rawDot;
+      ctx.beginPath(); ctx.arc(x(p.t), y(p.midi), p.outlier?2.2:1.7, 0, 6.2832); ctx.fill();
+    }
+  }
+
+  // segments of kept points (break on gaps)
+  const segs = [];
+  let cur = [];
+  for(const p of pts){
+    if(p.kept){ cur.push(p); }
+    else if(cur.length){ segs.push(cur); cur=[]; }
+  }
+  if(cur.length) segs.push(cur);
+
+  const hopMs = lastAnalysis.raw.length > 1
+    ? Math.max(1, (lastAnalysis.raw[1].t - lastAnalysis.raw[0].t) * 1000)
+    : 8;
+  let maWin = Math.max(1, Math.round(+$('#maWindow').value / hopMs));
+  if(maWin % 2 === 0) maWin++;
+  const emaEquivalentSpan = Math.max(1, +$('#emaSpan').value / hopMs);
+  const alpha = 2/(emaEquivalentSpan+1);
+
+  function strokeSeg(seg, values, color, lw){
+    ctx.strokeStyle=color; ctx.lineWidth=lw; ctx.lineJoin='round'; ctx.lineCap='round';
+    ctx.beginPath();
+    for(let i=0;i<seg.length;i++){
+      const px=x(seg[i].t), py=y(values[i]);
+      if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+  }
+
+  for(const seg of segs){
+    const m = seg.map(p=>p.midi);
+    if(seg.length < 2) continue;
+    if($('#optMa').checked){
+      const ma = m.map((_,i)=>{
+        const a=Math.max(0,i-(maWin>>1)), b=Math.min(m.length-1,i+(maWin>>1));
+        let s=0; for(let j=a;j<=b;j++) s+=m[j]; return s/(b-a+1);
+      });
+      strokeSeg(seg, ma, getCss('--blue'), 2);
+    }
+    if($('#optEma').checked){
+      const ema=[]; let prev=m[0];
+      for(let i=0;i<m.length;i++){ prev = i===0 ? m[0] : alpha*m[i]+(1-alpha)*prev; ema.push(prev); }
+      strokeSeg(seg, ema, getCss('--accent'), 2.4);
+    }
+  }
+}
+
+function getCss(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim() || '#fff'; }
+
+/* ---------- chart playback overlay (playhead / hover / seek) ---------- */
+const player = $('#player');
+function xFromTime(t){ return chartGeom ? chartGeom.padL + (chartGeom.dur>0 ? t/chartGeom.dur : 0)*chartGeom.plotW : 0; }
+function timeFromX(px){ return (!chartGeom || chartGeom.dur<=0) ? 0 : Math.max(0, Math.min(chartGeom.dur, (px-chartGeom.padL)/chartGeom.plotW*chartGeom.dur)); }
+function hideHover(){ $('#hoverline').style.display='none'; $('#hovertip').style.display='none'; }
+function updatePlayhead(){
+  const ph = $('#playhead');
+  if(!chartGeom || !player.src || !$('#results').classList.contains('on')){ ph.style.display='none'; return; }
+  ph.style.left = xFromTime(player.currentTime||0)+'px';
+  ph.style.top = chartGeom.padT+'px';
+  ph.style.height = chartGeom.plotH+'px';
+  ph.style.display = 'block';
+}
+function positionOverlays(){ hideHover(); updatePlayhead(); }
+let phRAF = 0;
+function phLoop(){ updatePlayhead(); if(!player.paused && !player.ended) phRAF = requestAnimationFrame(phLoop); }
+(function initChartInteraction(){
+  const canvas = $('#chart');
+  const pxOf = e => { const r=canvas.getBoundingClientRect(); return (e.clientX-r.left)*(chartGeom.cssW/r.width); };
+  canvas.addEventListener('mousemove', e=>{
+    if(!chartGeom) return;
+    const px = pxOf(e);
+    if(px<chartGeom.padL || px>chartGeom.padL+chartGeom.plotW){ hideHover(); return; }
+    const hl=$('#hoverline'), tip=$('#hovertip');
+    hl.style.left=px+'px'; hl.style.top=chartGeom.padT+'px'; hl.style.height=chartGeom.plotH+'px'; hl.style.display='block';
+    tip.textContent=timeFromX(px).toFixed(2)+' с'; tip.style.left=px+'px'; tip.style.top=(chartGeom.padT-1)+'px'; tip.style.display='block';
+  });
+  canvas.addEventListener('mouseleave', hideHover);
+  canvas.addEventListener('click', e=>{
+    if(!chartGeom || !player.src) return;
+    const t = timeFromX(pxOf(e));
+    if(!player.paused && Math.abs(t-player.currentTime) < Math.max(0.15, chartGeom.dur*0.02)){
+      player.pause();
+    } else {
+      player.currentTime = t; player.play();
+    }
+  });
+  player.addEventListener('play', ()=>{ cancelAnimationFrame(phRAF); phLoop(); });
+  player.addEventListener('pause', updatePlayhead);
+  player.addEventListener('seeked', updatePlayhead);
+  player.addEventListener('ended', updatePlayhead);
+})();
+
+/* ---------- theme ---------- */
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+  $('#themeBtn').textContent = (t==='light') ? '🌙' : '☀';
+  try{ localStorage.setItem('vs-theme', t); }catch(_){}
+  if(lastDraw) renderChart(lastDraw.pts, lastDraw.band, lastDraw.statRange);
+  if(recording) drawLiveChart();
+}
+function toggleTheme(){
+  const cur = document.documentElement.getAttribute('data-theme')==='light' ? 'light' : 'dark';
+  applyTheme(cur==='light' ? 'dark' : 'light');
+}
+
+function postProcessAndRender(){
+  if(!lastAnalysis) return;
+  const { pts, band } = postProcess();
+  const statRange = renderStats(pts);
+  lastDraw = { pts, band, statRange };
+  renderChart(pts, band, statRange);
+}
+
+/* ---------- playback ---------- */
+function setupPlayback(){
+  const blob = encodeWAV(recordedSamples, recRate);
+  const url = URL.createObjectURL(blob);
+  $('#player').src = url;
+  $('#download').href = url;
+}
+function encodeWAV(samples, rate){
+  const buf = new ArrayBuffer(44 + samples.length*2);
+  const view = new DataView(buf);
+  const wstr=(o,s)=>{ for(let i=0;i<s.length;i++) view.setUint8(o+i, s.charCodeAt(i)); };
+  wstr(0,'RIFF'); view.setUint32(4,36+samples.length*2,true); wstr(8,'WAVE');
+  wstr(12,'fmt '); view.setUint32(16,16,true); view.setUint16(20,1,true); view.setUint16(22,1,true);
+  view.setUint32(24,rate,true); view.setUint32(28,rate*2,true); view.setUint16(32,2,true); view.setUint16(34,16,true);
+  wstr(36,'data'); view.setUint32(40,samples.length*2,true);
+  let o=44;
+  for(let i=0;i<samples.length;i++){
+    let s=Math.max(-1,Math.min(1,samples[i]));
+    view.setInt16(o, s<0 ? s*0x8000 : s*0x7FFF, true); o+=2;
+  }
+  return new Blob([view],{type:'audio/wav'});
+}
+
+/* ---------- presets ---------- */
+const PRESETS = [
+  { id:'raw',      name:'Сырой',           sens:0.40, maMs:24,  emaMs:24,  trim:'off' },
+  { id:'gentle',   name:'Бережно',         sens:0.50, maMs:56,  emaMs:56,  trim:'p1'  },
+  { id:'balanced', name:'Сбалансированно', sens:0.55, maMs:72,  emaMs:72,  trim:'p3'  },
+  { id:'strict',   name:'Строго',          sens:0.65, maMs:104, emaMs:104, trim:'p5'  },
+  { id:'max',      name:'Максимально',     sens:0.72, maMs:136, emaMs:136, trim:'mad' },
+];
+let activePreset = 'balanced';
+function buildPresets(){
+  $('#presets').innerHTML = PRESETS.map(p=>`<button class="preset" data-id="${p.id}">${p.name}</button>`).join('');
+  $('#presets').querySelectorAll('.preset').forEach(b=>
+    b.addEventListener('click', ()=>applyPreset(b.dataset.id, true)));
+}
+function markActivePreset(){
+  $('#presets').querySelectorAll('.preset').forEach(b=>b.classList.toggle('active', b.dataset.id===activePreset));
+}
+function applyPreset(id, rerender){
+  const p = PRESETS.find(x=>x.id===id); if(!p) return;
+  activePreset = id;
+  $('#sens').value = p.sens;     $('#sensVal').textContent = p.sens.toFixed(2);
+  $('#maWindow').value = p.maMs;
+  $('#emaSpan').value = p.emaMs;
+  updateSmoothingLabels();
+  $('#trimMode').value = p.trim;
+  markActivePreset(); updateTrimDesc();
+  if(rerender && lastAnalysis) postProcessAndRender();
+}
+function updateTrimDesc(){
+  const map = { off:'', p1:'(±1%)', p3:'(±3%)', p5:'(±5%)', p10:'(±10%)', mad:'(авто)' };
+  $('#trimDesc').textContent = map[$('#trimMode').value] || '';
+}
+function snapshotSettings(){
+  return { preset:activePreset, sens:+$('#sens').value,
+           maMs:+$('#maWindow').value, emaMs:+$('#emaSpan').value,
+           trim:$('#trimMode').value, octave:$('#optOctave').checked,
+           minRun:+$('#minRun').value, adaptive:$('#optAdaptive').checked };
+}
+function updateSmoothingLabels(){
+  $('#maWindowVal').textContent = `${$('#maWindow').value} мс`;
+  $('#emaSpanVal').textContent = `${$('#emaSpan').value} мс`;
+}
+function renderRefArticle(){
+  if(window.VS_CONTENT && window.VS_CONTENT.REFERENCE) $('#refart').innerHTML = window.VS_CONTENT.REFERENCE;
+}
+
+/* ---------- history (IndexedDB) ---------- */
+const DB_NAME='voicescope', STORE='recordings', MAX_RECS=30, MAX_BYTES=1024*1024*1024;
+let dbPromise = null;
+function db(){
+  if(dbPromise) return dbPromise;
+  dbPromise = new Promise((res,rej)=>{
+    const r = indexedDB.open(DB_NAME, 1);
+    r.onupgradeneeded = e => {
+      const d = e.target.result;
+      if(!d.objectStoreNames.contains(STORE)) d.createObjectStore(STORE, { keyPath:'id' });
+    };
+    r.onsuccess = e => res(e.target.result);
+    r.onerror = e => rej(e.target.error);
+  });
+  return dbPromise;
+}
+function reqP(req){ return new Promise((res,rej)=>{ req.onsuccess=()=>res(req.result); req.onerror=()=>rej(req.error); }); }
+async function store(mode){ const d = await db(); return d.transaction(STORE, mode).objectStore(STORE); }
+async function dbAll(){ return reqP((await store('readonly')).getAll()); }
+async function dbGet(id){ return reqP((await store('readonly')).get(id)); }
+async function dbPut(rec){ return reqP((await store('readwrite')).put(rec)); }
+async function dbDel(id){ return reqP((await store('readwrite')).delete(id)); }
+
+function fmtBytes(b){
+  if(b<1024) return b+' Б';
+  if(b<1048576) return (b/1024).toFixed(0)+' КБ';
+  if(b<1073741824) return (b/1048576).toFixed(1)+' МБ';
+  return (b/1073741824).toFixed(2)+' ГБ';
+}
+
+async function saveRecording(){
+  if(!window.indexedDB || !recordedSamples || !lastStats || !lastAnalysis) return;
+  try{
+    const raw = lastAnalysis.raw;
+    const f0   = Float32Array.from(raw.map(p=>p.f0));
+    const conf = Float32Array.from(raw.map(p=>p.conf));
+    const rms  = Float32Array.from(raw.map(p=>p.rms));
+    const wav  = encodeWAV(recordedSamples, recRate);
+    const id = Date.now();
+    const dt = raw.length>1 ? (raw[1].t - raw[0].t) : 0.008;
+    const rec = {
+      id, date:id, dur:lastAnalysis.duration, rate:recRate,
+      medianHz:lastStats.medHz, medianNote:lastStats.medNote,
+      settings:snapshotSettings(),
+      t0: raw.length ? raw[0].t : 0, dt,
+      f0, conf, rms, wav,
+      bytes: wav.size + f0.byteLength*3
+    };
+    await dbPut(rec);
+    await pruneDB();
+    refreshHistory();
+  }catch(e){ console.warn('Не удалось сохранить запись:', e); }
+}
+async function pruneDB(){
+  let recs = await dbAll();
+  recs.sort((a,b)=>b.date-a.date);
+  for(let i=MAX_RECS;i<recs.length;i++) await dbDel(recs[i].id);
+  recs = recs.slice(0, MAX_RECS);
+  let total = recs.reduce((s,r)=>s+(r.bytes||0),0);
+  let idx = recs.length-1;
+  while(total>MAX_BYTES && idx>=0){ await dbDel(recs[idx].id); total -= recs[idx].bytes||0; idx--; }
+}
+function loadRecording(rec){
+  const n = rec.f0.length, raw = [];
+  for(let i=0;i<n;i++) raw.push({ t: rec.t0 + i*rec.dt, f0:rec.f0[i], conf:rec.conf[i], rms:rec.rms[i] });
+  lastAnalysis = { raw, duration: rec.dur };
+  recordedSamples = null; // loaded item: don't re-save on render
+  const url = URL.createObjectURL(rec.wav);
+  $('#player').src = url; $('#download').href = url;
+  $('#results').classList.add('on');
+  postProcessAndRender();
+  $('#results').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+async function refreshHistory(){
+  if(!window.indexedDB){ $('#histCard').style.display='none'; return; }
+  let recs;
+  try{ recs = await dbAll(); }
+  catch(e){ $('#histCard').style.display='none'; return; }
+  recs.sort((a,b)=>b.date-a.date);
+  const total = recs.reduce((s,r)=>s+(r.bytes||0),0);
+  $('#histUsage').textContent = recs.length ? `${recs.length}/30 · ${fmtBytes(total)} из 1 ГБ` : '';
+  if(!recs.length){
+    $('#histList').innerHTML = '<div class="hist-empty">Пока нет сохранённых записей — они появятся здесь автоматически после записи.</div>';
+    return;
+  }
+  $('#histList').innerHTML = recs.map(r=>{
+    const d = new Date(r.date);
+    const when = d.toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    return `<div class="hist-item" data-id="${r.id}">
+      <span class="hist-when">${when}</span>
+      <span class="hist-med">${r.medianHz.toFixed(0)} <small>Гц · ${r.medianNote}</small></span>
+      <span class="hist-meta">${r.dur.toFixed(1)} с · ${fmtBytes(r.bytes||0)} · ${r.settings?r.settings.preset:'?'}</span>
+      <span class="hist-btns">
+        <button class="ibtn act-play">▶</button>
+        <button class="ibtn act-load">Открыть</button>
+        <button class="ibtn act-wav">WAV</button>
+        <button class="ibtn del act-del">✕</button>
+      </span></div>`;
+  }).join('');
+  $('#histList').querySelectorAll('.hist-item').forEach(el=>{
+    const id = +el.dataset.id;
+    el.querySelector('.act-play').onclick = ()=>toggleHistPlay(id);
+    el.querySelector('.act-load').onclick = async()=>{ const r=await dbGet(id); if(r) loadRecording(r); };
+    el.querySelector('.act-wav').onclick  = async()=>{ const r=await dbGet(id); if(r){ const a=document.createElement('a'); a.href=URL.createObjectURL(r.wav); a.download=`voicescope-${id}.wav`; a.click(); } };
+    el.querySelector('.act-del').onclick  = async()=>{
+      if(histPlayingId===id && histAudio){ histAudio.pause(); histPlayingId=null; }
+      await dbDel(id); refreshHistory();
+    };
+  });
+  updateHistPlayBtns();
+}
+
+let histAudio = null, histPlayingId = null;
+async function toggleHistPlay(id){
+  try{
+    if(histPlayingId===id && histAudio && !histAudio.paused){ histAudio.pause(); return; }
+    if(histAudio){ histAudio.pause(); }
+    const r = await dbGet(id); if(!r) return;
+    histAudio = new Audio(URL.createObjectURL(r.wav));
+    histPlayingId = id;
+    histAudio.onended = ()=>{ histPlayingId=null; updateHistPlayBtns(); };
+    histAudio.onpause = updateHistPlayBtns;
+    histAudio.onplay  = updateHistPlayBtns;
+    await histAudio.play();
+    updateHistPlayBtns();
+  }catch(e){ console.warn('Воспроизведение не удалось:', e); }
+}
+function updateHistPlayBtns(){
+  document.querySelectorAll('#histList .hist-item').forEach(el=>{
+    const id = +el.dataset.id;
+    const b = el.querySelector('.act-play'); if(!b) return;
+    const playing = histPlayingId===id && histAudio && !histAudio.paused;
+    b.textContent = playing ? '⏸' : '▶';
+    b.classList.toggle('active', playing);
+  });
+}
+async function exportData(){
+  let recs;
+  try{ recs = await dbAll(); }catch(e){ return; }
+  recs.sort((a,b)=>a.date-b.date);
+  const out = {
+    app:'VoiceScope', version:1, exportedAt:new Date().toISOString(), count:recs.length,
+    note:'Контуры основного тона для анализа качества обрезки. f0 в Гц по кадрам; t_i = t0 + i*dt.',
+    recordings: recs.map(r=>({
+      id:r.id, date:new Date(r.date).toISOString(), dur:r.dur, rate:r.rate,
+      medianHz:Math.round(r.medianHz*10)/10, medianNote:r.medianNote, settings:r.settings,
+      t0:r.t0, dt:r.dt,
+      f0:   Array.from(r.f0).map(x=>Math.round(x*10)/10),
+      conf: Array.from(r.conf).map(x=>Math.round(x*1000)/1000),
+      rms:  Array.from(r.rms).map(x=>Math.round(x*1e5)/1e5)
+    }))
+  };
+  const blob = new Blob([JSON.stringify(out)], { type:'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'voicescope-data.json'; a.click();
+}
+async function clearHistory(){
+  if(!confirm('Удалить все сохранённые записи?')) return;
+  try{ const recs = await dbAll(); for(const r of recs) await dbDel(r.id); }catch(e){}
+  refreshHistory();
+}
+
+/* ---------- ui glue ---------- */
+function showBanner(msg){ const b=$('#banner'); b.textContent=msg; b.classList.add('on'); }
+function hideBanner(){ $('#banner').classList.remove('on'); }
+
+$('#rec').addEventListener('click', startRecording);
+$('#stop').addEventListener('click', stopRecording);
+$('#shuffle').addEventListener('click', renderReading);
+$('#exportData').addEventListener('click', exportData);
+$('#clearHist').addEventListener('click', clearHistory);
+$('#themeBtn').addEventListener('click', toggleTheme);
+document.addEventListener('keydown', e=>{
+  if(e.code==='Space' && e.target.tagName!=='INPUT' && e.target.tagName!=='SELECT'){
+    e.preventDefault();
+    if(recording) stopRecording();
+    else if(!recordingStarting) startRecording();
+  }
+});
+
+window.addEventListener('beforeunload', ()=>{
+  if(stream) stream.getTracks().forEach(track=>track.stop());
+  releaseRecordingLock();
+});
+
+// draw-only toggles
+['optRaw','optEma','optMa'].forEach(id=>$('#'+id).addEventListener('change', ()=>{ if(lastAnalysis) postProcessAndRender(); }));
+
+// settings that switch the preset to "custom"
+function markCustom(){ activePreset='custom'; markActivePreset(); }
+$('#trimMode').addEventListener('change', ()=>{ markCustom(); updateTrimDesc(); if(lastAnalysis) postProcessAndRender(); });
+$('#optOctave').addEventListener('change', ()=>{ markCustom(); if(lastAnalysis) postProcessAndRender(); });
+$('#optAdaptive').addEventListener('change', ()=>{ markCustom(); if(lastAnalysis) postProcessAndRender(); });
+$('#minRun').addEventListener('input', e=>{ $('#minRunVal').textContent=e.target.value; markCustom(); if(lastAnalysis) postProcessAndRender(); });
+$('#maWindow').addEventListener('input', ()=>{ updateSmoothingLabels(); markCustom(); if(lastAnalysis) postProcessAndRender(); });
+$('#emaSpan').addEventListener('input', ()=>{ updateSmoothingLabels(); markCustom(); if(lastAnalysis) postProcessAndRender(); });
+$('#sens').addEventListener('input', e=>{ $('#sensVal').textContent=(+e.target.value).toFixed(2); markCustom(); if(lastAnalysis) postProcessAndRender(); });
+
+let resizeT;
+window.addEventListener('resize', ()=>{ clearTimeout(resizeT); resizeT=setTimeout(()=>{
+  if(lastDraw) renderChart(lastDraw.pts,lastDraw.band,lastDraw.statRange);
+  if(recording) drawLiveChart();
+},120); });
+
+// init
+let savedTheme = 'dark';
+try{ savedTheme = localStorage.getItem('vs-theme') || 'dark'; }catch(_){}
+applyTheme(savedTheme);
+buildPresets();
+applyPreset('balanced', false);
+updateTrimDesc();
+renderReading();
+renderRefArticle();
+refreshHistory();
+
+if(!window.isSecureContext && location.protocol!=='file:'){
+  showBanner('Для доступа к микрофону нужен https или localhost. Запусти локальный сервер (подсказка внизу).');
+}
+</script>
+</body>
+</html>
