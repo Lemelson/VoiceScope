@@ -4,7 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>VoiceScope — free online voice pitch analyzer</title>
-<meta name="description" content="Record your voice and see its pitch: frequency in hertz, musical notes, and how it changes over time. Free, private — audio never leaves your device." />
+<meta name="description" content="Free online voice pitch analyzer. Record your voice and see its fundamental frequency (F0) in hertz, musical notes, and how the pitch moves over time. A clean, private voicecel alternative — audio never leaves your browser." />
+<meta name="keywords" content="voice pitch analyzer, voice frequency analyzer, fundamental frequency, F0, voice pitch test, pitch detection, YIN, vocal range, voice notes, Hz, voicecel, voicecel alternative, deep voice test, анализатор голоса, высота голоса, частота голоса, тон голоса, определить высоту голоса онлайн" />
 <meta name="robots" content="index, follow, max-image-preview:large" />
 <meta name="author" content="Lemelson" />
 <meta name="theme-color" content="#0b0d10" />
@@ -12,13 +13,19 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 <meta property="og:type" content="website" />
 <meta property="og:locale" content="en_US" />
+<meta property="og:locale:alternate" content="ru_RU" />
 <meta property="og:site_name" content="VoiceScope" />
 <meta property="og:title" content="VoiceScope — free online voice pitch analyzer" />
-<meta property="og:description" content="Record your voice and see its pitch: frequency, notes and pitch contour over time. Runs entirely in your browser." />
+<meta property="og:description" content="Record your voice and see its fundamental frequency, notes and pitch contour over time. Runs entirely in your browser — a private voicecel alternative." />
 <meta property="og:url" content="https://lemelson.github.io/VoiceScope/" />
-<meta name="twitter:card" content="summary" />
+<meta property="og:image" content="https://lemelson.github.io/VoiceScope/og-image.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="VoiceScope — free online voice pitch analyzer showing a pitch contour" />
+<meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="VoiceScope — voice pitch analyzer" />
-<meta name="twitter:description" content="Frequency, notes and pitch contour, right in your browser. Audio stays on your device." />
+<meta name="twitter:description" content="See your voice frequency, notes and pitch contour, right in your browser. Audio stays on your device." />
+<meta name="twitter:image" content="https://lemelson.github.io/VoiceScope/og-image.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -27,12 +34,15 @@
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "VoiceScope",
+  "alternateName": "Voice pitch analyzer",
   "url": "https://lemelson.github.io/VoiceScope/",
-  "description": "Free in-browser voice pitch analyzer with note visualization and a pitch contour over time.",
+  "description": "Free in-browser voice pitch analyzer with note visualization and a pitch contour over time — a private voicecel alternative.",
   "applicationCategory": "MultimediaApplication",
   "operatingSystem": "Any",
   "browserRequirements": "Modern browser with Web Audio API and microphone access",
   "isAccessibleForFree": true,
+  "image": "https://lemelson.github.io/VoiceScope/og-image.png",
+  "keywords": "voice pitch analyzer, fundamental frequency, F0, pitch detection, vocal range, voicecel alternative, высота голоса, частота голоса",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "codeRepository": "https://github.com/Lemelson/VoiceScope",
   "inLanguage": ["en", "ru"],
@@ -248,6 +258,7 @@
   .banner.on{display:block}
 
   footer{margin-top:44px; color:var(--muted2); font-size:12.5px; line-height:1.7}
+  footer h2{font-size:13px; font-weight:600; color:var(--muted); margin:0 0 6px; letter-spacing:0}
   footer p{margin:4px 0; max-width:64ch}
   .foot-links{display:flex; gap:16px; flex-wrap:wrap; margin-top:8px; font-size:12.5px}
 
@@ -415,7 +426,8 @@
   </div>
 
   <footer>
-    <p><strong style="color:var(--muted); font-weight:600">About.</strong> VoiceScope measures the fundamental frequency of your voice, converts it to musical notes, and shows how your pitch changed over time — useful for comparing recordings, watching intonation, and finding your comfortable speaking range.</p>
+    <h2>Online voice pitch analyzer</h2>
+    <p>VoiceScope measures the fundamental frequency (F0) of your voice, converts it to musical notes, and shows how your pitch changed over time — useful for comparing recordings, watching intonation, and finding your comfortable speaking range. It's a clean, private alternative to voicecel.</p>
     <p>Recording and analysis happen locally with the YIN autocorrelation algorithm; nothing is uploaded. Results are a reference, not a medical assessment.</p>
     <div class="foot-links">
       <a href="https://github.com/Lemelson/VoiceScope" target="_blank" rel="noreferrer">Source code on GitHub</a>

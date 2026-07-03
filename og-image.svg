@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d1014"/>
+      <stop offset="1" stop-color="#12181c"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2fd0b5"/>
+      <stop offset="1" stop-color="#6ee7d4"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1200" fill="url(#bg)"/>
+  <!-- content lives in the centred 1200x630 band: y 285..915 -->
+  <g stroke="#1c242b" stroke-width="1">
+    <line x1="0" y1="470" x2="1200" y2="470"/>
+    <line x1="0" y1="600" x2="1200" y2="600"/>
+    <line x1="0" y1="730" x2="1200" y2="730"/>
+  </g>
+  <path d="M90 720 L210 720 250 600 330 760 440 520 550 650 650 560 770 630 880 545 1000 600 1110 600"
+        fill="none" stroke="url(#line)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+  <g fill="#2fd0b5" opacity="0.85">
+    <circle cx="440" cy="520" r="9"/>
+    <circle cx="880" cy="545" r="9"/>
+  </g>
+  <text x="90" y="470" font-family="Outfit, Helvetica, Arial, sans-serif" font-size="90" font-weight="700" fill="#e9ebee">Voice<tspan fill="#2fd0b5">Scope</tspan></text>
+  <text x="93" y="540" font-family="Outfit, Helvetica, Arial, sans-serif" font-size="35" font-weight="500" fill="#96a0ab">Free online voice pitch analyzer</text>
+  <g font-family="Outfit, Helvetica, Arial, sans-serif" font-size="27" font-weight="600">
+    <rect x="90" y="828" width="196" height="54" rx="27" fill="#161d22" stroke="#26313a"/>
+    <text x="188" y="863" fill="#c7ccd3" text-anchor="middle">Hz &amp; notes</text>
+    <rect x="304" y="828" width="200" height="54" rx="27" fill="#161d22" stroke="#26313a"/>
+    <text x="404" y="863" fill="#c7ccd3" text-anchor="middle">runs locally</text>
+    <rect x="522" y="828" width="190" height="54" rx="27" fill="#161d22" stroke="#26313a"/>
+    <text x="617" y="863" fill="#c7ccd3" text-anchor="middle">no upload</text>
+  </g>
+</svg>

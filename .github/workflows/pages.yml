@@ -27,7 +27,7 @@ jobs:
       - name: Prepare static site
         run: |
           mkdir public
-          cp index.html content.js analysis-core.js favicon.svg robots.txt sitemap.xml public/
+          cp index.html content.js analysis-core.js favicon.svg og-image.png robots.txt sitemap.xml public/
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
