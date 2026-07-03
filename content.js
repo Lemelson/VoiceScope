@@ -337,7 +337,7 @@ NORMS: {
 ZONES: [
   { max:80,       name:"Very low speaking F0",   hint:"around the 1st percentile of a typical male model" },
   { max:100,      name:"Low male F0",            hint:"lower than roughly 84% of men in a simple model" },
-  { max:132,      name:"Typical male range",     hint:"100–132 Hz — the central ~68% of the model" },
+  { max:132,      name:"Typical male range",     hint:"the central ~68% of a typical male model" },
   { max:155,      name:"Upper male range",       hint:"above the average male speaking value" },
   { max:185,      name:"Overlap zone",           hint:"one F0 value alone doesn't determine sex or voice type" },
   { max:255,      name:"Typical female range",   hint:"reference range for conversational speech" },

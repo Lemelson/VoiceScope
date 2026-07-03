@@ -48,9 +48,10 @@ Then open http://localhost:8000 and allow microphone access.
 - **History playback**: play any saved recording right from the list (▶) or delete it (✕).
 
 ## Processing profiles and fine-tuning
-Quick **profiles**: Raw · Gentle · Balanced (default) · Strict · Maximum.
-Each sets sensitivity, MA window, EMA span and trimming mode at once. Any manual tweak
-switches to a custom state.
+Quick **profiles** above the chart: Raw · Gentle · Smart (default) · Strict · Maximum.
+Each sets sensitivity, MA window, EMA span and trimming mode at once. Smart uses the hybrid
+MAD trimmer, which removes short glitches by local context instead of blindly cutting
+percentiles. Any manual tweak in Analysis settings switches to a Custom profile.
 
 - **Outlier trimming**: Off / Light 1% / Medium 3% / Strict 5% / Aggressive 10% /
   Smart (hybrid MAD — compares each frame against neighbouring speech and additionally catches

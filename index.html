@@ -191,11 +191,14 @@
   details.adv > summary::before{content:'▸ '; color:var(--accent)}
   details.adv[open] > summary::before{content:'▾ '}
   .adv-body{margin-top:16px; display:flex; flex-direction:column; gap:16px}
+  .presets-bar{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:6px}
+  .presets-label{font-size:12px; color:var(--muted); font-weight:500}
   .presets{display:flex; gap:8px; flex-wrap:wrap}
   .preset{background:var(--panel2); border:1px solid var(--line); color:var(--text);
           padding:7px 14px; border-radius:999px; font-size:12.5px; font-weight:500}
   .preset:hover{border-color:var(--muted2)}
   .preset.active{background:var(--accent); color:var(--accent-ink); border-color:var(--accent); font-weight:600}
+  .preset-desc{font-size:12px; color:var(--muted2); margin-bottom:14px; min-height:16px}
   select{background:var(--panel2); border:1px solid var(--line); color:var(--text);
          border-radius:9px; padding:7px 10px; font-size:13px; outline:none; max-width:100%; font-family:inherit}
   select:focus-visible{outline:2px solid var(--accent)}
@@ -217,6 +220,8 @@
   .scale .segm{position:absolute; top:0; height:16px}
   .scale .segm:first-of-type{border-radius:5px 0 0 5px}
   .scale .segm:last-of-type{border-radius:0 5px 5px 0}
+  .scale .segm.cur{height:22px; top:-3px; border-radius:5px; z-index:1;
+    box-shadow:0 0 0 1.5px var(--bg), 0 0 10px rgba(0,0,0,.25)}
   .scale .ticks{position:absolute; top:22px; left:0; width:100%; height:14px; font-size:10px; color:var(--muted2)}
   .scale .tk{position:absolute; transform:translateX(-50%); white-space:nowrap}
   .scale .marker{position:absolute; top:-7px; width:2px; height:26px; background:var(--text); box-shadow:0 0 0 1px rgba(0,0,0,.45)}
@@ -312,6 +317,11 @@
     </div>
 
     <div class="card">
+      <div class="presets-bar">
+        <span class="presets-label">Profile</span>
+        <div class="presets" id="presets"></div>
+      </div>
+      <div class="preset-desc" id="presetDesc"></div>
       <div class="chart-box">
         <canvas id="chart"></canvas>
         <div id="hoverline" class="vline hover"></div>
@@ -329,10 +339,7 @@
       <details class="adv" id="adv">
         <summary>Analysis settings</summary>
         <div class="adv-body">
-          <div>
-            <div class="exp" style="color:var(--muted); font-size:12px; margin-bottom:7px">Processing profile:</div>
-            <div class="presets" id="presets"></div>
-          </div>
+          <div class="exp" style="color:var(--muted2); font-size:12px">Changing anything below switches the profile to <b style="color:var(--muted)">Custom</b> — your own preset.</div>
           <div class="row" style="gap:16px">
             <label class="check"><input id="optRaw" type="checkbox" checked /> points</label>
             <label class="check"><input id="optEma" type="checkbox" checked /> EMA</label>
@@ -924,20 +931,35 @@ function scaleHtml(medHz){
   const LO=70, HI=320;
   const pos = hz => Math.max(0, Math.min(100, Math.log(hz/LO)/Math.log(HI/LO)*100));
   const bounds = [70,80,100,132,155,185,255,320];
-  const cols = ['#3b82f6','#22d3ee','#2fd0b5','#a3e635','#e8b44a','#fb7185','#f472b6'];
+  // one clearly distinct hue per zone: indigo→sky→emerald→lime→amber→red→fuchsia
+  const cols = ['#6366f1','#0ea5e9','#10b981','#a3e635','#f59e0b','#ef4444','#d946ef'];
+  const Z = (window.VS_CONTENT && window.VS_CONTENT.ZONES) || [];
   let segs='';
   for(let i=0;i<bounds.length-1;i++){
     const l=pos(bounds[i]), r=pos(bounds[i+1]);
-    segs += `<div class="segm" style="left:${l}%; width:${r-l}%; background:${cols[i]}; opacity:.5"></div>`;
+    const isCurrent = medHz >= bounds[i] && medHz < bounds[i+1];
+    const zone = Z[i] ? Z[i].name : '';
+    segs += `<div class="segm${isCurrent?' cur':''}" title="${zone}${zone?': ':''}${bounds[i]}–${bounds[i+1]} Hz" style="left:${l}%; width:${r-l}%; background:${cols[i]}; opacity:${isCurrent?.95:.4}"></div>`;
   }
-  const ticks = [80,100,130,155,185,255].map(v=>`<span class="tk" style="left:${pos(v)}%">${v}</span>`).join('');
+  const ticks = [80,100,132,155,185,255].map(v=>`<span class="tk" style="left:${pos(v)}%">${v}</span>`).join('');
   const mk = `<div class="marker" style="left:${pos(medHz)}%" data-l="${medHz.toFixed(0)} Hz"></div>`;
   return `<div class="scale">${segs}${mk}<div class="ticks">${ticks}</div></div>`;
+}
+function zoneRangeHz(z){
+  const Z = (window.VS_CONTENT && window.VS_CONTENT.ZONES) || [];
+  const i = Z.indexOf(z);
+  if(i < 0) return '';
+  const lo = i === 0 ? null : Z[i-1].max;
+  const hi = z.max === Infinity ? null : z.max;
+  if(lo == null) return `below ${hi} Hz`;
+  if(hi == null) return `above ${lo} Hz`;
+  return `${lo}–${hi} Hz`;
 }
 function renderClassBox(medHz){
   const N = window.VS_CONTENT && window.VS_CONTENT.NORMS;
   const z = classifyHz(medHz);
-  let html = `<div class="class-line">F0 reference: <b>${z.name}</b> <span class="pen">— ${z.hint}</span></div>`;
+  const range = zoneRangeHz(z);
+  let html = `<div class="class-line">Your median pitch of ${medHz.toFixed(0)} Hz lands in <b>${z.name}</b>${range ? ` (${range})` : ''} <span class="pen">— ${z.hint}</span></div>`;
   if(N){
     const lowerThanMen = Math.round((1-normCdf(medHz, N.men.mean, N.men.sd))*100);
     const lowerThanWomen = Math.round((1-normCdf(medHz, N.women.mean, N.women.sd))*100);
@@ -1220,20 +1242,37 @@ function encodeWAV(samples, rate){
 
 /* ---------- presets ---------- */
 const PRESETS = [
-  { id:'raw',      name:'Raw',      sens:0.40, maMs:24,  emaMs:24,  trim:'off' },
-  { id:'gentle',   name:'Gentle',   sens:0.50, maMs:56,  emaMs:56,  trim:'p1'  },
-  { id:'balanced', name:'Balanced', sens:0.55, maMs:72,  emaMs:72,  trim:'p3'  },
-  { id:'strict',   name:'Strict',   sens:0.65, maMs:104, emaMs:104, trim:'p5'  },
-  { id:'max',      name:'Maximum',  sens:0.72, maMs:136, emaMs:136, trim:'mad' },
+  { id:'raw',    name:'Raw',     sens:0.40, maMs:24,  emaMs:24,  trim:'off',
+    desc:'No cleanup — every detected frame, exactly as measured.' },
+  { id:'gentle', name:'Gentle',  sens:0.50, maMs:56,  emaMs:56,  trim:'p1',
+    desc:'Light smoothing; trims the extreme 1% of values.' },
+  { id:'smart',  name:'Smart',   sens:0.55, maMs:72,  emaMs:72,  trim:'mad',
+    desc:'Recommended. Removes short glitches by local context and keeps real pitch changes.' },
+  { id:'strict', name:'Strict',  sens:0.65, maMs:104, emaMs:104, trim:'p5',
+    desc:'Stronger smoothing; trims the extreme 5% of values.' },
+  { id:'max',    name:'Maximum', sens:0.72, maMs:136, emaMs:136, trim:'p10',
+    desc:'Heaviest cleanup — smoothest contour, may hide quick moves.' },
 ];
-let activePreset = 'balanced';
+const CUSTOM_DESC = 'Your own settings — adjust anything in Analysis settings below.';
+let activePreset = 'smart';
 function buildPresets(){
-  $('#presets').innerHTML = PRESETS.map(p=>`<button class="preset" data-id="${p.id}">${p.name}</button>`).join('');
-  $('#presets').querySelectorAll('.preset').forEach(b=>
-    b.addEventListener('click', ()=>applyPreset(b.dataset.id, true)));
+  $('#presets').innerHTML = PRESETS.map(p=>`<button class="preset" data-id="${p.id}">${p.name}</button>`).join('')
+    + `<button class="preset" data-id="custom" style="display:none">Custom</button>`;
+  $('#presets').querySelectorAll('.preset').forEach(b=>{
+    if(b.dataset.id === 'custom'){
+      b.addEventListener('click', ()=>{ $('#adv').open = true; $('#adv').scrollIntoView({behavior:'smooth', block:'nearest'}); });
+    } else {
+      b.addEventListener('click', ()=>applyPreset(b.dataset.id, true));
+    }
+  });
 }
 function markActivePreset(){
-  $('#presets').querySelectorAll('.preset').forEach(b=>b.classList.toggle('active', b.dataset.id===activePreset));
+  $('#presets').querySelectorAll('.preset').forEach(b=>{
+    b.classList.toggle('active', b.dataset.id===activePreset);
+    if(b.dataset.id === 'custom') b.style.display = activePreset==='custom' ? '' : 'none';
+  });
+  const p = PRESETS.find(x=>x.id===activePreset);
+  $('#presetDesc').textContent = p ? p.desc : CUSTOM_DESC;
 }
 function applyPreset(id, rerender){
   const p = PRESETS.find(x=>x.id===id); if(!p) return;
@@ -1472,7 +1511,7 @@ let savedTheme = 'dark';
 try{ savedTheme = localStorage.getItem('vs-theme') || 'dark'; }catch(_){}
 applyTheme(savedTheme);
 buildPresets();
-applyPreset('balanced', false);
+applyPreset('smart', false);
 updateTrimDesc();
 renderReading(true);
 refreshHistory();
