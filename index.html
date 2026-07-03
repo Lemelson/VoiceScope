@@ -1,134 +1,171 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>VoiceScope — анализ высоты и частоты голоса онлайн</title>
-<meta name="description" content="Бесплатный анализатор высоты голоса: запишите речь, узнайте частоту в герцах, ноты и изменение тона по времени. Аудио обрабатывается локально." />
+<title>VoiceScope — free online voice pitch analyzer</title>
+<meta name="description" content="Record your voice and see its pitch: frequency in hertz, musical notes, and how it changes over time. Free, private — audio never leaves your device." />
 <meta name="robots" content="index, follow, max-image-preview:large" />
 <meta name="author" content="Lemelson" />
-<meta name="theme-color" content="#0d0f12" />
+<meta name="theme-color" content="#0b0d10" />
 <link rel="canonical" href="https://lemelson.github.io/VoiceScope/" />
 <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 <meta property="og:type" content="website" />
-<meta property="og:locale" content="ru_RU" />
+<meta property="og:locale" content="en_US" />
 <meta property="og:site_name" content="VoiceScope" />
-<meta property="og:title" content="VoiceScope — анализ высоты и частоты голоса онлайн" />
-<meta property="og:description" content="Запишите голос и узнайте его частоту, ноты и изменение высоты по времени. Бесплатно, локально и без отправки аудио на сервер." />
+<meta property="og:title" content="VoiceScope — free online voice pitch analyzer" />
+<meta property="og:description" content="Record your voice and see its pitch: frequency, notes and pitch contour over time. Runs entirely in your browser." />
 <meta property="og:url" content="https://lemelson.github.io/VoiceScope/" />
 <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="VoiceScope — анализ высоты голоса онлайн" />
-<meta name="twitter:description" content="Частота, ноты и контур высоты голоса прямо в браузере. Аудио остаётся на устройстве." />
+<meta name="twitter:title" content="VoiceScope — voice pitch analyzer" />
+<meta name="twitter:description" content="Frequency, notes and pitch contour, right in your browser. Audio stays on your device." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "VoiceScope",
   "url": "https://lemelson.github.io/VoiceScope/",
-  "description": "Бесплатный браузерный анализатор высоты и частоты голоса с визуализацией нот и изменения основного тона по времени.",
+  "description": "Free in-browser voice pitch analyzer with note visualization and a pitch contour over time.",
   "applicationCategory": "MultimediaApplication",
   "operatingSystem": "Any",
-  "browserRequirements": "Современный браузер с поддержкой Web Audio API и доступом к микрофону",
+  "browserRequirements": "Modern browser with Web Audio API and microphone access",
   "isAccessibleForFree": true,
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "RUB"
-  },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "codeRepository": "https://github.com/Lemelson/VoiceScope",
-  "inLanguage": ["ru", "en"],
+  "inLanguage": ["en", "ru"],
   "featureList": [
-    "Анализ основной частоты голоса в герцах",
-    "Определение нот и контура высоты по времени",
-    "Локальная обработка аудио без отправки на сервер",
-    "Воспроизведение и скачивание WAV",
-    "Локальная история записей"
+    "Fundamental frequency (F0) analysis in hertz",
+    "Note detection and pitch contour over time",
+    "Local processing — audio never uploaded",
+    "Playback and WAV download",
+    "Local recording history"
   ]
 }
 </script>
 <style>
   :root{
-    --bg:#0d0f12; --panel:#15181d; --panel2:#1b1f26; --line:#262b33;
-    --text:#e6e8eb; --muted:#8b929c; --muted2:#5b626c;
-    --accent:#5eead4; --accent-d:#0f766e; --accent-ink:#04211c;
-    --blue:#60a5fa; --red:#f87171; --amber:#fbbf24; --stop-ink:#2a0606;
-    --radius:14px; --shadow:none; --field-bg:#1b1f26;
+    --bg:#0b0d10; --panel:#12151a; --panel2:#191d24; --line:#222831;
+    --text:#e9ebee; --muted:#96a0ab; --muted2:#5d6570;
+    --accent:#2fd0b5; --accent-soft:rgba(47,208,181,.12); --accent-ink:#05261f;
+    --blue:#6ea8f7; --red:#ef6f6b; --amber:#e8b44a; --stop-ink:#2a0808;
+    --radius:16px; --shadow:none; --field-bg:#191d24;
   }
   [data-theme="light"]{
-    --bg:#f5f6f7; --panel:#ffffff; --panel2:#f1f2f4; --line:#e6e8eb;
-    --text:#1b1f24; --muted:#6b7280; --muted2:#9aa1ab;
-    --accent:#0d9488; --accent-d:#0f766e; --accent-ink:#ffffff;
-    --blue:#2563eb; --red:#e11d48; --amber:#d97706; --stop-ink:#ffffff;
-    --shadow:0 1px 2px rgba(16,24,40,.04), 0 2px 6px rgba(16,24,40,.05); --field-bg:#f7f8f9;
+    --bg:#f6f6f4; --panel:#ffffff; --panel2:#f0f0ee; --line:#e5e5e2;
+    --text:#1d2126; --muted:#69727c; --muted2:#9aa2ab;
+    --accent:#0e9a85; --accent-soft:rgba(14,154,133,.10); --accent-ink:#ffffff;
+    --blue:#2563eb; --red:#dc4a45; --amber:#c98a12; --stop-ink:#ffffff;
+    --shadow:0 1px 2px rgba(25,30,40,.04), 0 4px 14px rgba(25,30,40,.05); --field-bg:#f7f7f5;
   }
   *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
   html,body{margin:0;padding:0}
   body{
     background:var(--bg); color:var(--text);
-    font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font:15px/1.55 "Outfit",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
     -webkit-font-smoothing:antialiased;
     display:flex; flex-direction:column; align-items:center;
-    min-height:100vh; padding:32px 18px 64px;
+    min-height:100dvh; padding:0 20px 72px;
     transition:background .25s ease, color .25s ease;
   }
-  .wrap{width:100%; max-width:920px}
-  header{margin-bottom:22px; display:flex; align-items:flex-start; gap:16px}
-  h1{font-size:22px; font-weight:650; margin:0 0 4px; letter-spacing:-.3px}
-  .sub{color:var(--muted); font-size:13.5px}
+  .wrap{width:100%; max-width:880px}
+
+  /* top bar */
+  .topbar{display:flex; align-items:center; gap:12px; padding:22px 0 0}
+  .wordmark{font-weight:700; font-size:17px; letter-spacing:-.2px}
+  .wordmark i{font-style:normal; color:var(--accent)}
+  .theme-btn{margin-left:auto; background:transparent; border:1px solid var(--line); color:var(--muted);
+    width:36px; height:36px; padding:0; border-radius:10px; font-size:15px; cursor:pointer; flex:0 0 auto;
+    transition:border-color .2s, color .2s}
+  .theme-btn:hover{border-color:var(--accent); color:var(--accent)}
+  .theme-btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  /* hero */
+  .hero{padding:56px 0 44px; max-width:620px}
+  .hero.hidden{display:none}
+  .hero h1{font-size:clamp(30px,5.4vw,42px); font-weight:700; letter-spacing:-1.2px;
+    line-height:1.08; margin:0 0 14px; text-wrap:balance}
+  .hero h1 em{font-style:normal; color:var(--accent)}
+  .hero p{color:var(--muted); font-size:15.5px; line-height:1.65; margin:0 0 30px; max-width:54ch; text-wrap:pretty}
+  .hero-cta{display:flex; align-items:center; gap:18px; flex-wrap:wrap}
+  .hero-hint{color:var(--muted2); font-size:13px}
+  kbd{font:12px/1 "Outfit",sans-serif; border:1px solid var(--line); border-bottom-width:2px;
+    border-radius:5px; padding:2px 6px; color:var(--muted)}
+
+  button{font:inherit; cursor:pointer; border:none; border-radius:12px;
+    padding:10px 18px; font-weight:600; letter-spacing:.1px;
+    transition:transform .15s ease, filter .15s ease, background .2s, color .2s, border-color .2s}
+  button:disabled{opacity:.4; cursor:default}
+  button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  button:active:not(:disabled){transform:scale(.98)}
+
+  .btn-rec{background:var(--accent); color:var(--accent-ink);
+    padding:15px 30px; border-radius:999px; font-size:16px; font-weight:600;
+    display:inline-flex; align-items:center; gap:11px;
+    box-shadow:0 6px 24px rgba(47,208,181,.22)}
+  .btn-rec:hover:not(:disabled){filter:brightness(1.07); transform:translateY(-1px)}
+  .rec-dot{width:10px; height:10px; border-radius:50%; background:var(--accent-ink); position:relative}
+  .rec-dot::after{content:''; position:absolute; inset:-5px; border-radius:50%;
+    border:2px solid var(--accent-ink); opacity:.35; animation:pulse 2s ease-out infinite}
+  @keyframes pulse{0%{transform:scale(.6); opacity:.4} 70%{transform:scale(1.15); opacity:0} 100%{opacity:0}}
+
+  .btn-stop{background:var(--red); color:var(--stop-ink); border-radius:999px; padding:12px 26px; font-size:15px}
+  .btn-stop:hover{filter:brightness(1.08)}
+  .btn-ghost{background:transparent; color:var(--text); border:1px solid var(--line); padding:8px 15px; font-weight:500; font-size:13.5px}
+  .btn-ghost:hover:not(:disabled){border-color:var(--accent); color:var(--accent)}
+
   .card{
     background:var(--panel); border:1px solid var(--line);
-    border-radius:var(--radius); padding:18px; margin-bottom:16px;
+    border-radius:var(--radius); padding:22px; margin-bottom:18px;
     box-shadow:var(--shadow); transition:background .25s ease, border-color .25s ease;
   }
   .row{display:flex; gap:14px; align-items:center; flex-wrap:wrap}
   .grow{flex:1 1 auto}
-  label.field{display:flex; flex-direction:column; gap:6px; font-size:12.5px; color:var(--muted)}
-  input[type=number]{
-    width:90px; background:var(--field-bg); border:1px solid var(--line); color:var(--text);
-    border-radius:9px; padding:8px 10px; font-size:15px; outline:none;
-  }
-  input[type=number]:focus{border-color:var(--accent)}
-  .check{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); cursor:pointer; user-select:none}
-  .check input{accent-color:var(--accent); width:15px; height:15px}
-  button{
-    font:inherit; cursor:pointer; border:none; border-radius:10px;
-    padding:10px 18px; font-weight:600; letter-spacing:.1px; transition:.15s ease;
-  }
-  button:disabled{opacity:.4; cursor:default}
-  .btn-rec{background:var(--accent); color:var(--accent-ink)}
-  .btn-rec:hover:not(:disabled){filter:brightness(1.06); transform:translateY(-1px)}
-  .btn-stop{background:var(--red); color:var(--stop-ink)}
-  .btn-ghost{background:transparent; color:var(--text); border:1px solid var(--line); padding:9px 15px; font-weight:500}
-  .btn-ghost:hover:not(:disabled){border-color:var(--accent); color:var(--accent)}
-  .theme-btn{margin-left:auto; background:transparent; border:1px solid var(--line); color:var(--muted);
-    width:38px; height:38px; padding:0; border-radius:10px; font-size:16px; flex:0 0 auto}
-  .theme-btn:hover{border-color:var(--accent); color:var(--accent)}
+  .hint{color:var(--muted2); font-size:12.5px; margin-top:6px}
+  a{color:var(--accent); text-underline-offset:3px}
 
   /* live panel */
   #live{display:none}
-  #live.on{display:block}
-  .live-row{display:flex; align-items:center; gap:18px; flex-wrap:wrap}
+  #live.on{display:flex; align-items:center; gap:22px; flex-wrap:wrap;
+    position:sticky; top:12px; z-index:5; backdrop-filter:blur(8px)}
   .timer{font-variant-numeric:tabular-nums; font-size:30px; font-weight:600; letter-spacing:.5px}
-  .live-note{font-variant-numeric:tabular-nums; font-size:15px; color:var(--muted)}
-  .live-note b{color:var(--accent); font-size:18px}
-  .meter{flex:1 1 160px; height:10px; background:var(--panel2); border-radius:6px; overflow:hidden; min-width:120px}
+  .live-stat{font-size:13px; color:var(--muted); display:flex; flex-direction:column; gap:1px; min-width:88px}
+  .live-stat b{color:var(--text); font-size:17px; font-weight:600; font-variant-numeric:tabular-nums}
+  .live-stat.acc b{color:var(--accent)}
+  .meter{flex:1 1 140px; height:8px; background:var(--panel2); border-radius:6px; overflow:hidden; min-width:110px}
   .meter > i{display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--accent),var(--amber),var(--red)); transition:width .06s linear}
-  .live-chart-stage{display:none; margin-bottom:18px; padding-bottom:18px; border-bottom:1px solid var(--line)}
+
+  .live-chart-stage{display:none; margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--line)}
   .live-chart-stage.on{display:block}
   .live-chart-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:10px}
   .live-chart-head strong{font-size:14px; font-weight:600}
-  .live-chart-head span{color:var(--muted); font-size:12px}
-  #liveChart{height:330px; background:var(--bg); cursor:default}
+  .live-chart-head span{color:var(--muted2); font-size:12px}
+  #liveChart{height:320px; background:var(--bg); cursor:default}
+
+  /* reading passage */
+  .read-top{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:6px}
+  .read-top strong{font-weight:600; font-size:15px}
+  .seg{display:inline-flex; background:var(--panel2); border:1px solid var(--line); border-radius:999px; padding:3px}
+  .seg button{background:transparent; color:var(--muted); border-radius:999px; padding:5px 15px; font-size:13px; font-weight:500}
+  .seg button.active{background:var(--accent); color:var(--accent-ink); font-weight:600}
+  .rtext{font-family:Georgia,"Times New Roman",serif; font-size:17.5px; line-height:1.8;
+         max-width:66ch; margin-top:14px; text-wrap:pretty}
+  [data-theme="light"] .rtext{color:#2a2f36}
 
   /* results */
   #results{display:none}
   #results.on{display:block}
-  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:1px; background:var(--line); border-radius:12px; overflow:hidden; border:1px solid var(--line)}
-  .stat{background:var(--panel); padding:13px 15px}
-  .stat .k{font-size:11.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px}
-  .stat .v{font-size:21px; font-weight:650; margin-top:3px; font-variant-numeric:tabular-nums}
-  .stat .v small{font-size:13px; color:var(--muted); font-weight:500}
-  .stat.hero .v{color:var(--accent)}
+  .sec-label{font-size:11.5px; font-weight:600; letter-spacing:1.6px; text-transform:uppercase;
+    color:var(--muted2); margin:34px 0 12px}
+  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:4px 22px}
+  .stat{padding:6px 0}
+  .stat .k{font-size:12px; color:var(--muted)}
+  .stat .v{font-size:22px; font-weight:600; margin-top:2px; font-variant-numeric:tabular-nums; letter-spacing:-.3px}
+  .stat .v small{font-size:12.5px; color:var(--muted); font-weight:500; letter-spacing:0}
+  .stat.hero-stat .v{color:var(--accent); font-size:26px}
 
   .chart-box{position:relative; width:100%}
   canvas{width:100%; display:block; border-radius:10px; cursor:pointer}
@@ -140,92 +177,54 @@
   .vtip{position:absolute; transform:translateX(-50%); background:var(--text); color:var(--bg);
     font-size:10px; font-weight:600; padding:2px 6px; border-radius:5px; pointer-events:none;
     display:none; z-index:3; font-variant-numeric:tabular-nums; white-space:nowrap}
-  .opts{display:flex; gap:18px; flex-wrap:wrap; align-items:center; margin-top:14px; padding-top:14px; border-top:1px solid var(--line)}
-  .opts .slider{display:flex; flex-direction:column; gap:4px; font-size:12px; color:var(--muted); min-width:150px}
-  input[type=range]{accent-color:var(--accent); width:100%}
-  .legend{display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin-top:10px}
+  .legend{display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin-top:12px}
   .legend span{display:inline-flex; align-items:center; gap:6px}
   .swatch{width:18px; height:3px; border-radius:2px; display:inline-block}
   .dot{width:8px; height:8px; border-radius:50%; display:inline-block}
-
-  .ref{font-size:12px; color:var(--muted2); margin-top:10px; line-height:1.6}
   audio{width:100%; margin-top:6px; filter:saturate(.6) brightness(.95)}
   [data-theme="light"] audio{filter:none}
 
-  /* reading material */
-  details.reader-details > summary{
-    cursor:pointer; list-style:none; user-select:none;
-    display:flex; align-items:center; gap:12px;
-  }
-  details.reader-details > summary::-webkit-details-marker{display:none}
-  details.reader-details > summary::before{content:'▸'; color:var(--accent); font-size:13px}
-  details.reader-details[open] > summary::before{content:'▾'}
-  .read-head{display:flex; align-items:center; gap:12px; width:100%}
-  .read-head strong{font-weight:600; font-size:15px}
-  .reader-body{padding-top:14px}
-  .reader-actions{display:flex; justify-content:flex-end; margin-bottom:12px}
-  .topic{border-left:3px solid var(--accent); padding:2px 0 2px 14px; margin-bottom:6px}
-  .topic-h{font-weight:600; font-size:15px; margin-bottom:8px}
-  .topic-h .pen{color:var(--muted); font-weight:500}
-  .topic ul{margin:0; padding-left:18px}
-  .topic li{margin:5px 0; font-size:13.5px; line-height:1.45}
-  .pen{color:var(--muted)}
-  .rtext{font-family:Georgia,"Times New Roman",serif; font-size:17px; line-height:1.78;
-         color:#d7dade; max-width:700px; margin-top:18px}
-  .rh{font-family:-apple-system,BlinkMacSystemFont,sans-serif; font-size:11px; font-weight:700;
-      letter-spacing:1.5px; color:var(--accent); margin-bottom:6px}
-  .sep{border:none; border-top:1px solid var(--line); margin:20px 0 0}
-
   /* analysis settings */
-  .presets{display:flex; gap:8px; flex-wrap:wrap}
-  .preset{background:var(--panel2); border:1px solid var(--line); color:var(--text);
-          padding:7px 13px; border-radius:9px; font-size:12.5px; font-weight:500; cursor:pointer}
-  .preset:hover{border-color:var(--muted2)}
-  .preset.active{background:var(--accent); color:#04211c; border-color:var(--accent)}
-  select{background:var(--panel2); border:1px solid var(--line); color:var(--text);
-         border-radius:9px; padding:7px 10px; font-size:13px; outline:none; max-width:100%}
-  details.adv{margin-top:4px}
-  details.adv > summary{cursor:pointer; color:var(--muted); font-size:13px; list-style:none; user-select:none}
+  details.adv{margin-top:16px; border-top:1px solid var(--line); padding-top:14px}
+  details.adv > summary{cursor:pointer; color:var(--muted); font-size:13.5px; font-weight:500; list-style:none; user-select:none}
   details.adv > summary::-webkit-details-marker{display:none}
   details.adv > summary::before{content:'▸ '; color:var(--accent)}
   details.adv[open] > summary::before{content:'▾ '}
-  .adv-grid{display:flex; gap:18px 24px; flex-wrap:wrap; margin-top:14px}
+  .adv-body{margin-top:16px; display:flex; flex-direction:column; gap:16px}
+  .presets{display:flex; gap:8px; flex-wrap:wrap}
+  .preset{background:var(--panel2); border:1px solid var(--line); color:var(--text);
+          padding:7px 14px; border-radius:999px; font-size:12.5px; font-weight:500}
+  .preset:hover{border-color:var(--muted2)}
+  .preset.active{background:var(--accent); color:var(--accent-ink); border-color:var(--accent); font-weight:600}
+  select{background:var(--panel2); border:1px solid var(--line); color:var(--text);
+         border-radius:9px; padding:7px 10px; font-size:13px; outline:none; max-width:100%; font-family:inherit}
+  select:focus-visible{outline:2px solid var(--accent)}
+  .check{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); cursor:pointer; user-select:none}
+  .check input{accent-color:var(--accent); width:15px; height:15px}
+  input[type=range]{accent-color:var(--accent); width:100%}
+  .adv-grid{display:flex; gap:18px 26px; flex-wrap:wrap}
   .ctl{display:flex; flex-direction:column; gap:5px; font-size:12.5px; color:var(--text); min-width:200px; max-width:280px}
   .ctl .lab{display:flex; justify-content:space-between; gap:8px}
   .ctl .lab b{color:var(--accent); font-variant-numeric:tabular-nums}
-  .ctl .exp{color:var(--muted2); font-size:11px; line-height:1.45}
-
-  /* reference article */
-  details.refart > summary{cursor:pointer; font-weight:600; font-size:15px; list-style:none}
-  details.refart > summary::-webkit-details-marker{display:none}
-  details.refart > summary::before{content:'▸ '; color:var(--accent)}
-  details.refart[open] > summary::before{content:'▾ '}
-  .refbody{margin-top:12px; font-size:13.5px; color:#c7ccd3; line-height:1.6}
-  .refbody h4{color:var(--text); font-size:14px; margin:18px 0 6px}
-  .refbody p{margin:6px 0}
-  .refbody ul{margin:6px 0; padding-left:20px}
-  .refbody li{margin:3px 0}
-  .reftab{border-collapse:collapse; width:100%; margin:10px 0; font-size:12.5px}
-  .reftab th,.reftab td{border:1px solid var(--line); padding:6px 9px; text-align:left}
-  .reftab th{background:var(--panel2); color:var(--muted)}
-  .refnote{color:var(--muted2); font-size:11.5px; margin-top:14px}
+  .ctl .exp{color:var(--muted2); font-size:11.5px; line-height:1.5}
+  .pen{color:var(--muted)}
 
   /* classification + scale */
-  .class-line{font-size:14.5px; margin:14px 0 2px}
+  .class-line{font-size:14.5px; margin:18px 0 2px}
   .class-line b{color:var(--accent)}
-  .pctl{font-size:12.5px; color:var(--muted); margin:3px 0}
-  .scale{position:relative; height:42px; margin:16px 4px 30px}
-  .scale .seg{position:absolute; top:0; height:18px}
-  .scale .seg:first-of-type{border-radius:5px 0 0 5px}
-  .scale .seg:last-of-type{border-radius:0 5px 5px 0}
+  .pctl{font-size:12.5px; color:var(--muted); margin:4px 0}
+  .scale{position:relative; height:42px; margin:18px 4px 30px}
+  .scale .segm{position:absolute; top:0; height:16px}
+  .scale .segm:first-of-type{border-radius:5px 0 0 5px}
+  .scale .segm:last-of-type{border-radius:0 5px 5px 0}
   .scale .ticks{position:absolute; top:22px; left:0; width:100%; height:14px; font-size:10px; color:var(--muted2)}
   .scale .tk{position:absolute; transform:translateX(-50%); white-space:nowrap}
-  .scale .marker{position:absolute; top:-7px; width:2px; height:26px; background:#fff; box-shadow:0 0 0 1px rgba(0,0,0,.6)}
+  .scale .marker{position:absolute; top:-7px; width:2px; height:26px; background:var(--text); box-shadow:0 0 0 1px rgba(0,0,0,.45)}
   .scale .marker::after{content:attr(data-l); position:absolute; top:-18px; left:50%; transform:translateX(-50%);
-        white-space:nowrap; font-size:10px; color:#fff; font-weight:700}
+        white-space:nowrap; font-size:10px; color:var(--text); font-weight:700}
 
   /* history */
-  .hist-item{display:flex; align-items:center; gap:12px; padding:10px 0; border-top:1px solid var(--line); font-size:13px; flex-wrap:wrap}
+  .hist-item{display:flex; align-items:center; gap:12px; padding:11px 0; border-top:1px solid var(--line); font-size:13px; flex-wrap:wrap}
   .hist-item:first-child{border-top:none}
   .hist-when{color:var(--muted); font-variant-numeric:tabular-nums; min-width:104px}
   .hist-med{font-weight:600; font-variant-numeric:tabular-nums}
@@ -239,76 +238,74 @@
   .ibtn.del:hover{border-color:var(--red); color:var(--red)}
   .hist-empty{color:var(--muted2); font-size:13px; padding:6px 0}
 
-  .banner{background:#2a1a1a; border:1px solid #5b2a2a; color:#fca5a5; padding:12px 14px; border-radius:10px; font-size:13.5px; margin-bottom:16px; display:none}
+  .banner{background:rgba(239,111,107,.10); border:1px solid rgba(239,111,107,.35); color:var(--red);
+    padding:12px 15px; border-radius:12px; font-size:13.5px; margin:16px 0; display:none}
   .banner.on{display:block}
-  .hint{color:var(--muted2); font-size:12px; margin-top:6px}
-  a{color:var(--accent)}
-  .footnote{color:var(--muted2); font-size:12px; text-align:center; margin-top:28px}
-  .about h2{font-size:17px; font-weight:650; margin:0 0 10px; letter-spacing:-.15px}
-  .about p{color:var(--muted); font-size:13.5px; margin:7px 0; line-height:1.65}
-  .about-links{display:flex; gap:14px; flex-wrap:wrap; margin-top:12px; font-size:13px}
+
+  footer{margin-top:44px; color:var(--muted2); font-size:12.5px; line-height:1.7}
+  footer p{margin:4px 0; max-width:64ch}
+  .foot-links{display:flex; gap:16px; flex-wrap:wrap; margin-top:8px; font-size:12.5px}
+
+  @media (max-width:560px){
+    .hero{padding:38px 0 30px}
+    .card{padding:16px}
+    #live.on{gap:14px}
+    .timer{font-size:24px}
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div>
-      <h1>VoiceScope</h1>
-      <div class="sub">Запиши голос — увидь, на каких нотах и в какую секунду он звучал. Локально, ничего не отправляется на сервер.</div>
-    </div>
-    <button id="themeBtn" class="theme-btn" title="Сменить тему">☀</button>
+  <header class="topbar">
+    <div class="wordmark">Voice<i>Scope</i></div>
+    <button id="themeBtn" class="theme-btn" title="Toggle theme" aria-label="Toggle theme">☀</button>
   </header>
 
-  <div id="banner" class="banner"></div>
+  <div id="banner" class="banner" role="alert"></div>
 
-  <!-- controls -->
-  <div class="card">
-    <div class="row">
-      <span class="pen">Запись идёт без ограничения времени — останови её вручную.</span>
-      <div class="grow"></div>
-      <button id="rec" class="btn-rec">● Записать</button>
+  <!-- hero -->
+  <section id="hero" class="hero">
+    <h1>Record your voice.<br />See <em>every note</em> it hits.</h1>
+    <p>Read a short passage aloud and VoiceScope maps your pitch in real time — frequency in hertz, musical notes, and how it moves over time. Everything runs in your browser; audio never leaves your device.</p>
+    <div class="hero-cta">
+      <button id="rec" class="btn-rec"><span class="rec-dot"></span>Start recording</button>
+      <span class="hero-hint">or press <kbd>Space</kbd> · stop whenever you like</span>
     </div>
-    <div class="hint">Совет: говори ровно и достаточно громко. Можно нажать стоп вручную в любой момент (или пробел).</div>
-  </div>
+  </section>
 
   <!-- live -->
   <div id="live" class="card">
-    <div class="live-row">
-      <div class="timer" id="timer">00:00</div>
-      <div class="meter"><i id="meterFill"></i></div>
-      <div class="live-note">сейчас: <b id="liveNote">—</b> <span id="liveHz"></span></div>
-      <button id="stop" class="btn-stop">■ Стоп</button>
-    </div>
+    <div class="timer" id="timer">00:00</div>
+    <div class="meter"><i id="meterFill"></i></div>
+    <div class="live-stat"><span>now</span><b id="liveNote">—</b><span id="liveHz"></span></div>
+    <div class="live-stat acc"><span>median so far</span><b id="liveMed">—</b><span id="liveMedHz"></span></div>
+    <button id="stop" class="btn-stop">■ Stop</button>
   </div>
 
   <!-- reading material -->
   <div id="reader" class="card">
     <div id="liveChartStage" class="live-chart-stage">
       <div class="live-chart-head">
-        <strong>Высота голоса в реальном времени</strong>
-        <span>график сжимается по мере записи</span>
+        <strong>Your pitch, live</strong>
+        <span>the chart compresses as the recording grows</span>
       </div>
       <canvas id="liveChart"></canvas>
     </div>
-    <details id="readerDetails" class="reader-details" open>
-      <summary>
-        <span class="read-head">
-          <strong>Материал для чтения</strong>
-          <span class="pen" style="font-size:12.5px">нажми на заголовок, чтобы свернуть</span>
-        </span>
-      </summary>
-      <div class="reader-body">
-        <div class="reader-actions"><button id="shuffle" class="btn-ghost">⟳ Другой</button></div>
-        <div id="topic" class="topic"></div>
-        <div id="textRu" class="rtext"></div>
-        <hr class="sep" />
-        <div id="textEn" class="rtext"></div>
+    <div class="read-top">
+      <strong>Read this aloud</strong>
+      <div class="seg" role="group" aria-label="Reading language">
+        <button id="langEn" data-lang="en">English</button>
+        <button id="langRu" data-lang="ru">Русский</button>
       </div>
-    </details>
+      <div class="grow"></div>
+      <button id="shuffle" class="btn-ghost">↺ Another text</button>
+    </div>
+    <div id="readText" class="rtext"></div>
   </div>
 
   <!-- results -->
   <div id="results">
+    <div class="sec-label">Results</div>
     <div class="card">
       <div class="stats" id="stats"></div>
       <div id="classbox"></div>
@@ -321,113 +318,103 @@
         <div id="playhead" class="vline play"></div>
         <div id="hovertip" class="vtip"></div>
       </div>
-      <div class="hint" style="margin:8px 0 0">▶ Клик по графику — слушать с этого места; клик по линии — пауза/продолжить. Наведи курсор, чтобы увидеть время.</div>
+      <div class="hint" style="margin:8px 0 0">▶ Click the chart to play from that point; click near the line to pause. Hover to see the time.</div>
       <div class="legend">
-        <span><i class="dot" style="background:rgba(230,232,235,.35)"></i> сырые точки</span>
-        <span><i class="dot" style="background:var(--red)"></i> обрезанные выбросы</span>
+        <span><i class="dot" style="background:rgba(180,188,196,.4)"></i> raw points</span>
+        <span><i class="dot" style="background:var(--red)"></i> trimmed outliers</span>
         <span><i class="swatch" style="background:var(--accent)"></i> EMA</span>
         <span><i class="swatch" style="background:var(--blue)"></i> MA</span>
       </div>
-      <div class="opts" style="flex-direction:column; align-items:stretch; gap:14px">
-        <div>
-          <div class="exp" style="color:var(--muted); font-size:12px; margin-bottom:7px">Профиль обработки (быстрый выбор):</div>
-          <div class="presets" id="presets"></div>
-        </div>
-        <div class="row" style="gap:16px">
-          <label class="check"><input id="optRaw" type="checkbox" checked /> точки</label>
-          <label class="check"><input id="optEma" type="checkbox" checked /> EMA</label>
-          <label class="check"><input id="optMa" type="checkbox" /> MA</label>
-          <div class="ctl" style="min-width:260px">
-            <span class="lab">Обрезка выбросов <span id="trimDesc" class="pen"></span></span>
-            <select id="trimMode">
-              <option value="off">Выкл — показать всё как есть</option>
-              <option value="p1">Лёгкая — отсечь 1% краёв</option>
-              <option value="p3">Средняя — отсечь 3% краёв</option>
-              <option value="p5">Строгая — отсечь 5% краёв</option>
-              <option value="p10">Жёсткая — отсечь 10% краёв</option>
-              <option value="mad">Умная (гибридная MAD) — короткие ошибки</option>
-            </select>
-            <span class="exp">Перцентильная обрезка убирает заданный % самых низких и высоких значений во всей записи. «Умная» ищет короткие ошибки по соседним кадрам и дополнительно отсекает очень короткие глобальные экстремумы у пауз; устойчивое изменение высоты сохраняется.</span>
+
+      <details class="adv" id="adv">
+        <summary>Analysis settings</summary>
+        <div class="adv-body">
+          <div>
+            <div class="exp" style="color:var(--muted); font-size:12px; margin-bottom:7px">Processing profile:</div>
+            <div class="presets" id="presets"></div>
           </div>
-        </div>
-        <details class="adv" id="adv">
-          <summary>Тонкая настройка и пояснения</summary>
+          <div class="row" style="gap:16px">
+            <label class="check"><input id="optRaw" type="checkbox" checked /> points</label>
+            <label class="check"><input id="optEma" type="checkbox" checked /> EMA</label>
+            <label class="check"><input id="optMa" type="checkbox" /> MA</label>
+            <div class="ctl" style="min-width:260px">
+              <span class="lab">Outlier trimming <span id="trimDesc" class="pen"></span></span>
+              <select id="trimMode">
+                <option value="off">Off — show everything as is</option>
+                <option value="p1">Light — trim 1% at the edges</option>
+                <option value="p3">Medium — trim 3% at the edges</option>
+                <option value="p5">Strict — trim 5% at the edges</option>
+                <option value="p10">Aggressive — trim 10% at the edges</option>
+                <option value="mad">Smart (hybrid MAD) — short glitches</option>
+              </select>
+              <span class="exp">Percentile trimming removes the given % of the lowest and highest values across the whole recording. "Smart" looks for short glitches against neighbouring frames and also cuts very short global extremes near pauses; sustained pitch changes are kept.</span>
+            </div>
+          </div>
           <div class="adv-grid">
             <div class="ctl">
-              <span class="lab">Чувствительность <b id="sensVal">0.55</b></span>
+              <span class="lab">Sensitivity <b id="sensVal">0.55</b></span>
               <input id="sens" type="range" min="0.30" max="0.90" step="0.05" value="0.55" />
-              <span class="exp">Порог «уверенности» детектора тона. <b>Ниже</b> — ловит больше тихих/неясных звуков (и шум). <b>Выше</b> — оставляет только чёткий устойчивый тон. Если голос «теряется» — понизь; если ловит лишнее — повысь.</span>
+              <span class="exp">Confidence threshold of the pitch detector. <b>Lower</b> catches more quiet/unclear sounds (and noise). <b>Higher</b> keeps only clear, stable tone. If your voice gets lost — lower it; if it picks up junk — raise it.</span>
             </div>
             <div class="ctl">
-              <span class="lab">Окно MA <b id="maWindowVal">72 мс</b></span>
+              <span class="lab">MA window <b id="maWindowVal">72 ms</b></span>
               <input id="maWindow" type="range" min="24" max="800" step="8" value="72" />
-              <span class="exp">Сколько времени усредняет скользящее среднее MA. Окно центрировано относительно каждой точки.</span>
+              <span class="exp">How much time the moving average smooths over. The window is centred on each point.</span>
             </div>
             <div class="ctl">
-              <span class="lab">Период EMA <b id="emaSpanVal">72 мс</b></span>
+              <span class="lab">EMA span <b id="emaSpanVal">72 ms</b></span>
               <input id="emaSpan" type="range" min="24" max="800" step="8" value="72" />
-              <span class="exp">Эквивалентный период экспоненциального среднего EMA. Меньше — быстрее реагирует; больше — сильнее сглаживает.</span>
+              <span class="exp">Equivalent span of the exponential moving average. Smaller reacts faster; larger smooths more.</span>
             </div>
             <div class="ctl">
-              <span class="lab"><label class="check" style="color:var(--text)"><input id="optOctave" type="checkbox" checked /> Коррекция октав</label></span>
-              <span class="exp">Исправляет ошибочные скачки ровно в 2 раза вверх/вниз, когда детектор путает октаву. Делает контур ровнее.</span>
+              <span class="lab"><label class="check" style="color:var(--text)"><input id="optOctave" type="checkbox" checked /> Octave correction</label></span>
+              <span class="exp">Fixes spurious jumps of exactly 2× up/down when the detector confuses the octave. Makes the contour smoother.</span>
             </div>
             <div class="ctl">
-              <span class="lab">Мин. длительность <b id="minRunVal">3</b></span>
+              <span class="lab">Min duration <b id="minRunVal">3</b></span>
               <input id="minRun" type="range" min="0" max="12" step="1" value="3" />
-              <span class="exp">Отбрасывает совсем короткие всплески короче N кадров — обычно это щелчки, придыхания и призвуки, а не голос. 0 — не отбрасывать.</span>
+              <span class="exp">Drops voiced bursts shorter than N frames — usually clicks, breaths and artifacts, not voice. 0 — keep all.</span>
             </div>
             <div class="ctl">
-              <span class="lab"><label class="check" style="color:var(--text)"><input id="optAdaptive" type="checkbox" checked /> Адаптивный порог тишины</label></span>
-              <span class="exp">Сам оценивает уровень фонового шума по тихим участкам и отсекает то, что тише него. Помогает в шумной комнате.</span>
+              <span class="lab"><label class="check" style="color:var(--text)"><input id="optAdaptive" type="checkbox" checked /> Adaptive silence floor</label></span>
+              <span class="exp">Estimates the background noise level from quiet sections and cuts anything below it. Helps in a noisy room.</span>
             </div>
           </div>
-        </details>
-      </div>
+        </div>
+      </details>
     </div>
 
     <div class="card">
       <div class="row" style="margin-bottom:8px">
-        <strong style="font-weight:600">Запись</strong>
+        <strong style="font-weight:600">Recording</strong>
         <div class="grow"></div>
-        <a id="download" class="btn-ghost" download="voicescope.wav" style="text-decoration:none">↓ Скачать WAV</a>
+        <a id="download" class="btn-ghost" download="voicescope.wav" style="text-decoration:none">↓ Download WAV</a>
       </div>
       <audio id="player" controls></audio>
     </div>
   </div>
 
-  <!-- reference article -->
-  <div class="card">
-    <details class="refart">
-      <summary>📚 Ориентиры по высоте голоса — подробно</summary>
-      <div class="refbody" id="refart"></div>
-    </details>
-  </div>
-
   <!-- history -->
   <div class="card" id="histCard">
     <div class="row" style="margin-bottom:6px">
-      <strong style="font-weight:600">История записей</strong>
+      <strong style="font-weight:600">History</strong>
       <span class="pen" id="histUsage" style="font-size:12px"></span>
       <div class="grow"></div>
-      <button id="exportData" class="btn-ghost">⤓ Экспорт данных</button>
-      <button id="clearHist" class="btn-ghost">Очистить</button>
+      <button id="exportData" class="btn-ghost">⤓ Export JSON</button>
+      <button id="clearHist" class="btn-ghost">Clear</button>
     </div>
-    <div class="hint" style="margin:0 0 8px">Последние 30 записей хранятся локально в браузере (до 1 ГБ), старые удаляются автоматически. Кнопка «Экспорт данных» выгружает контуры тона в JSON для анализа.</div>
+    <div class="hint" style="margin:0 0 8px">Your last 30 recordings are stored locally in this browser (up to 1 GB); older ones are removed automatically. Export downloads the pitch contours as JSON.</div>
     <div id="histList"></div>
   </div>
 
-  <section class="card about" aria-labelledby="aboutTitle">
-    <h2 id="aboutTitle">Онлайн-анализатор высоты голоса</h2>
-    <p>VoiceScope измеряет основную частоту голоса в герцах, переводит её в музыкальные ноты и показывает, как менялась высота речи по времени. Это помогает сравнивать записи, наблюдать интонацию и находить устойчивый разговорный диапазон.</p>
-    <p>Запись и анализ выполняются локально в браузере: аудио не загружается на сервер. Результаты являются справочными и не заменяют медицинскую диагностику или работу со специалистом по голосу.</p>
-    <div class="about-links">
-      <a href="https://github.com/Lemelson/VoiceScope" target="_blank" rel="noreferrer">Исходный код VoiceScope на GitHub</a>
-      <a href="https://github.com/Lemelson/VoiceScope#readme" target="_blank" rel="noreferrer">Как работает проект</a>
+  <footer>
+    <p><strong style="color:var(--muted); font-weight:600">About.</strong> VoiceScope measures the fundamental frequency of your voice, converts it to musical notes, and shows how your pitch changed over time — useful for comparing recordings, watching intonation, and finding your comfortable speaking range.</p>
+    <p>Recording and analysis happen locally with the YIN autocorrelation algorithm; nothing is uploaded. Results are a reference, not a medical assessment.</p>
+    <div class="foot-links">
+      <a href="https://github.com/Lemelson/VoiceScope" target="_blank" rel="noreferrer">Source code on GitHub</a>
+      <a href="https://github.com/Lemelson/VoiceScope#readme" target="_blank" rel="noreferrer">How it works</a>
     </div>
-  </section>
-
-  <div class="footnote">Высота тона измеряется алгоритмом YIN (autocorrelation). Вдохновлено voicecel.org, но без ярлыков и с визуализацией контура.</div>
+  </footer>
 </div>
 
 <script src="content.js"></script>
@@ -437,25 +424,34 @@
 const $ = s => document.querySelector(s);
 
 /* ---------- reading material ---------- */
-let topicIdx = -1, ruIdx = -1, enIdx = -1;
+let readLang = 'en';
+try{ readLang = localStorage.getItem('vs-lang') || 'en'; }catch(_){}
+let ruIdx = -1, enIdx = -1;
 function pickIdx(len, prev){
   if(len <= 1) return 0;
   let i; do { i = Math.floor(Math.random()*len); } while(i === prev);
   return i;
 }
-function renderReading(){
+function renderReading(fresh){
   const C = window.VS_CONTENT;
   if(!C){ $('#reader').style.display='none'; return; }
-  topicIdx = pickIdx(C.TOPICS.length, topicIdx);
-  ruIdx = pickIdx(C.TEXTS_RU.length, ruIdx);
-  enIdx = pickIdx(C.TEXTS_EN.length, enIdx);
-  const t = C.TOPICS[topicIdx];
-  const items = t.ru.points.map((p,i)=>
-    `<li>${p} <span class="pen">— ${t.en.points[i]}</span></li>`).join('');
-  $('#topic').innerHTML =
-    `<div class="topic-h">💬 ${t.ru.title} <span class="pen">/ ${t.en.title}</span></div><ul>${items}</ul>`;
-  $('#textRu').innerHTML = `<div class="rh">RU</div>${C.TEXTS_RU[ruIdx]}`;
-  $('#textEn').innerHTML = `<div class="rh">EN</div>${C.TEXTS_EN[enIdx]}`;
+  if(fresh !== false){
+    if(readLang === 'ru') ruIdx = pickIdx(C.TEXTS_RU.length, ruIdx);
+    else enIdx = pickIdx(C.TEXTS_EN.length, enIdx);
+  }
+  if(ruIdx < 0) ruIdx = pickIdx(C.TEXTS_RU.length, -1);
+  if(enIdx < 0) enIdx = pickIdx(C.TEXTS_EN.length, -1);
+  $('#readText').textContent = readLang === 'ru' ? C.TEXTS_RU[ruIdx] : C.TEXTS_EN[enIdx];
+  markLang();
+}
+function markLang(){
+  document.querySelectorAll('.seg button').forEach(b=>
+    b.classList.toggle('active', b.dataset.lang === readLang));
+}
+function setLang(l){
+  readLang = l;
+  try{ localStorage.setItem('vs-lang', l); }catch(_){}
+  renderReading(false);
 }
 
 /* ---------- note / pitch helpers ---------- */
@@ -553,6 +549,7 @@ let recordedSamples = null, params = null;
 let startedAt = 0, rafId = 0;
 let lastAnalysis = null, lastDraw = null, chartGeom = null;
 let livePitchPoints = [];
+let liveVoicedMidis = [], lastMedUpdate = 0;
 let recordingLockRelease = null, recordingLockTask = null;
 
 async function acquireRecordingLock(){
@@ -566,7 +563,7 @@ async function acquireRecordingLock(){
       reportAcquired(true);
     });
   }).catch(error => {
-    console.warn('Не удалось получить межвкладочный замок записи:', error);
+    console.warn('Could not acquire cross-tab recording lock:', error);
     reportAcquired(false);
   });
   return acquired;
@@ -586,7 +583,7 @@ async function startRecording(){
   $('#rec').disabled = true;
   if(histAudio) histAudio.pause();
   if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-    showBanner('Микрофон недоступен. Открой страницу через локальный сервер (см. подсказку внизу) или в Chrome/Firefox.');
+    showBanner('Microphone unavailable. Open this page over https or localhost in a modern browser.');
     recordingStarting = false;
     $('#rec').disabled = false;
     return;
@@ -594,7 +591,7 @@ async function startRecording(){
 
   const lockAcquired = await acquireRecordingLock();
   if(!lockAcquired){
-    showBanner('Запись уже идёт в другой вкладке VoiceScope. Останови её там перед запуском новой.');
+    showBanner('Recording is already running in another VoiceScope tab. Stop it there first.');
     recordingStarting = false;
     $('#rec').disabled = false;
     return;
@@ -605,7 +602,7 @@ async function startRecording(){
       audio:{ echoCancellation:false, noiseSuppression:false, autoGainControl:false }
     });
   }catch(e){
-    showBanner('Не удалось получить доступ к микрофону: ' + e.message);
+    showBanner('Could not access the microphone: ' + e.message);
     releaseRecordingLock();
     recordingStarting = false;
     $('#rec').disabled = false;
@@ -620,6 +617,8 @@ async function startRecording(){
   muteGain = audioCtx.createGain(); muteGain.gain.value = 0;
 
   recChunks = []; recLen = 0; livePitchPoints = [];
+  liveVoicedMidis = []; lastMedUpdate = 0;
+  $('#liveMed').textContent = '—'; $('#liveMedHz').textContent = '';
   processor.onaudioprocess = e => {
     const ch = e.inputBuffer.getChannelData(0);
     const copy = new Float32Array(ch.length); copy.set(ch);
@@ -634,9 +633,9 @@ async function startRecording(){
   recordingStarting = false;
   startedAt = performance.now();
   $('#results').classList.remove('on');
+  $('#hero').classList.add('hidden');
   $('#live').classList.add('on');
   $('#liveChartStage').classList.add('on');
-  $('#readerDetails').open = true;
   requestAnimationFrame(drawLiveChart);
   tick();
 }
@@ -666,17 +665,26 @@ function liveProcess(buf){
         const frame = sig.subarray(i, i+params.frameLen);
         const r = yin(frame, params.aRate, params.tauMin, params.tauMax, 0.15);
         const voiced = r.conf >= 0.5 && r.f0 >= 55 && r.f0 <= 600 && rms > 0.004;
-        livePitchPoints.push({
-          t: chunkStart + (i+params.frameLen/2)/params.aRate,
-          midi: voiced ? hzToMidi(r.f0) : null
-        });
-        if(voiced) latest = r;
+        const midi = voiced ? hzToMidi(r.f0) : null;
+        livePitchPoints.push({ t: chunkStart + (i+params.frameLen/2)/params.aRate, midi });
+        if(voiced){ latest = r; liveVoicedMidis.push(midi); }
       }
       $('#liveNote').textContent = latest ? midiName(hzToMidi(latest.f0)) : '—';
-      $('#liveHz').textContent = latest ? '(' + latest.f0.toFixed(0) + ' Гц)' : '';
+      $('#liveHz').textContent = latest ? latest.f0.toFixed(0) + ' Hz' : '';
+      updateLiveMedian();
       drawLiveChart();
     }
   }catch(_){}
+}
+
+function updateLiveMedian(){
+  const now = performance.now();
+  if(now - lastMedUpdate < 1000 || liveVoicedMidis.length < 20) return;
+  lastMedUpdate = now;
+  const sorted = [...liveVoicedMidis].sort((a,b)=>a-b);
+  const medMidi = percentile(sorted, 50);
+  $('#liveMed').textContent = midiName(medMidi);
+  $('#liveMedHz').textContent = midiToHz(medMidi).toFixed(0) + ' Hz';
 }
 
 function drawLiveChart(){
@@ -694,8 +702,8 @@ function drawLiveChart(){
   const light = document.documentElement.getAttribute('data-theme')==='light';
   const grid = light ? 'rgba(0,0,0,.08)' : 'rgba(255,255,255,.07)';
   const rowShade = light ? 'rgba(0,0,0,.035)' : 'rgba(255,255,255,.025)';
-  const label = light ? '#9aa1ab' : '#5b626c';
-  const dot = light ? 'rgba(13,148,136,.55)' : 'rgba(94,234,212,.5)';
+  const label = light ? '#9aa2ab' : '#5d6570';
+  const dot = light ? 'rgba(14,154,133,.55)' : 'rgba(47,208,181,.5)';
   const padL=44, padR=12, padT=12, padB=25;
   const plotW=cssW-padL-padR, plotH=cssH-padT-padB;
   const elapsed = Math.max(0.1, (performance.now()-startedAt)/1000);
@@ -733,7 +741,7 @@ function drawLiveChart(){
     const px=x(t);
     ctx.strokeStyle=grid;
     ctx.beginPath(); ctx.moveTo(px,padT); ctx.lineTo(px,padT+plotH); ctx.stroke();
-    ctx.fillText((step<1?t.toFixed(1):Math.round(t))+'с',px,padT+plotH+14);
+    ctx.fillText((step<1?t.toFixed(1):Math.round(t))+'s',px,padT+plotH+14);
   }
   ctx.textAlign='start';
 
@@ -774,14 +782,14 @@ function stopRecording(){
 
   $('#live').classList.remove('on');
   $('#liveChartStage').classList.remove('on');
+  $('#hero').classList.remove('hidden');
   $('#rec').disabled = false;
   $('#meterFill').style.width = '0%';
-  $('#readerDetails').open = false;
 
   if(audioCtx) audioCtx.close();
 
   if(recordedSamples.length < recRate*0.3){
-    showBanner('Запись слишком короткая. Попробуй ещё раз.');
+    showBanner('That recording was too short. Try again.');
     return;
   }
   runAnalysis();
@@ -805,6 +813,7 @@ function runAnalysis(){
   $('#results').classList.add('on');
   postProcessAndRender();
   saveRecording();
+  $('#results').scrollIntoView({ behavior:'smooth', block:'start' });
 }
 
 function median(arr){
@@ -915,28 +924,28 @@ function scaleHtml(medHz){
   const LO=70, HI=320;
   const pos = hz => Math.max(0, Math.min(100, Math.log(hz/LO)/Math.log(HI/LO)*100));
   const bounds = [70,80,100,132,155,185,255,320];
-  const cols = ['#3b82f6','#22d3ee','#5eead4','#a3e635','#fbbf24','#fb7185','#f472b6'];
+  const cols = ['#3b82f6','#22d3ee','#2fd0b5','#a3e635','#e8b44a','#fb7185','#f472b6'];
   let segs='';
   for(let i=0;i<bounds.length-1;i++){
     const l=pos(bounds[i]), r=pos(bounds[i+1]);
-    segs += `<div class="seg" style="left:${l}%; width:${r-l}%; background:${cols[i]}; opacity:.5"></div>`;
+    segs += `<div class="segm" style="left:${l}%; width:${r-l}%; background:${cols[i]}; opacity:.5"></div>`;
   }
   const ticks = [80,100,130,155,185,255].map(v=>`<span class="tk" style="left:${pos(v)}%">${v}</span>`).join('');
-  const mk = `<div class="marker" style="left:${pos(medHz)}%" data-l="${medHz.toFixed(0)} Гц"></div>`;
+  const mk = `<div class="marker" style="left:${pos(medHz)}%" data-l="${medHz.toFixed(0)} Hz"></div>`;
   return `<div class="scale">${segs}${mk}<div class="ticks">${ticks}</div></div>`;
 }
 function renderClassBox(medHz){
   const N = window.VS_CONTENT && window.VS_CONTENT.NORMS;
   const z = classifyHz(medHz);
-  let html = `<div class="class-line">Ориентир F0: <b>${z.name}</b> <span class="pen">— ${z.hint}</span></div>`;
+  let html = `<div class="class-line">F0 reference: <b>${z.name}</b> <span class="pen">— ${z.hint}</span></div>`;
   if(N){
     const lowerThanMen = Math.round((1-normCdf(medHz, N.men.mean, N.men.sd))*100);
     const lowerThanWomen = Math.round((1-normCdf(medHz, N.women.mean, N.women.sd))*100);
     const menPercentile = Math.round(normCdf(medHz, N.men.mean, N.men.sd)*100);
-    html += `<div class="pctl">F0 ниже (голос глубже), чем примерно у ${lowerThanMen}% мужчин и ${lowerThanWomen}% женщин. В условной мужской модели это ${menPercentile}-й процентиль по F0.</div>`;
+    html += `<div class="pctl">Deeper than roughly ${lowerThanMen}% of men and ${lowerThanWomen}% of women — the ${menPercentile}th percentile of a simple male-voice model.</div>`;
   }
   html += scaleHtml(medHz);
-  html += `<div class="pctl">Это статистический ориентир, а не диагноз. Подробности — в разделе «📚 Ориентиры по высоте голоса» ниже.</div>`;
+  html += `<div class="pctl">A statistical reference, not a diagnosis.</div>`;
   $('#classbox').innerHTML = html;
 }
 
@@ -948,8 +957,8 @@ function renderStats(pts){
   const dur = lastAnalysis.duration;
 
   if(!kept.length){
-    $('#stats').innerHTML = '<div class="stat"><div class="k">Результат</div><div class="v">Голос не найден</div></div>';
-    $('#classbox').innerHTML = '<div class="pctl">Понизь чувствительность или говори громче/ближе к микрофону.</div>';
+    $('#stats').innerHTML = '<div class="stat"><div class="k">Result</div><div class="v">No voice detected</div></div>';
+    $('#classbox').innerHTML = '<div class="pctl">Lower the sensitivity or speak louder / closer to the microphone.</div>';
     lastStats = null;
     return null;
   }
@@ -961,16 +970,16 @@ function renderStats(pts){
   lastStats = { medHz, medNote: midiName(medMidi), meanHz, dur };
 
   const cells = [
-    ['Медиана высоты', `${medHz.toFixed(0)} <small>Гц · ${midiName(medMidi)}</small>`, true],
-    ['Среднее', `${meanHz.toFixed(0)} <small>Гц · ${midiName(meanMidi)}</small>`, false],
-    ['Диапазон', `${midiName(minMidi)}–${midiName(maxMidi)}`, false],
-    ['Размах', `${(maxMidi-minMidi).toFixed(1)} <small>полутонов</small>`, false],
-    ['Озвучено', `${voicedPct.toFixed(0)}<small>%</small>`, false],
-    ['Длина', `${dur.toFixed(1)}<small> с</small>`, false],
-    ['Обрезано', `${outliers}<small> кадров</small>`, false],
+    ['Median pitch', `${medHz.toFixed(0)} <small>Hz · ${midiName(medMidi)}</small>`, true],
+    ['Mean', `${meanHz.toFixed(0)} <small>Hz · ${midiName(meanMidi)}</small>`, false],
+    ['Range', `${midiName(minMidi)}–${midiName(maxMidi)}`, false],
+    ['Spread', `${(maxMidi-minMidi).toFixed(1)} <small>semitones</small>`, false],
+    ['Voiced', `${voicedPct.toFixed(0)}<small>%</small>`, false],
+    ['Length', `${dur.toFixed(1)}<small> s</small>`, false],
+    ['Trimmed', `${outliers}<small> frames</small>`, false],
   ];
   $('#stats').innerHTML = cells.map(([k,v,hero])=>
-    `<div class="stat${hero?' hero':''}"><div class="k">${k}</div><div class="v">${v}</div></div>`
+    `<div class="stat${hero?' hero-stat':''}"><div class="k">${k}</div><div class="v">${v}</div></div>`
   ).join('');
 
   renderClassBox(medHz);
@@ -992,12 +1001,12 @@ function renderChart(pts, band, statRange){
   const light = document.documentElement.getAttribute('data-theme')==='light';
   const P = light ? {
     rowShade:'rgba(0,0,0,.035)', grid:'rgba(0,0,0,.07)', tgrid:'rgba(0,0,0,.05)',
-    rawDot:'rgba(30,35,42,.32)', outDot:'rgba(225,29,72,.6)',
-    noteC:'#4b5563', noteOther:'#9aa1ab', tick:'#9aa1ab', msg:'#6b7280'
+    rawDot:'rgba(30,35,42,.32)', outDot:'rgba(220,74,69,.6)',
+    noteC:'#4b5563', noteOther:'#9aa2ab', tick:'#9aa2ab', msg:'#69727c'
   } : {
     rowShade:'rgba(255,255,255,.025)', grid:'rgba(255,255,255,.05)', tgrid:'rgba(255,255,255,.04)',
-    rawDot:'rgba(230,232,235,.30)', outDot:'rgba(248,113,113,.55)',
-    noteC:'#9aa2ad', noteOther:'#565d67', tick:'#565d67', msg:'#8b929c'
+    rawDot:'rgba(233,235,238,.30)', outDot:'rgba(239,111,107,.55)',
+    noteC:'#9aa2ad', noteOther:'#565d67', tick:'#565d67', msg:'#96a0ab'
   };
 
   const padL = 46, padR = 14, padT = 14, padB = 26;
@@ -1010,7 +1019,7 @@ function renderChart(pts, band, statRange){
   const allMidi = pts.filter(p=>p.midi!=null).map(p=>p.midi);
   if(!allMidi.length){
     ctx.fillStyle = P.msg; ctx.font='14px sans-serif';
-    ctx.fillText('Нет озвученных кадров', padL, padT+20);
+    ctx.fillText('No voiced frames', padL, padT+20);
     return;
   }
   let lo = Math.min(...allMidi) - 2, hi = Math.max(...allMidi) + 2;
@@ -1037,7 +1046,7 @@ function renderChart(pts, band, statRange){
   }
 
   // reference speech bands (subtle)
-  const refs = [[100,150,'rgba(96,165,250,.05)'],[185,255,'rgba(244,114,182,.05)']];
+  const refs = [[100,150,'rgba(110,168,247,.05)'],[185,255,'rgba(244,114,182,.05)']];
   for(const [a,b,col] of refs){
     const ma=hzToMidi(a), mb=hzToMidi(b);
     if(mb<lo || ma>hi) continue;
@@ -1047,7 +1056,7 @@ function renderChart(pts, band, statRange){
 
   // trim band edges
   if(band){
-    ctx.strokeStyle='rgba(248,113,113,.35)'; ctx.setLineDash([4,4]); ctx.lineWidth=1;
+    ctx.strokeStyle='rgba(239,111,107,.35)'; ctx.setLineDash([4,4]); ctx.lineWidth=1;
     for(const m of [band.lo, band.hi]){
       if(m>=lo && m<=hi){ ctx.beginPath(); ctx.moveTo(padL,y(m)); ctx.lineTo(padL+plotW,y(m)); ctx.stroke(); }
     }
@@ -1062,7 +1071,7 @@ function renderChart(pts, band, statRange){
     const px=x(t);
     ctx.strokeStyle=P.tgrid;
     ctx.beginPath(); ctx.moveTo(px,padT); ctx.lineTo(px,padT+plotH); ctx.stroke();
-    ctx.fillText(t.toFixed(step<1?1:0)+'с', px, padT+plotH+13);
+    ctx.fillText(t.toFixed(step<1?1:0)+'s', px, padT+plotH+13);
   }
   ctx.textAlign='start';
 
@@ -1147,7 +1156,7 @@ function phLoop(){ updatePlayhead(); if(!player.paused && !player.ended) phRAF =
     if(px<chartGeom.padL || px>chartGeom.padL+chartGeom.plotW){ hideHover(); return; }
     const hl=$('#hoverline'), tip=$('#hovertip');
     hl.style.left=px+'px'; hl.style.top=chartGeom.padT+'px'; hl.style.height=chartGeom.plotH+'px'; hl.style.display='block';
-    tip.textContent=timeFromX(px).toFixed(2)+' с'; tip.style.left=px+'px'; tip.style.top=(chartGeom.padT-1)+'px'; tip.style.display='block';
+    tip.textContent=timeFromX(px).toFixed(2)+' s'; tip.style.left=px+'px'; tip.style.top=(chartGeom.padT-1)+'px'; tip.style.display='block';
   });
   canvas.addEventListener('mouseleave', hideHover);
   canvas.addEventListener('click', e=>{
@@ -1211,11 +1220,11 @@ function encodeWAV(samples, rate){
 
 /* ---------- presets ---------- */
 const PRESETS = [
-  { id:'raw',      name:'Сырой',           sens:0.40, maMs:24,  emaMs:24,  trim:'off' },
-  { id:'gentle',   name:'Бережно',         sens:0.50, maMs:56,  emaMs:56,  trim:'p1'  },
-  { id:'balanced', name:'Сбалансированно', sens:0.55, maMs:72,  emaMs:72,  trim:'p3'  },
-  { id:'strict',   name:'Строго',          sens:0.65, maMs:104, emaMs:104, trim:'p5'  },
-  { id:'max',      name:'Максимально',     sens:0.72, maMs:136, emaMs:136, trim:'mad' },
+  { id:'raw',      name:'Raw',      sens:0.40, maMs:24,  emaMs:24,  trim:'off' },
+  { id:'gentle',   name:'Gentle',   sens:0.50, maMs:56,  emaMs:56,  trim:'p1'  },
+  { id:'balanced', name:'Balanced', sens:0.55, maMs:72,  emaMs:72,  trim:'p3'  },
+  { id:'strict',   name:'Strict',   sens:0.65, maMs:104, emaMs:104, trim:'p5'  },
+  { id:'max',      name:'Maximum',  sens:0.72, maMs:136, emaMs:136, trim:'mad' },
 ];
 let activePreset = 'balanced';
 function buildPresets(){
@@ -1238,7 +1247,7 @@ function applyPreset(id, rerender){
   if(rerender && lastAnalysis) postProcessAndRender();
 }
 function updateTrimDesc(){
-  const map = { off:'', p1:'(±1%)', p3:'(±3%)', p5:'(±5%)', p10:'(±10%)', mad:'(авто)' };
+  const map = { off:'', p1:'(±1%)', p3:'(±3%)', p5:'(±5%)', p10:'(±10%)', mad:'(auto)' };
   $('#trimDesc').textContent = map[$('#trimMode').value] || '';
 }
 function snapshotSettings(){
@@ -1248,11 +1257,8 @@ function snapshotSettings(){
            minRun:+$('#minRun').value, adaptive:$('#optAdaptive').checked };
 }
 function updateSmoothingLabels(){
-  $('#maWindowVal').textContent = `${$('#maWindow').value} мс`;
-  $('#emaSpanVal').textContent = `${$('#emaSpan').value} мс`;
-}
-function renderRefArticle(){
-  if(window.VS_CONTENT && window.VS_CONTENT.REFERENCE) $('#refart').innerHTML = window.VS_CONTENT.REFERENCE;
+  $('#maWindowVal').textContent = `${$('#maWindow').value} ms`;
+  $('#emaSpanVal').textContent = `${$('#emaSpan').value} ms`;
 }
 
 /* ---------- history (IndexedDB) ---------- */
@@ -1279,10 +1285,10 @@ async function dbPut(rec){ return reqP((await store('readwrite')).put(rec)); }
 async function dbDel(id){ return reqP((await store('readwrite')).delete(id)); }
 
 function fmtBytes(b){
-  if(b<1024) return b+' Б';
-  if(b<1048576) return (b/1024).toFixed(0)+' КБ';
-  if(b<1073741824) return (b/1048576).toFixed(1)+' МБ';
-  return (b/1073741824).toFixed(2)+' ГБ';
+  if(b<1024) return b+' B';
+  if(b<1048576) return (b/1024).toFixed(0)+' KB';
+  if(b<1073741824) return (b/1048576).toFixed(1)+' MB';
+  return (b/1073741824).toFixed(2)+' GB';
 }
 
 async function saveRecording(){
@@ -1306,7 +1312,7 @@ async function saveRecording(){
     await dbPut(rec);
     await pruneDB();
     refreshHistory();
-  }catch(e){ console.warn('Не удалось сохранить запись:', e); }
+  }catch(e){ console.warn('Could not save the recording:', e); }
 }
 async function pruneDB(){
   let recs = await dbAll();
@@ -1335,23 +1341,23 @@ async function refreshHistory(){
   catch(e){ $('#histCard').style.display='none'; return; }
   recs.sort((a,b)=>b.date-a.date);
   const total = recs.reduce((s,r)=>s+(r.bytes||0),0);
-  $('#histUsage').textContent = recs.length ? `${recs.length}/30 · ${fmtBytes(total)} из 1 ГБ` : '';
+  $('#histUsage').textContent = recs.length ? `${recs.length}/30 · ${fmtBytes(total)} of 1 GB` : '';
   if(!recs.length){
-    $('#histList').innerHTML = '<div class="hist-empty">Пока нет сохранённых записей — они появятся здесь автоматически после записи.</div>';
+    $('#histList').innerHTML = '<div class="hist-empty">No recordings yet — they will appear here automatically after you record.</div>';
     return;
   }
   $('#histList').innerHTML = recs.map(r=>{
     const d = new Date(r.date);
-    const when = d.toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const when = d.toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
     return `<div class="hist-item" data-id="${r.id}">
       <span class="hist-when">${when}</span>
-      <span class="hist-med">${r.medianHz.toFixed(0)} <small>Гц · ${r.medianNote}</small></span>
-      <span class="hist-meta">${r.dur.toFixed(1)} с · ${fmtBytes(r.bytes||0)} · ${r.settings?r.settings.preset:'?'}</span>
+      <span class="hist-med">${r.medianHz.toFixed(0)} <small>Hz · ${r.medianNote}</small></span>
+      <span class="hist-meta">${r.dur.toFixed(1)} s · ${fmtBytes(r.bytes||0)} · ${r.settings?r.settings.preset:'?'}</span>
       <span class="hist-btns">
-        <button class="ibtn act-play">▶</button>
-        <button class="ibtn act-load">Открыть</button>
+        <button class="ibtn act-play" aria-label="Play">▶</button>
+        <button class="ibtn act-load">Open</button>
         <button class="ibtn act-wav">WAV</button>
-        <button class="ibtn del act-del">✕</button>
+        <button class="ibtn del act-del" aria-label="Delete">✕</button>
       </span></div>`;
   }).join('');
   $('#histList').querySelectorAll('.hist-item').forEach(el=>{
@@ -1380,7 +1386,7 @@ async function toggleHistPlay(id){
     histAudio.onplay  = updateHistPlayBtns;
     await histAudio.play();
     updateHistPlayBtns();
-  }catch(e){ console.warn('Воспроизведение не удалось:', e); }
+  }catch(e){ console.warn('Playback failed:', e); }
 }
 function updateHistPlayBtns(){
   document.querySelectorAll('#histList .hist-item').forEach(el=>{
@@ -1397,7 +1403,7 @@ async function exportData(){
   recs.sort((a,b)=>a.date-b.date);
   const out = {
     app:'VoiceScope', version:1, exportedAt:new Date().toISOString(), count:recs.length,
-    note:'Контуры основного тона для анализа качества обрезки. f0 в Гц по кадрам; t_i = t0 + i*dt.',
+    note:'Pitch contours for analysis. f0 in Hz per frame; t_i = t0 + i*dt.',
     recordings: recs.map(r=>({
       id:r.id, date:new Date(r.date).toISOString(), dur:r.dur, rate:r.rate,
       medianHz:Math.round(r.medianHz*10)/10, medianNote:r.medianNote, settings:r.settings,
@@ -1412,7 +1418,7 @@ async function exportData(){
   a.href = URL.createObjectURL(blob); a.download = 'voicescope-data.json'; a.click();
 }
 async function clearHistory(){
-  if(!confirm('Удалить все сохранённые записи?')) return;
+  if(!confirm('Delete all saved recordings?')) return;
   try{ const recs = await dbAll(); for(const r of recs) await dbDel(r.id); }catch(e){}
   refreshHistory();
 }
@@ -1423,12 +1429,14 @@ function hideBanner(){ $('#banner').classList.remove('on'); }
 
 $('#rec').addEventListener('click', startRecording);
 $('#stop').addEventListener('click', stopRecording);
-$('#shuffle').addEventListener('click', renderReading);
+$('#shuffle').addEventListener('click', ()=>renderReading(true));
+$('#langEn').addEventListener('click', ()=>setLang('en'));
+$('#langRu').addEventListener('click', ()=>setLang('ru'));
 $('#exportData').addEventListener('click', exportData);
 $('#clearHist').addEventListener('click', clearHistory);
 $('#themeBtn').addEventListener('click', toggleTheme);
 document.addEventListener('keydown', e=>{
-  if(e.code==='Space' && e.target.tagName!=='INPUT' && e.target.tagName!=='SELECT'){
+  if(e.code==='Space' && e.target.tagName!=='INPUT' && e.target.tagName!=='SELECT' && e.target.tagName!=='BUTTON'){
     e.preventDefault();
     if(recording) stopRecording();
     else if(!recordingStarting) startRecording();
@@ -1466,12 +1474,11 @@ applyTheme(savedTheme);
 buildPresets();
 applyPreset('balanced', false);
 updateTrimDesc();
-renderReading();
-renderRefArticle();
+renderReading(true);
 refreshHistory();
 
 if(!window.isSecureContext && location.protocol!=='file:'){
-  showBanner('Для доступа к микрофону нужен https или localhost. Запусти локальный сервер (подсказка внизу).');
+  showBanner('Microphone access requires https or localhost.');
 }
 </script>
 </body>

@@ -1,104 +1,102 @@
 # VoiceScope
 
-Локальный анализатор высоты голоса — улучшенный аналог [voicecel.org](https://voicecel.org).
-Записывает голос с микрофона, определяет основной тон (pitch) алгоритмом **YIN** и показывает,
-**на каких нотах и в какую секунду** звучал голос.
+A local, in-browser voice pitch analyzer. Records your voice from the microphone, detects the
+fundamental pitch with the **YIN** algorithm and shows **which notes your voice hit, second by second**.
 
-**Открыть приложение:** [lemelson.github.io/VoiceScope](https://lemelson.github.io/VoiceScope/)
+**Open the app:** [lemelson.github.io/VoiceScope](https://lemelson.github.io/VoiceScope/)
 
-Весь анализ выполняется локально в браузере. Аудио не отправляется на GitHub или другой сервер.
+All analysis runs locally in your browser. Audio is never uploaded to GitHub or any other server.
 
-## Чем лучше оригинала
-- **Произвольная длина записи** (>10 c) + ручной стоп (или пробел).
-- **Контур высоты по времени** в виде piano-roll: ноты по вертикали, секунды по горизонтали.
-- **Линии MA и EMA** — видно, как голос «ходил» вверх/вниз.
-- **Обрезка пограничных выбросов**: медианный фильтр убирает одиночные скачки октавы,
-  перцентильная обрезка (3–97%) отсекает шипение (слишком высокое) и случайные провалы (слишком низкое).
-- **Нейтральная статистика** (медиана, среднее, диапазон, размах) вместо ярлыков.
-- Живой индикатор ноты/уровня во время записи, **воспроизведение** и **скачивание WAV**.
-- **Материал для чтения** (`content.js`): случайная тема для разговора с подпунктами (RU/EN),
-  плюс случайный русский и случайный английский текст на ~1–1.5 минуты чтения вслух.
-  Кнопка «Другой» перетасовывает всё. 20 тем, 15 русских и 15 английских текстов.
-- Всё считается локально в браузере, ничего не отправляется на сервер.
+## Features
+- **Unlimited recording length** with manual stop (button or Space).
+- **Pitch contour over time** as a piano roll: notes vertically, seconds horizontally.
+- **Live view while recording**: real-time pitch chart, current note/Hz, and a running median.
+- **MA and EMA smoothing lines** — see how the voice moved up and down.
+- **Outlier trimming**: a median filter removes single-frame octave spikes; percentile trimming
+  cuts hiss (too high) and random dips (too low); a hybrid MAD mode targets short glitches only.
+- **Neutral statistics** (median, mean, range, spread) instead of labels.
+- **Reading passages** (`content.js`) in English or Russian — pick the language before recording,
+  shuffle with "Another text". Each passage is ~1–1.5 minutes read aloud.
+- **Playback with a chart playhead**, WAV download, and a local recording history.
+- Light/dark theme, remembered between visits.
 
-## Как запустить
+## Running locally
 
-Микрофону нужен «безопасный контекст» (https или localhost / file://).
+The microphone needs a secure context (https, localhost, or `file://`).
 
-**Вариант 1 — двойной клик.** Открой `index.html` в Chrome или Firefox. Обычно работает (`file://`).
+**Option 1 — double click.** Open `index.html` in Chrome or Firefox (`file://` usually works).
 
-**Вариант 2 — локальный сервер** (надёжнее всего, рекомендуется для Safari):
+**Option 2 — local server** (most reliable, recommended for Safari):
 
 ```bash
 cd VoiceCellCopy
 python3 -m http.server 8000
 ```
-Затем открой http://localhost:8000 и разреши доступ к микрофону.
+Then open http://localhost:8000 and allow microphone access.
 
-## Управление
-- **Записать / Стоп** — кнопки или клавиша **Пробел**.
-- Таймера авто-стопа больше нет: запись идёт без ограничения времени и останавливается вручную.
-- Материал для чтения можно свернуть/развернуть по заголовку. После завершения записи он сворачивается автоматически,
-  чтобы статистика и график не уезжали вниз.
-- Под графиком: тумблеры точек/EMA/MA/обрезки, отдельные ползунки **окна MA**, **периода EMA** и **чувствительности**
-  (пересчитываются мгновенно, без новой записи).
+## Controls
+- **Start recording / Stop** — buttons or the **Space** key.
+- No auto-stop timer: the recording runs until you stop it.
+- Under the chart, "Analysis settings" holds the processing profile, display toggles
+  (points/EMA/MA), trimming mode, and fine-tuning sliders — all re-render instantly
+  without re-recording.
 
-## Воспроизведение и тема
-- **Плейхед на графике**: при проигрывании по контуру бежит вертикальная линия, показывая текущий момент.
-- **Управление с графика**: клик по графику — слушать с этого места; клик по самой линии — пауза/продолжить;
-  наведение показывает время. Нижний плеер тоже работает.
-- **История с прослушиванием**: каждую запись можно проиграть прямо в списке (кнопка ▶), не открывая, и удалить (✕).
-- **Светлая/тёмная тема**: переключатель ☀/🌙 в правом верхнем углу, выбор запоминается. График и шкала адаптируются.
+## Playback
+- **Chart playhead**: a vertical line follows the contour during playback.
+- **Chart controls**: click the chart to play from that point; click near the line to pause;
+  hover shows the time. The audio player below works too.
+- **History playback**: play any saved recording right from the list (▶) or delete it (✕).
 
-## Профили обработки и тонкая настройка
-Под графиком — быстрые **профили**: Сырой · Бережно · Сбалансированно (по умолчанию) · Строго · Максимально.
-Каждый задаёт сразу чувствительность, окно MA, период EMA и режим обрезки. Любая ручная правка переводит в «свой» режим.
+## Processing profiles and fine-tuning
+Quick **profiles**: Raw · Gentle · Balanced (default) · Strict · Maximum.
+Each sets sensitivity, MA window, EMA span and trimming mode at once. Any manual tweak
+switches to a custom state.
 
-- **Обрезка выбросов** (выпадающий список): Выкл / Лёгкая 1% / Средняя 3% / Строгая 5% / Жёсткая 10% /
-  Умная (гибридная MAD — сравнивает кадр с соседней речью и дополнительно ловит короткие глобальные экстремумы
-  у пауз; устойчивое изменение высоты сохраняется).
-- **Чувствительность** — порог уверенности детектора тона (ниже = ловит больше тихого/шумного; выше = только чёткий тон).
-- **Окно MA** — ширина центрированного скользящего среднего.
-- **Период EMA** — скорость реакции экспоненциальной линии.
-- **Коррекция октав** — исправляет короткие ошибки ровно в 2×, когда детектор путает октаву. Коррекция смотрит на
-  неизменённые соседние кадры с обеих сторон, поэтому шумный участок не может «перетащить» последующую нормальную речь
-  на неправильную октаву.
-- **Мин. длительность** — отбрасывает совсем короткие всплески (щелчки, призвуки).
-- **Адаптивный порог тишины** — сам оценивает фоновый шум и отсекает то, что тише.
+- **Outlier trimming**: Off / Light 1% / Medium 3% / Strict 5% / Aggressive 10% /
+  Smart (hybrid MAD — compares each frame against neighbouring speech and additionally catches
+  short global extremes near pauses; sustained pitch changes are preserved).
+- **Sensitivity** — confidence threshold of the pitch detector (lower = catches more quiet/noisy
+  material; higher = only clear tone).
+- **MA window** — width of the centred moving average.
+- **EMA span** — responsiveness of the exponential line.
+- **Octave correction** — fixes short 2× errors when the detector confuses the octave. It compares
+  against unchanged neighbouring frames on both sides, so a noisy burst can't drag subsequent
+  normal speech to the wrong octave.
+- **Min duration** — drops very short bursts (clicks, artifacts).
+- **Adaptive silence floor** — estimates background noise and cuts anything quieter.
 
-## Ориентиры по высоте голоса
-Раздел «📚 Ориентиры по высоте голоса» — справка по разговорной F0: почему нет одной универсальной нормы,
-почему разговорная F0 не равна певческим категориям «бас/баритон/тенор», и как читать процентили.
-Для экранного ориентира используется приблизительная модель: мужчины **116±16 Гц**, женщины **190±25 Гц**.
-Важно: фраза «100 Гц ниже, чем у ~84% мужчин» означает, что только около **16%** находятся на 100 Гц или ниже.
-Источники приведены прямо в справке: Awan et al. 2017, Hudson & Holbrook 1981, Fernández Liesa et al. 1999,
+## F0 reference
+The results include a descriptive speaking-F0 zone and percentile estimates based on a simple
+statistical model: men **116±16 Hz**, women **190±25 Hz**. Note that "100 Hz is lower than ~84%
+of men" means only about **16%** sit at 100 Hz or below. These are statistical references,
+not a diagnosis. Sources: Awan et al. 2017, Hudson & Holbrook 1981, Fernández Liesa et al. 1999,
 Barsties 2013.
 
-## Защита от параллельных записей
-Приложение использует браузерный `navigator.locks`-замок `voicescope-recording`. Если запись уже идёт в другой
-вкладке VoiceScope, новая вкладка покажет предупреждение и не откроет второй захват микрофона. В браузерах без
-поддержки Web Locks остаётся обычная защита внутри одной вкладки от повторного старта.
+## Parallel recording protection
+The app takes a browser `navigator.locks` lock named `voicescope-recording`. If a recording is
+already running in another VoiceScope tab, a new tab shows a warning instead of grabbing the
+microphone a second time. Browsers without Web Locks still get single-tab double-start protection.
 
-## История записей (локально)
-Последние **30 записей** хранятся в браузере (IndexedDB), суммарно **до 1 ГБ** — старые удаляются автоматически.
-Каждую можно открыть заново (с тем же контуром), проиграть, скачать WAV или удалить. Хранятся: WAV, контур тона
-(f0/уверенность/громкость по кадрам), медиана и настройки.
+## Recording history (local)
+The last **30 recordings** are stored in the browser (IndexedDB), up to **1 GB** total — older ones
+are pruned automatically. Each can be reopened (same contour), played, downloaded as WAV, or
+deleted. Stored per recording: WAV, pitch contour (f0/confidence/loudness per frame), median,
+and the settings used.
 
-### План: анализ записей для калибровки обрезки
-Кнопка **«⤓ Экспорт данных»** выгружает `voicescope-data.json` со всеми контурами (без аудио, компактно).
-**Задача на будущее (по запросу пользователя):** взять накопленные ~30 записей (этот JSON, при необходимости —
-и WAV-файлы), проанализировать и понять, не слишком ли агрессивно/слабо режутся края — то есть не выбрасываем ли
-мы реальные низкие/высокие участки голоса вместо случайных призвуков, и не нужно ли менять проценты обрезки или
-пороги. По выводам — подстроить дефолтные пресеты/перцентили. (Дублируется в памяти проекта.)
+### Planned: trim calibration from collected recordings
+The **Export JSON** button downloads `voicescope-data.json` with all pitch contours (no audio,
+compact). Future task (on request): analyze the accumulated ~30 recordings to check whether edge
+trimming is too aggressive or too weak — i.e. whether real low/high voice segments are being
+discarded instead of random artifacts — and adjust the default presets/percentiles accordingly.
 
-## Как это работает
-1. Захват PCM с микрофона (без шумоподавления/AGC — чтобы не искажать тон).
-2. Децимация до ~16 кГц, покадровый YIN (окно ~33 мс, шаг 8 мс) → частота + «уверенность».
-3. Фильтрация: порог уверенности, диапазон 55–600 Гц, медианный фильтр, локальная коррекция октав,
-   min-run, затем перцентильная или локальная MAD-обрезка.
-4. Hz → ноты (MIDI), MA/EMA в полутоновом пространстве, отрисовка на canvas.
+## How it works
+1. PCM capture from the microphone (no noise suppression/AGC, to avoid distorting the pitch).
+2. Decimation to ~16 kHz, frame-by-frame YIN (~33 ms window, 8 ms hop) → frequency + confidence.
+3. Filtering: confidence threshold, 55–600 Hz range, median filter, local octave correction,
+   min-run, then percentile or local-MAD trimming.
+4. Hz → notes (MIDI), MA/EMA in semitone space, canvas rendering.
 
-## Проверка
+## Tests
 
 ```bash
 node --test tests/analysis-core.test.js

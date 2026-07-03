@@ -330,18 +330,18 @@ TEXTS_RU: [
 
 /* Illustrative speaking-F0 model used only for the on-screen percentile guide. */
 NORMS: {
-  men:   { mean:116, sd:16, label:"мужчин" },
-  women: { mean:190, sd:25, label:"женщин" }
+  men:   { mean:116, sd:16, label:"men" },
+  women: { mean:190, sd:25, label:"women" }
 },
 /* Descriptive speaking-F0 zones. These are not singing voice types. */
 ZONES: [
-  { max:80,       name:"Очень низкая разговорная F0", hint:"около 1-го процентиля условной мужской модели" },
-  { max:100,      name:"Низкая мужская F0",           hint:"ниже примерно 84% мужчин по условной модели" },
-  { max:132,      name:"Обычный мужской диапазон F0", hint:"100–132 Гц — центральные ~68% условной модели" },
-  { max:155,      name:"Повышенная мужская F0",       hint:"выше среднего мужского значения" },
-  { max:185,      name:"Зона перекрытия",             hint:"по одной F0 пол или тип голоса не определяется" },
-  { max:255,      name:"Обычный женский диапазон F0", hint:"ориентир для разговорной речи" },
-  { max:Infinity, name:"Высокая разговорная F0",      hint:"возможны возраст, манера речи и интонация" }
+  { max:80,       name:"Very low speaking F0",   hint:"around the 1st percentile of a typical male model" },
+  { max:100,      name:"Low male F0",            hint:"lower than roughly 84% of men in a simple model" },
+  { max:132,      name:"Typical male range",     hint:"100–132 Hz — the central ~68% of the model" },
+  { max:155,      name:"Upper male range",       hint:"above the average male speaking value" },
+  { max:185,      name:"Overlap zone",           hint:"one F0 value alone doesn't determine sex or voice type" },
+  { max:255,      name:"Typical female range",   hint:"reference range for conversational speech" },
+  { max:Infinity, name:"High speaking F0",       hint:"may reflect age, speaking style, or intonation" }
 ],
 
 REFERENCE: `
