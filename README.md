@@ -18,7 +18,8 @@ All analysis runs locally in your browser. Audio is never uploaded to GitHub or 
 - **10 interface languages** — English is the default and remains first in the selector; the
   browser/OS language is promoted to the second option when supported. Reading passages follow
   the selected language and can be shuffled with "Another text".
-- **Playback with a chart playhead**, WAV download, and a local recording history.
+- **Consistent custom playback controls** across desktop and mobile, plus chart seeking and WAV download.
+- **Readable local history** with pitch, note, speaking zone, duration, profile, playback, and reopen actions.
 - Light/dark theme, remembered between visits.
 
 ## Running locally
@@ -104,3 +105,7 @@ discarded instead of random artifacts — and adjust the default presets/percent
 ```bash
 node --test tests/*.test.js
 ```
+
+For the mobile recording layout regression, run the local server and open
+`http://localhost:8000/tests/mobile-recording-harness.html`. The harness repeatedly changes live
+pitch values and passes only when the reading text remains at a stable vertical position.

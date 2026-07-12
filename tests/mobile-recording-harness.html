@@ -1,0 +1,49 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>VoiceScope mobile recording layout harness</title>
+<style>
+  body{font:14px system-ui;margin:20px;background:#eee}
+  iframe{width:390px;height:844px;border:1px solid #999;background:white}
+  output{display:block;margin:12px 0;font-weight:700}
+</style>
+<output id="result">RUNNING</output>
+<iframe id="app" src="../index.html"></iframe>
+<script>
+const frame = document.querySelector('#app');
+frame.addEventListener('load', async()=>{
+  const win = frame.contentWindow;
+  const doc = frame.contentDocument;
+  doc.querySelector('#hero').classList.add('hidden');
+  doc.querySelector('#live').classList.add('on');
+  doc.querySelector('#liveChartStage').classList.add('on');
+  win.drawLiveChart();
+  await new Promise(resolve=>requestAnimationFrame(resolve));
+
+  const samples = [];
+  const variants = [
+    ['—', '', '—', ''],
+    ['C#10', '599 Hz', 'G#9', '528 Hz'],
+    ['A0', '55 Hz', 'C8', '4186 Hz']
+  ];
+  for(let index=0; index<30; index++){
+    const values = variants[index % variants.length];
+    ['liveNote','liveHz','liveMed','liveMedHz'].forEach((id, valueIndex)=>{
+      doc.querySelector('#'+id).textContent = values[valueIndex];
+    });
+    win.drawLiveChart();
+    await new Promise(resolve=>requestAnimationFrame(resolve));
+    samples.push({
+      liveHeight:doc.querySelector('#live').getBoundingClientRect().height,
+      textTop:doc.querySelector('#readText').getBoundingClientRect().top
+    });
+  }
+  const liveHeights = samples.map(sample=>sample.liveHeight);
+  const textTops = samples.map(sample=>sample.textTop);
+  const drift = Math.max(...textTops) - Math.min(...textTops);
+  const liveDrift = Math.max(...liveHeights) - Math.min(...liveHeights);
+  const passed = drift <= 1 && liveDrift <= 1;
+  const result = { passed, drift, liveDrift, samples:samples.slice(0,6) };
+  document.querySelector('#result').textContent = (passed ? 'PASS ' : 'FAIL ') + JSON.stringify(result);
+  document.body.dataset.passed = String(passed);
+});
+</script>
