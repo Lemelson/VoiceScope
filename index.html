@@ -60,6 +60,10 @@
   "browserRequirements": "Modern browser with Web Audio API and microphone access",
   "isAccessibleForFree": true,
   "image": "https://lemelson.github.io/VoiceScope/og-image.png",
+  "screenshot": [
+    "https://lemelson.github.io/VoiceScope/assets/pitch-contour.svg",
+    "https://lemelson.github.io/VoiceScope/assets/smart-filter.svg"
+  ],
   "keywords": "voice pitch analyzer, fundamental frequency, F0, pitch detection, vocal range, voicecel alternative, высота голоса, частота голоса",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "codeRepository": "https://github.com/Lemelson/VoiceScope",
@@ -330,6 +334,11 @@
   .seo-kicker{margin:0 0 10px; color:var(--accent); font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase}
   .seo-home h2{max-width:720px; margin:0; font-size:clamp(26px,4vw,38px); line-height:1.12; letter-spacing:-.8px}
   .seo-lead{max-width:68ch; margin:18px 0 0; color:var(--muted); font-size:16px; line-height:1.75}
+  .seo-figure{margin:38px 0 46px}
+  .seo-figure img{display:block; width:100%; height:auto; aspect-ratio:16/9; border:1px solid var(--line);
+    border-radius:20px; background:var(--panel)}
+  .seo-figure figcaption{max-width:72ch; margin-top:12px; color:var(--muted2); font-size:12.5px; line-height:1.55}
+  .seo-figure-wide{margin-top:38px; margin-bottom:52px}
   .seo-grid{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(240px,.65fr); gap:48px; margin-top:48px}
   .seo-copy h3{margin:34px 0 10px; font-size:19px; letter-spacing:-.2px}
   .seo-copy h3:first-child{margin-top:0}
@@ -401,6 +410,8 @@
     .seo-home{margin-top:52px; padding-top:40px}
     .seo-grid{grid-template-columns:1fr; gap:38px; margin-top:36px}
     .seo-side{border-left:0; border-top:1px solid var(--line); padding:28px 0 0}
+    .seo-figure img{border-radius:14px}
+    .seo-figure,.seo-figure-wide{margin:30px 0 38px}
   }
 
   @media (max-width:350px){
@@ -576,6 +587,10 @@
 	    <p class="seo-kicker">Free browser-based pitch analysis</p>
 	    <h2 id="seo-guide-title">Measure your speaking voice in hertz, notes, and time</h2>
 	    <p class="seo-lead">VoiceScope is a free online voice pitch analyzer for speech and singing. It records from your microphone, estimates fundamental frequency (F0), and turns each voiced moment into a frequency, musical note, and readable pitch contour. Processing stays in your browser.</p>
+	    <figure class="seo-figure seo-figure-wide">
+	      <img src="assets/pitch-contour.svg" width="1200" height="675" loading="lazy" decoding="async" alt="VoiceScope pitch contour showing detected notes and frequency across a recording">
+	      <figcaption>A full contour keeps the timing and shape of the recording visible instead of reducing the voice to one number.</figcaption>
+	    </figure>
 
 	    <div class="seo-grid">
 	      <div class="seo-copy">
@@ -592,6 +607,10 @@
 
 	        <h3>Why VoiceScope keeps the full pitch contour</h3>
 	        <p>A short voice test often returns one number. VoiceScope also keeps the underlying time series, highlights trimmed outliers, lets you replay the exact recording, and stores recent sessions locally for comparison. That makes it useful for checking speaking pitch, vocal exercises, intonation, and detector errors rather than treating one number as a verdict.</p>
+	        <figure class="seo-figure">
+	          <img src="assets/smart-filter.svg" width="1200" height="675" loading="lazy" decoding="async" alt="Before and after diagram of Smart filtering removing a short low-confidence pitch spike">
+	          <figcaption>Smart mode uses local context and detector confidence to remove a brief glitch while preserving the surrounding phrase.</figcaption>
+	        </figure>
 
 	        <h3>Privacy and limits</h3>
 	        <p>Microphone analysis and recording history run locally on your device. VoiceScope measures F0, not attractiveness, health, gender, resonance, or the complete character of a voice. Results are a statistical and acoustic reference, not a medical diagnosis.</p>

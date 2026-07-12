@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <rect width="1200" height="675" rx="28" fill="#111419"/>
+  <rect x="1" y="1" width="1198" height="673" rx="27" fill="none" stroke="#293039"/>
+  <g font-family="Outfit,Arial,sans-serif">
+    <text x="70" y="76" fill="#49c3ad" font-size="18" font-weight="700" letter-spacing="3">SMART FILTER</text>
+    <text x="70" y="124" fill="#eef1f3" font-size="40" font-weight="650">Remove the glitch. Keep the phrase.</text>
+    <g transform="translate(70 174)">
+      <rect width="1060" height="176" rx="18" fill="#15191f" stroke="#293039"/>
+      <text x="28" y="38" fill="#8d98a4" font-size="14" font-weight="700" letter-spacing="2">DETECTED</text>
+      <path d="M30 112 C92 108 139 87 195 98 S294 126 348 101 S449 79 510 96 L548 26 L581 102 C637 119 688 72 746 93 S850 125 910 99 S978 82 1030 94" fill="none" stroke="#d6dce0" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="548" cy="26" r="8" fill="#df756e"/>
+      <path d="M548 46V76" stroke="#df756e" stroke-width="2" stroke-dasharray="4 4"/>
+      <text x="566" y="50" fill="#df756e" font-size="14">short low-confidence spike</text>
+    </g>
+    <g transform="translate(70 376)">
+      <rect width="1060" height="176" rx="18" fill="#15191f" stroke="#293039"/>
+      <text x="28" y="38" fill="#49c3ad" font-size="14" font-weight="700" letter-spacing="2">KEPT</text>
+      <path d="M30 112 C92 108 139 87 195 98 S294 126 348 101 S449 79 510 96 S637 119 688 72 S850 125 910 99 S978 82 1030 94" fill="none" stroke="#49c3ad" stroke-width="5" stroke-linecap="round"/>
+      <path d="M530 94L548 112L578 76" fill="none" stroke="#49c3ad" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".7"/>
+    </g>
+    <text x="70" y="610" fill="#8d98a4" font-size="17">Local context + detector confidence + short-run protection</text>
+  </g>
+</svg>

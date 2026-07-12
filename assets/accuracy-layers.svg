@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <rect width="1200" height="675" rx="28" fill="#111419"/>
+  <rect x="1" y="1" width="1198" height="673" rx="27" fill="none" stroke="#293039"/>
+  <g font-family="Outfit,Arial,sans-serif">
+    <text x="72" y="78" fill="#49c3ad" font-size="18" font-weight="700" letter-spacing="3">EVIDENCE LEVELS</text>
+    <text x="72" y="126" fill="#eef1f3" font-size="40" font-weight="650">Accuracy is not one claim</text>
+    <g transform="translate(90 210)">
+      <rect x="0" y="0" width="1020" height="90" rx="18" fill="#18201e" stroke="#49c3ad"/>
+      <circle cx="52" cy="45" r="17" fill="#49c3ad"/><path d="M44 45l6 7 12-15" fill="none" stroke="#09221d" stroke-width="4" stroke-linecap="round"/>
+      <text x="90" y="38" fill="#eef1f3" font-size="20" font-weight="650">Regression-tested behaviour</text>
+      <text x="90" y="64" fill="#8d98a4" font-size="15">octave correction · short spikes · sustained changes</text>
+      <rect x="0" y="112" width="820" height="90" rx="18" fill="#15191f" stroke="#38424c"/>
+      <circle cx="52" cy="157" r="17" fill="#263039"/><path d="M44 157l6 7 12-15" fill="none" stroke="#9aa5af" stroke-width="4" stroke-linecap="round"/>
+      <text x="90" y="150" fill="#eef1f3" font-size="20" font-weight="650">Real-world repeatability</text>
+      <text x="90" y="176" fill="#8d98a4" font-size="15">same room · device · distance · speaking task</text>
+      <rect x="0" y="224" width="620" height="90" rx="18" fill="#15191f" stroke="#38424c" stroke-dasharray="9 8"/>
+      <circle cx="52" cy="269" r="17" fill="none" stroke="#6d7883" stroke-width="3"/>
+      <text x="90" y="262" fill="#eef1f3" font-size="20" font-weight="650">Clinical validation</text>
+      <text x="90" y="288" fill="#8d98a4" font-size="15">not claimed</text>
+    </g>
+    <text x="90" y="586" fill="#8d98a4" font-size="17">Transparent limits are part of a trustworthy measurement</text>
+  </g>
+</svg>

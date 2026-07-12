@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <rect width="1200" height="675" rx="28" fill="#111419"/>
+  <rect x="1" y="1" width="1198" height="673" rx="27" fill="none" stroke="#293039"/>
+  <g font-family="Outfit,Arial,sans-serif">
+    <text x="72" y="78" fill="#49c3ad" font-size="18" font-weight="700" letter-spacing="3">LOCAL HISTORY</text>
+    <text x="72" y="126" fill="#eef1f3" font-size="40" font-weight="650">Compare sessions, not isolated labels</text>
+    <g transform="translate(72 184)">
+      <g transform="translate(0 0)"><rect width="1056" height="112" rx="16" fill="#15191f" stroke="#293039"/><text x="28" y="43" fill="#eef1f3" font-size="25" font-weight="650">94 Hz</text><text x="28" y="72" fill="#7f8a95" font-size="14">G2 · 22.4 s · Smart</text><path d="M340 68 C390 42 430 82 476 59 S570 40 618 61 S712 83 760 55 S860 42 1016 58" fill="none" stroke="#49c3ad" stroke-width="4"/></g>
+      <g transform="translate(0 136)"><rect width="1056" height="112" rx="16" fill="#15191f" stroke="#293039"/><text x="28" y="43" fill="#eef1f3" font-size="25" font-weight="650">97 Hz</text><text x="28" y="72" fill="#7f8a95" font-size="14">G2 · 19.8 s · Smart</text><path d="M340 60 C395 76 432 41 480 62 S570 82 625 53 S718 39 770 63 S875 79 1016 56" fill="none" stroke="#7f8a95" stroke-width="4"/></g>
+      <g transform="translate(0 272)"><rect width="1056" height="112" rx="16" fill="#18201e" stroke="#49c3ad"/><text x="28" y="43" fill="#eef1f3" font-size="25" font-weight="650">95 Hz</text><text x="28" y="72" fill="#49c3ad" font-size="14">G2 · 24.1 s · Smart</text><path d="M340 64 C391 48 436 74 484 57 S577 45 630 64 S721 75 778 51 S890 42 1016 60" fill="none" stroke="#49c3ad" stroke-width="5"/></g>
+    </g>
+    <text x="72" y="620" fill="#8d98a4" font-size="17">Same device and task make within-person trends easier to interpret</text>
+  </g>
+</svg>

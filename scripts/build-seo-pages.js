@@ -309,6 +309,64 @@ const pages = [
   },
 ];
 
+const PAGE_VISUALS = {
+  "voice-pitch-analyzer": [
+    { asset: "pitch-contour.svg", alt: "A VoiceScope pitch contour plotting detected notes across twenty seconds", caption: "The contour preserves timing, note position, and the recording’s central pitch." },
+    { asset: "smart-filter.svg", alt: "Before and after diagram showing a short pitch spike removed by Smart filtering", caption: "Smart mode targets a brief low-confidence glitch while retaining the surrounding phrase." },
+  ],
+  "voice-frequency-test": [
+    { asset: "frequency-summary.svg", alt: "Voice frequency summary showing a median of 96 hertz, note G2, mean, range, and voiced percentage", caption: "A median frequency becomes more useful when range, mean, and voiced proportion remain visible." },
+    { asset: "recording-guide.svg", alt: "Diagram showing consistent microphone, distance, and recording duration", caption: "Keep the room, microphone distance, speaking task, and duration consistent between takes." },
+  ],
+  "how-deep-is-my-voice": [
+    { asset: "voice-components.svg", alt: "Diagram separating pitch, resonance, timbre, and rhythm as components of perceived voice", caption: "Fundamental frequency contributes to perceived depth, but it is not the whole voice." },
+    { asset: "frequency-summary.svg", alt: "Voice frequency result with median, range, mean, and voiced percentage", caption: "Use the median as a centre and the contour as evidence—not as a score of the person." },
+  ],
+  "voicecel-test": [
+    { asset: "frequency-summary.svg", alt: "Neutral voice frequency result presented in hertz and musical note", caption: "The acoustic measurement is F0 in hertz; any social category is an interpretation added afterward." },
+    { asset: "voice-components.svg", alt: "Voice perception diagram with pitch alongside resonance, timbre, and rhythm", caption: "A voicecel-style number cannot describe resonance, timbre, rhythm, or the full perception of a voice." },
+  ],
+  "voicecel-alternative": [
+    { asset: "session-history.svg", alt: "Three local VoiceScope recording sessions with pitch contours and median frequencies", caption: "Local history makes repeated, matched recordings easier to compare." },
+    { asset: "smart-filter.svg", alt: "Smart filtering diagram preserving a phrase while removing a brief glitch", caption: "Filtering decisions are easier to evaluate when the contour and final outliers remain visible." },
+  ],
+  about: [
+    { asset: "open-source.svg", alt: "Open source analysis pipeline shown beside its resulting pitch contour", caption: "Source, tests, visible detections, and documented limits keep the method connected to the result." },
+  ],
+  privacy: [
+    { asset: "privacy-flow.svg", alt: "Data flow from microphone to browser analysis and local storage without an audio cloud upload", caption: "Audio, WAV data, contours, and recording history stay inside the current browser profile." },
+  ],
+  methodology: [
+    { asset: "signal-pipeline.svg", alt: "Signal pipeline from PCM audio through YIN frames and filters to a pitch contour", caption: "VoiceScope turns local PCM samples into F0 candidates, filters, notes, and a time-based contour." },
+    { asset: "smart-filter.svg", alt: "Detected pitch before and after Smart filtering of a short anomaly", caption: "Smart filtering combines local context, confidence, and run length instead of cutting every extreme." },
+  ],
+  accuracy: [
+    { asset: "accuracy-layers.svg", alt: "Three evidence levels separating regression tests, real-world repeatability, and unclaimed clinical validation", caption: "Algorithm behaviour, repeatability, and clinical validation are different evidence levels." },
+    { asset: "recording-guide.svg", alt: "Repeatable voice recording setup with stable microphone, distance, and duration", caption: "Matched recording conditions reduce variation that does not come from the detector itself." },
+  ],
+  faq: [
+    { asset: "voice-components.svg", alt: "Voice perception diagram showing pitch, resonance, timbre, and rhythm", caption: "Many common questions become clearer once pitch is separated from the rest of voice perception." },
+  ],
+  "ru/izmerit-chastotu-golosa": [
+    { asset: "frequency-summary.svg", alt: "Результат измерения частоты голоса с медианой, диапазоном и долей распознанной речи", caption: "Медианная частота понятнее вместе с диапазоном, средним значением и графиком записи." },
+    { asset: "recording-guide.svg", alt: "Схема повторяемой записи с постоянным микрофоном, расстоянием и длительностью", caption: "Для сравнения попыток сохраняйте одинаковую комнату, расстояние до микрофона и длительность." },
+  ],
+};
+
+for (const page of pages) page.visuals = PAGE_VISUALS[page.slug] || [];
+
+const LANGUAGE_VISUALS = {
+  ru: { alt: "График высоты голоса по времени с частотой и музыкальными нотами", caption: "Полный график показывает, как высота голоса меняется во времени, а не только одно итоговое число." },
+  es: { alt: "Curva de tono de voz con frecuencia y notas musicales a lo largo del tiempo", caption: "La curva completa muestra cómo cambia el tono, no solo un único resultado final." },
+  de: { alt: "Tonhöhenverlauf der Stimme mit Frequenz und Noten über die Zeit", caption: "Der vollständige Verlauf zeigt Veränderungen der Stimme statt nur eines Endwerts." },
+  fr: { alt: "Courbe de hauteur vocale avec fréquence et notes au fil du temps", caption: "La courbe complète montre les variations de la voix au lieu d’un seul résultat." },
+  pt: { alt: "Contorno de tom da voz com frequência e notas ao longo do tempo", caption: "O contorno completo mostra como a voz muda, em vez de apresentar apenas um número final." },
+  zh: { alt: "随时间显示声音频率和音符的音高曲线", caption: "完整曲线展示声音音高如何变化，而不只是一个最终数值。" },
+  ja: { alt: "時間に沿って声の周波数と音名を示すピッチ曲線", caption: "1つの結果だけでなく、声の高さが時間とともにどう変化したかを確認できます。" },
+  ko: { alt: "시간에 따른 목소리 주파수와 음표를 보여 주는 피치 곡선", caption: "하나의 최종 숫자뿐 아니라 목소리 높이가 시간에 따라 어떻게 변했는지 보여 줍니다." },
+  hi: { alt: "समय के साथ आवाज़ की आवृत्ति और सुर दिखाने वाला पिच ग्राफ", caption: "पूरा ग्राफ केवल एक अंतिम संख्या नहीं, बल्कि समय के साथ पिच का बदलाव दिखाता है।" },
+};
+
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (character) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
@@ -384,7 +442,7 @@ function footer(page) {
 }
 
 function structuredData(page, canonical) {
-  const graph = [{
+  const webPage = {
     "@type": "WebPage",
     "@id": canonical,
     url: canonical,
@@ -392,7 +450,15 @@ function structuredData(page, canonical) {
     description: page.description,
     inLanguage: page.lang || "en",
     isPartOf: { "@type": "WebSite", name: "VoiceScope", url: APP },
-  }];
+  };
+  if (page.visuals?.[0]) {
+    webPage.primaryImageOfPage = {
+      "@type": "ImageObject",
+      contentUrl: `${SITE}/assets/${page.visuals[0].asset}`,
+      caption: page.visuals[0].caption,
+    };
+  }
+  const graph = [webPage];
   if (page.faq) {
     graph.push({
       "@type": "FAQPage",
@@ -405,13 +471,25 @@ function structuredData(page, canonical) {
   return JSON.stringify({ "@context": "https://schema.org", "@graph": graph });
 }
 
+function renderFigure(visual, assetPrefix, placement) {
+  if (!visual) return "";
+  const eager = placement === "lead";
+  return `<figure class="feature-visual ${placement === "lead" ? "lead-visual" : "article-visual"}">
+    <img src="${assetPrefix}assets/${escapeHtml(visual.asset)}" width="1200" height="675" alt="${escapeHtml(visual.alt)}" loading="${eager ? "eager" : "lazy"}" decoding="async"${eager ? ' fetchpriority="high"' : ""}>
+    <figcaption>${escapeHtml(visual.caption)}</figcaption>
+  </figure>`;
+}
+
 function renderPage(page) {
   const canonical = `${SITE}/${page.slug}/`;
   const assetPrefix = "../".repeat(page.slug.split("/").length);
   const labels = labelsFor(page);
-  const sections = page.faq
-    ? `<section><h2>VoiceScope FAQ</h2><div class="faq-list">${page.faq.map(([question, answer]) => `<details><summary>${escapeHtml(question)}</summary><p>${escapeHtml(answer)}</p></details>`).join("")}</div></section>`
-    : page.sections.map(([title, body]) => `<section><h2>${escapeHtml(title)}</h2>${body}</section>`).join("\n");
+  const sectionBlocks = page.faq
+    ? [`<section><h2>VoiceScope FAQ</h2><div class="faq-list">${page.faq.map(([question, answer]) => `<details><summary>${escapeHtml(question)}</summary><p>${escapeHtml(answer)}</p></details>`).join("")}</div></section>`]
+    : page.sections.map(([title, body]) => `<section><h2>${escapeHtml(title)}</h2>${body}</section>`);
+  const sections = sectionBlocks.map((section, index) =>
+    section + (index === 0 ? renderFigure(page.visuals?.[1], assetPrefix, "article") : "")
+  ).join("\n");
   const alternates = languagePages.some((language) => language.slug === page.slug) ? languageAlternates() : "";
   const cta = page.cta || "Start voice analysis";
   return `<!doctype html>
@@ -446,6 +524,7 @@ function renderPage(page) {
         </div>
         <aside class="hero-aside"><strong>${escapeHtml(labels.glance)}</strong><p>${escapeHtml(page.aside)}</p></aside>
       </div>
+      ${renderFigure(page.visuals?.[0], assetPrefix, "lead")}
       <div class="content-grid" id="guide"><article class="article">${sections}</article>${sideNavigation(page)}</div>
     </main>
     ${footer(page)}
@@ -455,17 +534,23 @@ function renderPage(page) {
 </html>`;
 }
 
-function renderLanguagePage(language) {
+function createLanguagePage(language) {
   const labels = labelsFor(language);
-  return renderPage({
+  const visualText = LANGUAGE_VISUALS[language.code];
+  return {
     ...language,
     aside: language.tips.join(" "),
+    visuals: [{ asset: "pitch-contour.svg", ...visualText }],
     sections: [
       [language.sectionTitle, `<p>${escapeHtml(language.sectionBody)}</p>`],
       [language.tipsTitle, `<ul>${language.tips.map((tip) => `<li>${escapeHtml(tip)}</li>`).join("")}</ul>`],
       ["VoiceScope", `<p><a href="${APP}?lang=${language.code}">${escapeHtml(language.cta)}</a>. <a href="${SITE}/methodology/">${escapeHtml(labels.method)}</a> · <a href="${SITE}/accuracy/">${escapeHtml(labels.accuracy)}</a> · <a href="${SITE}/privacy/">${escapeHtml(labels.privacy)}</a></p>`],
     ],
-  });
+  };
+}
+
+function renderLanguagePage(language) {
+  return renderPage(createLanguagePage(language));
 }
 
 function renderSitemap(allPages) {
@@ -477,23 +562,23 @@ function renderSitemap(allPages) {
     `<xhtml:link rel="alternate" hreflang="en" href="${APP}"/>`,
     ...languagePages.map((language) => `<xhtml:link rel="alternate" hreflang="${language.code}" href="${SITE}/${language.slug}/"/>`),
   ].join("");
+  const imageTag = (asset) => asset ? `<image:image><image:loc>${SITE}/assets/${asset}</image:loc></image:image>` : "";
   const entries = [
-    `<url><loc>${APP}</loc><lastmod>${homeLastModified}</lastmod>${alternates}</url>`,
+    `<url><loc>${APP}</loc><lastmod>${homeLastModified}</lastmod>${alternates}${imageTag("pitch-contour.svg")}</url>`,
     ...allPages.map((page) => {
       const localized = localizedSlugs.has(page.slug) ? alternates : "";
-      return `<url><loc>${SITE}/${page.slug}/</loc><lastmod>${lastModified}</lastmod>${localized}</url>`;
+      return `<url><loc>${SITE}/${page.slug}/</loc><lastmod>${lastModified}</lastmod>${localized}${imageTag(page.visuals?.[0]?.asset)}</url>`;
     }),
   ];
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n  ${entries.join("\n  ")}\n</urlset>\n`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n  ${entries.join("\n  ")}\n</urlset>\n`;
 }
 
 function build(outputDirectory) {
-  const allPages = [...pages, ...languagePages];
+  const allPages = [...pages, ...languagePages.map(createLanguagePage)];
   for (const page of allPages) {
     const directory = path.join(outputDirectory, page.slug);
     fs.mkdirSync(directory, { recursive: true });
-    const html = languagePages.includes(page) ? renderLanguagePage(page) : renderPage(page);
-    fs.writeFileSync(path.join(directory, "index.html"), html);
+    fs.writeFileSync(path.join(directory, "index.html"), renderPage(page));
   }
   fs.writeFileSync(path.join(outputDirectory, "sitemap.xml"), renderSitemap(allPages));
   return allPages.map((page) => page.slug);

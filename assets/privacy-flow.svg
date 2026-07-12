@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <rect width="1200" height="675" rx="28" fill="#111419"/>
+  <rect x="1" y="1" width="1198" height="673" rx="27" fill="none" stroke="#293039"/>
+  <g font-family="Outfit,Arial,sans-serif">
+    <text x="72" y="78" fill="#49c3ad" font-size="18" font-weight="700" letter-spacing="3">LOCAL AUDIO PATH</text>
+    <text x="72" y="126" fill="#eef1f3" font-size="40" font-weight="650">The recording stays inside the browser</text>
+    <g transform="translate(74 210)">
+      <rect width="240" height="220" rx="22" fill="#15191f" stroke="#293039"/>
+      <path d="M94 55a26 26 0 0 1 52 0v57a26 26 0 0 1-52 0zM78 104v9a42 42 0 0 0 84 0v-9M120 155v28" fill="none" stroke="#49c3ad" stroke-width="5" stroke-linecap="round"/>
+      <text x="120" y="201" fill="#eef1f3" font-size="17" font-weight="650" text-anchor="middle">MICROPHONE</text>
+    </g>
+    <path d="M336 320H430" stroke="#49c3ad" stroke-width="3" stroke-dasharray="8 8"/>
+    <path d="M416 308L430 320L416 332" fill="none" stroke="#49c3ad" stroke-width="3"/>
+    <g transform="translate(452 180)">
+      <rect width="342" height="280" rx="24" fill="#18201e" stroke="#49c3ad"/>
+      <rect x="42" y="48" width="258" height="160" rx="12" fill="#111419" stroke="#38434d"/>
+      <path d="M62 159 C92 132 117 179 147 148 S203 118 228 151 S270 170 284 136" fill="none" stroke="#49c3ad" stroke-width="4"/>
+      <text x="171" y="250" fill="#eef1f3" font-size="18" font-weight="650" text-anchor="middle">ANALYSIS + INDEXEDDB</text>
+    </g>
+    <path d="M816 320H892" stroke="#53606b" stroke-width="3" stroke-dasharray="8 8"/>
+    <g transform="translate(908 230)" opacity=".7">
+      <path d="M50 134h146c31 0 48-20 48-45 0-24-17-42-40-45C192 15 168 0 136 0 97 0 66 24 56 58 24 61 0 84 0 111c0 13 5 23 14 31" fill="none" stroke="#7c8792" stroke-width="5"/>
+      <path d="M22 18L224 156" stroke="#df756e" stroke-width="7" stroke-linecap="round"/>
+      <text x="122" y="196" fill="#8d98a4" font-size="17" font-weight="650" text-anchor="middle">NO AUDIO CLOUD</text>
+    </g>
+    <text x="72" y="570" fill="#8d98a4" font-size="17">WAV, pitch contour, and recent history remain on the current device</text>
+  </g>
+</svg>

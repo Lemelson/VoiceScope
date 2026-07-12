@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <rect width="1200" height="675" rx="28" fill="#111419"/>
+  <rect x="1" y="1" width="1198" height="673" rx="27" fill="none" stroke="#293039"/>
+  <g font-family="Outfit,Arial,sans-serif">
+    <text x="72" y="78" fill="#49c3ad" font-size="18" font-weight="700" letter-spacing="3">INSPECTABLE BY DESIGN</text>
+    <text x="72" y="126" fill="#eef1f3" font-size="40" font-weight="650">The result and the method stay connected</text>
+    <g transform="translate(72 185)">
+      <rect width="500" height="350" rx="20" fill="#15191f" stroke="#293039"/>
+      <g fill="#7f8a95" font-family="ui-monospace,SFMono-Regular,monospace" font-size="16">
+        <text x="34" y="56">01  frame → yin(samples)</text><text x="34" y="94">02  candidate.f0</text>
+        <text x="34" y="132">03  candidate.confidence</text><text x="34" y="170">04  correctOctave()</text>
+        <text x="34" y="208">05  smartOutlierMask()</text><text x="34" y="246">06  renderContour()</text>
+      </g>
+      <rect x="31" y="281" width="180" height="38" rx="19" fill="#18201e" stroke="#49c3ad"/>
+      <text x="121" y="306" fill="#49c3ad" font-size="14" font-weight="700" text-anchor="middle">TESTED PIPELINE</text>
+    </g>
+    <g transform="translate(630 185)">
+      <rect width="498" height="350" rx="20" fill="#15191f" stroke="#293039"/>
+      <path d="M38 237 C86 209 119 244 161 214 S237 160 278 192 S352 242 391 205 S445 168 462 183" fill="none" stroke="#49c3ad" stroke-width="5"/>
+      <g fill="#d8dde1"><circle cx="38" cy="237" r="5"/><circle cx="161" cy="214" r="5"/><circle cx="278" cy="192" r="5"/><circle cx="391" cy="205" r="5"/><circle cx="462" cy="183" r="5"/></g>
+      <text x="38" y="60" fill="#eef1f3" font-size="24" font-weight="650">96 Hz · G2</text>
+      <text x="38" y="91" fill="#7f8a95" font-size="15">processed detections remain visible</text>
+      <path d="M38 286H462" stroke="#293039"/><text x="38" y="320" fill="#49c3ad" font-size="14" font-weight="700">SOURCE + TESTS + LIMITS</text>
+    </g>
+    <text x="72" y="605" fill="#8d98a4" font-size="17">Open source makes the measurement reviewable instead of mysterious</text>
+  </g>
+</svg>

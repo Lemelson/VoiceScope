@@ -124,6 +124,7 @@ Build the same artifact locally:
 ```bash
 mkdir -p public
 cp index.html i18n.js content.js analysis-core.js seo.css favicon.svg og-image.png robots.txt public/
+cp -R assets public/assets
 HOME_LASTMOD="$(git log -1 --format=%cs -- index.html)" \
 SITE_LASTMOD="$(git log -1 --format=%cs -- scripts/build-seo-pages.js)" \
 node scripts/build-seo-pages.js public

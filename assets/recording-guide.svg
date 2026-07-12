@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <rect width="1200" height="675" rx="28" fill="#111419"/>
+  <rect x="1" y="1" width="1198" height="673" rx="27" fill="none" stroke="#293039"/>
+  <g font-family="Outfit,Arial,sans-serif">
+    <text x="72" y="78" fill="#49c3ad" font-size="18" font-weight="700" letter-spacing="3">REPEATABLE RECORDING</text>
+    <text x="72" y="126" fill="#eef1f3" font-size="40" font-weight="650">Make each take comparable</text>
+    <g transform="translate(80 190)">
+      <rect x="0" y="0" width="265" height="310" rx="20" fill="#15191f" stroke="#293039"/>
+      <path d="M112 71a34 34 0 0 1 68 0v74a34 34 0 0 1-68 0z" fill="none" stroke="#49c3ad" stroke-width="6"/>
+      <path d="M91 136v12a55 55 0 0 0 110 0v-12M146 203v45M110 248h72" fill="none" stroke="#8d98a4" stroke-width="5" stroke-linecap="round"/>
+      <text x="132" y="286" text-anchor="middle" fill="#eef1f3" font-size="18" font-weight="650">SAME MICROPHONE</text>
+    </g>
+    <g transform="translate(405 190)">
+      <rect width="305" height="310" rx="20" fill="#15191f" stroke="#293039"/>
+      <path d="M48 140H257" stroke="#293039" stroke-width="2" stroke-dasharray="8 8"/>
+      <path d="M62 96v88M244 96v88" stroke="#49c3ad" stroke-width="4" stroke-linecap="round"/>
+      <path d="M62 140h182" stroke="#49c3ad" stroke-width="3" marker-start="url(#a)" marker-end="url(#a)"/>
+      <defs><marker id="a" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5"><path d="M7 0L0 3.5L7 7" fill="none" stroke="#49c3ad"/></marker></defs>
+      <text x="153" y="124" fill="#eef1f3" font-size="30" font-weight="650" text-anchor="middle">10–20 cm</text>
+      <text x="153" y="286" text-anchor="middle" fill="#eef1f3" font-size="18" font-weight="650">SAME DISTANCE</text>
+    </g>
+    <g transform="translate(770 190)">
+      <rect width="350" height="310" rx="20" fill="#15191f" stroke="#293039"/>
+      <text x="175" y="105" fill="#eef1f3" font-size="58" font-weight="650" text-anchor="middle">00:20</text>
+      <path d="M45 169 C70 139 91 201 116 169 S163 139 188 169 S235 201 260 169 S307 139 330 169" fill="none" stroke="#49c3ad" stroke-width="4"/>
+      <text x="175" y="286" text-anchor="middle" fill="#eef1f3" font-size="18" font-weight="650">NATURAL SPEECH</text>
+    </g>
+    <text x="80" y="580" fill="#8d98a4" font-size="17">Quiet room · stable position · 15–30 seconds · three takes</text>
+  </g>
+</svg>
