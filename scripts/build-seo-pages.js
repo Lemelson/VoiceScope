@@ -1,5 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const { LANGUAGES } = require("../i18n.js");
 
 const SITE = "https://lemelson.github.io/VoiceScope";
 const APP = `${SITE}/`;
@@ -385,17 +386,54 @@ function labelsFor(page) {
   return CHROME[(page.lang || "en").split("-")[0]] || CHROME.en;
 }
 
+function languageDestination(code) {
+  if (code === "en") return APP;
+  const language = languagePages.find((candidate) => candidate.code === code);
+  return language ? `${SITE}/${language.slug}/` : APP;
+}
+
+function guideMenu(labels) {
+  return `<details class="nav-menu">
+        <summary>${escapeHtml(labels.explore)}</summary>
+        <div class="nav-popover">
+          <a href="${SITE}/voice-pitch-analyzer/">Voice pitch analyzer</a>
+          <a href="${SITE}/voice-frequency-test/">Voice frequency test</a>
+          <a href="${SITE}/how-deep-is-my-voice/">How deep is my voice?</a>
+          <a href="${SITE}/voicecel-test/">Voicecel test</a>
+          <a href="${SITE}/voicecel-alternative/">Voicecel alternative</a>
+          <a href="${SITE}/about/">${escapeHtml(labels.about)}</a>
+          <a href="${SITE}/privacy/">${escapeHtml(labels.privacy)}</a>
+          <a href="${SITE}/accuracy/">${escapeHtml(labels.accuracy)}</a>
+        </div>
+      </details>`;
+}
+
+function languageSelect(page, labels) {
+  const active = (page.lang || "en").split("-")[0];
+  return `<label class="language-picker">
+      <span class="sr-only">${escapeHtml(labels.languages)}</span>
+      <select data-language-select aria-label="${escapeHtml(labels.languages)}">
+        ${LANGUAGES.map((language) => `<option value="${language.code}" data-url="${languageDestination(language.code)}"${language.code === active ? " selected" : ""}>${language.flag} ${escapeHtml(language.name)}</option>`).join("\n        ")}
+      </select>
+    </label>`;
+}
+
 function header(page) {
   const labels = labelsFor(page);
   const lang = page.lang || "en";
   return `<header class="site-header">
     <a class="brand" href="${APP}" aria-label="VoiceScope home">Voice<i>Scope</i></a>
     <nav class="site-nav" aria-label="${escapeHtml(labels.explore)}">
+      <a href="${APP}?lang=${lang.split("-")[0]}">${escapeHtml(labels.analyzer)}</a>
+      ${guideMenu(labels)}
       <a href="${SITE}/methodology/">${labels.method}</a>
-      <a href="${SITE}/accuracy/">${labels.accuracy}</a>
       <a href="${SITE}/faq/">${labels.faq}</a>
     </nav>
-    <a class="header-cta" href="${APP}?lang=${lang.split("-")[0]}">${labels.open}</a>
+    <div class="header-tools">
+      ${languageSelect(page, labels)}
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme" title="Toggle theme">☀</button>
+      <a class="header-cta" href="${APP}?lang=${lang.split("-")[0]}">${labels.open}</a>
+    </div>
   </header>`;
 }
 
@@ -427,14 +465,13 @@ function sideNavigation(page) {
 function footer(page) {
   const labels = labelsFor(page);
   return `<div class="language-nav" aria-label="${escapeHtml(labels.languages)}">
-    <a href="${APP}" hreflang="en">English</a>
-    ${languagePages.map((language) => `<a href="${SITE}/${language.slug}/" hreflang="${language.code}">${escapeHtml(language.name)}</a>`).join("\n    ")}
+    ${LANGUAGES.map((language) => `<a href="${languageDestination(language.code)}" hreflang="${language.code}">${language.flag} ${escapeHtml(language.name)}</a>`).join("\n    ")}
   </div>
   <footer class="site-footer">
     <div class="footer-row"><span>${escapeHtml(labels.footer)}</span>
       <nav class="footer-links" aria-label="${escapeHtml(labels.explore)}">
         <a href="${SITE}/about/">${escapeHtml(labels.about)}</a><a href="${SITE}/privacy/">${escapeHtml(labels.privacy)}</a>
-        <a href="${SITE}/methodology/">${escapeHtml(labels.method)}</a><a href="${SITE}/accuracy/">${escapeHtml(labels.accuracy)}</a>
+        <a href="${SITE}/methodology/">${escapeHtml(labels.method)}</a><a href="${SITE}/accuracy/">${escapeHtml(labels.accuracy)}</a><a href="${SITE}/faq/">${escapeHtml(labels.faq)}</a>
         <a href="https://github.com/Lemelson/VoiceScope">${escapeHtml(labels.source)}</a>
       </nav>
     </div>
@@ -507,6 +544,7 @@ function renderPage(page) {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="${assetPrefix}seo.css">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem("vs-theme")||"dark"}catch(_){document.documentElement.dataset.theme="dark"}</script>
   <meta property="og:type" content="website"><meta property="og:site_name" content="VoiceScope">
   <meta property="og:title" content="${escapeHtml(page.title)}"><meta property="og:description" content="${escapeHtml(page.description)}">
   <meta property="og:url" content="${canonical}"><meta property="og:image" content="${SITE}/og-image.png">
@@ -529,6 +567,16 @@ function renderPage(page) {
     </main>
     ${footer(page)}
   </div>
+  <script>
+    (()=>{
+      const root=document.documentElement;
+      const themeButton=document.querySelector("[data-theme-toggle]");
+      const syncTheme=()=>{const dark=root.dataset.theme!=="light";themeButton.textContent=dark?"☀":"🌙";themeButton.setAttribute("aria-pressed",String(!dark));};
+      syncTheme();
+      themeButton.addEventListener("click",()=>{root.dataset.theme=root.dataset.theme==="light"?"dark":"light";try{localStorage.setItem("vs-theme",root.dataset.theme)}catch(_){}syncTheme();});
+      document.querySelector("[data-language-select]").addEventListener("change",event=>{const option=event.target.selectedOptions[0];if(option?.dataset.url)location.href=option.dataset.url;});
+    })();
+  </script>
   <script data-goatcounter="https://voicescope.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>`;

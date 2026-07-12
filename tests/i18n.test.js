@@ -22,9 +22,10 @@ test("ships ten complete language bundles", () => {
   }
 });
 
-test("every language option has a native name and locale", () => {
+test("every language option has a native name, flag, and locale", () => {
   for (const language of LANGUAGES) {
     assert.ok(language.name);
+    assert.match(language.flag, /\p{Regional_Indicator}{2}/u);
     assert.ok(language.locale);
   }
 });

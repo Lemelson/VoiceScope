@@ -108,20 +108,31 @@
   .wrap{width:100%; max-width:880px}
 
   /* top bar */
-  .topbar{display:flex; align-items:center; gap:12px; padding:22px 0 0}
-  .wordmark{font-weight:700; font-size:17px; letter-spacing:-.2px}
+  .topbar{display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:24px; min-height:76px; border-bottom:1px solid var(--line)}
+  .wordmark{font-weight:700; font-size:17px; letter-spacing:-.2px; color:var(--text); text-decoration:none}
   .wordmark i{font-style:normal; color:var(--accent)}
-  .lang-picker{margin-left:auto; position:relative; display:flex; align-items:center}
-  .lang-picker::before{content:'文'; position:absolute; left:11px; color:var(--accent); font-size:12px; font-weight:700; pointer-events:none}
+  .top-nav{display:flex; justify-content:center; align-items:center; gap:22px; min-width:0}
+  .top-nav>a,.top-nav summary{color:var(--muted); font-size:13px; font-weight:600; text-decoration:none; white-space:nowrap}
+  .top-nav>a:hover,.top-nav summary:hover{color:var(--text)}
+  .nav-menu{position:relative}
+  .nav-menu summary{cursor:pointer; list-style:none}
+  .nav-menu summary::-webkit-details-marker{display:none}
+  .nav-menu summary::after{content:'⌄'; display:inline-block; margin-left:6px; color:var(--muted2)}
+  .nav-popover{position:absolute; z-index:30; top:calc(100% + 14px); left:50%; width:250px; padding:8px;
+    border:1px solid var(--line); border-radius:14px; background:var(--panel); box-shadow:0 18px 45px rgba(0,0,0,.22); transform:translateX(-50%)}
+  .nav-popover a{display:block; padding:9px 11px; border-radius:8px; color:var(--muted); font-size:13px; font-weight:600; text-decoration:none}
+  .nav-popover a:hover{background:var(--panel2); color:var(--text)}
+  .header-tools{display:flex; align-items:center; gap:8px}
+  .lang-picker{position:relative; display:flex; align-items:center}
   .lang-picker::after{content:'⌄'; position:absolute; right:11px; top:6px; color:var(--muted); font-size:16px; pointer-events:none}
-  .lang-picker select{appearance:none; height:36px; min-width:146px; padding:0 31px 0 31px; border-radius:10px;
+  .lang-picker select{appearance:none; height:42px; width:144px; padding:0 30px 0 11px; border-radius:10px;
     background:var(--panel); color:var(--text); border:1px solid var(--line); cursor:pointer; font:500 14px/1 "Outfit",sans-serif;
     transition:border-color .2s, background-color .2s, transform .15s}
   .lang-picker select:hover{border-color:var(--accent); background:var(--panel2)}
   .lang-picker select:active{transform:translateY(1px)}
   .lang-picker select:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
-  .theme-btn{margin-left:auto; background:transparent; border:1px solid var(--line); color:var(--muted);
-    width:36px; height:36px; padding:0; border-radius:10px; font-size:15px; cursor:pointer; flex:0 0 auto;
+  .theme-btn{background:var(--panel); border:1px solid var(--line); color:var(--muted);
+    width:42px; height:42px; padding:0; border-radius:10px; font-size:15px; cursor:pointer; flex:0 0 auto;
     transition:border-color .2s, color .2s}
   .theme-btn:hover{border-color:var(--accent); color:var(--accent)}
   .theme-btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
@@ -360,10 +371,16 @@
   footer h2{font-size:13px; font-weight:600; color:var(--muted); margin:0 0 6px; letter-spacing:0}
   footer p{margin:4px 0; max-width:64ch}
   .foot-links{display:flex; gap:16px; flex-wrap:wrap; margin-top:8px; font-size:12.5px}
+  .footer-language-nav{display:flex; flex-wrap:wrap; gap:8px 17px; margin-top:26px; padding:20px 0; border-top:1px solid var(--line)}
+  .footer-language-nav a{color:var(--muted); font-weight:600; text-decoration:none}
+  .footer-language-nav a:hover{color:var(--text)}
 
   @media (max-width:560px){
     body{padding-left:16px; padding-right:16px}
-    .topbar{gap:10px; padding-top:max(14px,env(safe-area-inset-top))}
+    .topbar{grid-template-columns:1fr auto; gap:10px 16px; padding-top:max(8px,env(safe-area-inset-top))}
+    .top-nav{grid-column:1/-1; grid-row:2; justify-content:flex-start; flex-wrap:wrap; gap:8px; padding:4px 0 12px}
+    .top-nav>a,.top-nav>details{flex:0 0 auto}
+    .nav-popover{position:fixed; top:120px; left:16px; right:16px; width:auto; transform:none}
     .hero{padding:38px 0 30px}
     .hero-cta{align-items:stretch}
     .hero-hint{display:none}
@@ -377,7 +394,7 @@
     #live .live-stat:not(.acc){grid-column:1 / 2}
     #live .live-stat.acc{grid-column:2 / 4}
     .timer{font-size:24px}
-    .lang-picker select{min-width:132px; max-width:150px; height:44px}
+    .lang-picker select{width:136px; height:44px}
     .lang-picker::after{top:10px}
     .theme-btn{width:44px; height:44px}
     .btn-rec{min-height:56px; justify-content:center}
@@ -417,19 +434,39 @@
   @media (max-width:350px){
     body{padding-left:12px; padding-right:12px}
     .wordmark{font-size:16px}
-    .lang-picker select{min-width:120px; max-width:132px; font-size:13px}
+    .lang-picker select{width:128px; font-size:13px}
   }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="topbar">
-    <div class="wordmark">Voice<i>Scope</i></div>
-    <label class="lang-picker" id="langPicker">
-      <span class="sr-only" data-i18n="language">Language</span>
-      <select id="siteLang" aria-label="Language"></select>
-    </label>
-    <button id="themeBtn" class="theme-btn" title="Toggle theme" aria-label="Toggle theme">☀</button>
+    <a class="wordmark" href="./" aria-label="VoiceScope home">Voice<i>Scope</i></a>
+    <nav class="top-nav" aria-label="VoiceScope">
+      <a href="#hero" data-i18n="footerTitle">Online voice pitch analyzer</a>
+      <details class="nav-menu">
+        <summary data-i18n="how">How it works</summary>
+        <div class="nav-popover">
+          <a href="voice-pitch-analyzer/">Voice pitch analyzer</a>
+          <a href="voice-frequency-test/">Voice frequency test</a>
+          <a href="how-deep-is-my-voice/">How deep is my voice?</a>
+          <a href="voicecel-test/">Voicecel test</a>
+          <a href="voicecel-alternative/">Voicecel alternative</a>
+          <a href="about/" data-i18n="aboutLink">About</a>
+          <a href="privacy/" data-i18n="privacyLink">Privacy</a>
+          <a href="accuracy/" data-i18n="accuracyLink">Accuracy</a>
+        </div>
+      </details>
+      <a href="methodology/" data-i18n="methodologyLink">Methodology</a>
+      <a href="faq/" data-i18n="faqLink">FAQ</a>
+    </nav>
+    <div class="header-tools">
+      <label class="lang-picker" id="langPicker">
+        <span class="sr-only" data-i18n="language">Language</span>
+        <select id="siteLang" aria-label="Language"></select>
+      </label>
+      <button id="themeBtn" class="theme-btn" title="Toggle theme" aria-label="Toggle theme">☀</button>
+    </div>
   </header>
 
   <div id="banner" class="banner" role="alert"></div>
@@ -644,6 +681,13 @@
     <h2 data-i18n="footerTitle">Online voice pitch analyzer</h2>
     <p data-i18n="footerBody">VoiceScope measures the fundamental frequency (F0), converts it to musical notes, and shows how pitch changes over time.</p>
     <p data-i18n="footerPrivacy">Recording and analysis happen locally with the YIN algorithm; nothing is uploaded. Results are a reference, not a medical assessment.</p>
+	    <nav class="footer-language-nav" aria-label="Language versions">
+	      <a href="./" hreflang="en">🇬🇧 English</a><a href="ru/" hreflang="ru">🇷🇺 Русский</a>
+	      <a href="es/" hreflang="es">🇪🇸 Español</a><a href="de/" hreflang="de">🇩🇪 Deutsch</a>
+	      <a href="fr/" hreflang="fr">🇫🇷 Français</a><a href="pt/" hreflang="pt">🇧🇷 Português</a>
+	      <a href="zh/" hreflang="zh">🇨🇳 中文</a><a href="ja/" hreflang="ja">🇯🇵 日本語</a>
+	      <a href="ko/" hreflang="ko">🇰🇷 한국어</a><a href="hi/" hreflang="hi">🇮🇳 हिन्दी</a>
+	    </nav>
 	    <div class="foot-links">
 	      <a href="https://github.com/Lemelson/VoiceScope" target="_blank" rel="noreferrer" data-i18n="source">Source code on GitHub</a>
 	      <a href="https://github.com/Lemelson/VoiceScope#readme" target="_blank" rel="noreferrer" data-i18n="how">How it works</a>
@@ -681,7 +725,7 @@ const t = (key, variables) => L10N.translate(uiLang, key, variables);
 function buildLanguageMenu(){
   const select = $('#siteLang');
   select.innerHTML = L10N.orderedLanguages(systemLanguage)
-    .map(language=>`<option value="${language.code}">${language.name}</option>`).join('');
+    .map(language=>`<option value="${language.code}">${language.flag} ${language.name}</option>`).join('');
   select.value = uiLang;
 }
 

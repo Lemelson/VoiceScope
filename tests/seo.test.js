@@ -36,6 +36,20 @@ test("builds every search-intent, trust, and language page", () => {
       assert.ok(fs.existsSync(path.join(__dirname, "..", "assets", asset)), `${asset} must exist`);
     }
     assert.match(html, /"primaryImageOfPage":\{"@type":"ImageObject"/);
+    assert.match(html, /class="site-header"/);
+    assert.match(html, /data-language-select/);
+    assert.match(html, /data-theme-toggle/);
+    assert.match(html, /localStorage\.getItem\("vs-theme"\)\|\|"dark"/);
+    for (const route of [
+      "voice-pitch-analyzer", "voice-frequency-test", "how-deep-is-my-voice",
+      "voicecel-test", "voicecel-alternative", "about", "privacy",
+      "methodology", "accuracy", "faq",
+    ]) {
+      assert.match(html, new RegExp(`href=["']https://lemelson\\.github\\.io/VoiceScope/${route}/["']`), `${page.slug} header needs ${route}`);
+    }
+    for (const language of LANGUAGES) {
+      assert.match(html, new RegExp(`${language.flag} ${language.name}`), `${page.slug} needs the ${language.code} language option`);
+    }
   }
 });
 
@@ -91,6 +105,12 @@ test("main analyzer contains indexable guidance and routes explicit languages", 
   assert.match(html, /src="assets\/smart-filter\.svg"[^>]+alt="[^"]+"/);
   assert.match(html, /Free online voice pitch analyzer/);
   assert.match(html, /new URLSearchParams\(location\.search\)\.get\('lang'\)/);
+  assert.match(html, /<header class="topbar">/);
+  assert.match(html, /<details class="nav-menu">/);
+  assert.match(html, /<nav class="footer-language-nav"/);
+  for (const language of LANGUAGES) {
+    assert.match(html, new RegExp(`${language.flag} ${language.name}`));
+  }
   for (const route of [
     "voice-pitch-analyzer", "voice-frequency-test", "how-deep-is-my-voice",
     "voicecel-test", "voicecel-alternative", "methodology", "accuracy", "faq",
