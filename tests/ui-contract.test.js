@@ -41,3 +41,12 @@ test("mobile live status uses a stable grid instead of wrapping flex content", (
   assert.match(html, /#live \.live-stat\{grid-row:2;/);
   assert.match(html, /\.live-stat b\{height:26px; line-height:26px\}/);
 });
+
+test("mobile recording controls remain reachable and touch-friendly", () => {
+  assert.match(html, /#live\.on\{position:sticky;/);
+  assert.match(html, /\.theme-btn\{width:44px; height:44px\}/);
+  assert.match(html, /\.btn-ghost\{min-height:44px\}/);
+  assert.match(html, /#live \.btn-stop\{[^}]*min-height:44px/);
+  assert.match(html, /\.ibtn\{min-height:44px\}/);
+  assert.match(html, /\.hero-hint\{display:none\}/);
+});

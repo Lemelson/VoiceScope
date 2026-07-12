@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- The Pages build adds hreflang alternates and refreshes lastmod automatically. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://lemelson.github.io/VoiceScope/</loc>
-    <lastmod>2026-07-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
-  </url>
+  <url><loc>https://lemelson.github.io/VoiceScope/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://lemelson.github.io/VoiceScope/voice-pitch-analyzer/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://lemelson.github.io/VoiceScope/voice-frequency-test/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://lemelson.github.io/VoiceScope/how-deep-is-my-voice/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://lemelson.github.io/VoiceScope/voicecel-test/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://lemelson.github.io/VoiceScope/voicecel-alternative/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://lemelson.github.io/VoiceScope/about/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://lemelson.github.io/VoiceScope/privacy/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://lemelson.github.io/VoiceScope/methodology/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://lemelson.github.io/VoiceScope/accuracy/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://lemelson.github.io/VoiceScope/faq/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://lemelson.github.io/VoiceScope/ru/izmerit-chastotu-golosa/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://lemelson.github.io/VoiceScope/ru/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://lemelson.github.io/VoiceScope/es/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://lemelson.github.io/VoiceScope/de/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://lemelson.github.io/VoiceScope/fr/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://lemelson.github.io/VoiceScope/pt/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://lemelson.github.io/VoiceScope/zh/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://lemelson.github.io/VoiceScope/ja/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://lemelson.github.io/VoiceScope/ko/</loc><lastmod>2026-07-12</lastmod></url>
+  <url><loc>https://lemelson.github.io/VoiceScope/hi/</loc><lastmod>2026-07-12</lastmod></url>
 </urlset>

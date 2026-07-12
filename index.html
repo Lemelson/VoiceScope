@@ -5,11 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>VoiceScope — free online voice pitch analyzer</title>
 <meta name="description" content="Free online voice pitch analyzer. Record your voice and see its fundamental frequency (F0) in hertz, musical notes, and how the pitch moves over time. A clean, private voicecel alternative — audio never leaves your browser." />
-<meta name="keywords" content="voice pitch analyzer, voice frequency analyzer, fundamental frequency, F0, voice pitch test, pitch detection, YIN, vocal range, voice notes, Hz, voicecel, voicecel alternative, deep voice test, анализатор голоса, высота голоса, частота голоса, тон голоса, определить высоту голоса онлайн" />
 <meta name="robots" content="index, follow, max-image-preview:large" />
 <meta name="author" content="Lemelson" />
 <meta name="theme-color" content="#0b0d10" />
 <link rel="canonical" href="https://lemelson.github.io/VoiceScope/" />
+<link rel="alternate" hreflang="x-default" href="https://lemelson.github.io/VoiceScope/" />
+<link rel="alternate" hreflang="en" href="https://lemelson.github.io/VoiceScope/" />
+<link rel="alternate" hreflang="ru" href="https://lemelson.github.io/VoiceScope/ru/" />
+<link rel="alternate" hreflang="es" href="https://lemelson.github.io/VoiceScope/es/" />
+<link rel="alternate" hreflang="de" href="https://lemelson.github.io/VoiceScope/de/" />
+<link rel="alternate" hreflang="fr" href="https://lemelson.github.io/VoiceScope/fr/" />
+<link rel="alternate" hreflang="pt" href="https://lemelson.github.io/VoiceScope/pt/" />
+<link rel="alternate" hreflang="zh" href="https://lemelson.github.io/VoiceScope/zh/" />
+<link rel="alternate" hreflang="ja" href="https://lemelson.github.io/VoiceScope/ja/" />
+<link rel="alternate" hreflang="ko" href="https://lemelson.github.io/VoiceScope/ko/" />
+<link rel="alternate" hreflang="hi" href="https://lemelson.github.io/VoiceScope/hi/" />
 <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 <meta property="og:type" content="website" />
 <meta property="og:locale" content="en_US" />
@@ -36,7 +46,7 @@
 <meta name="twitter:image" content="https://lemelson.github.io/VoiceScope/og-image.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -88,7 +98,7 @@
     font:15px/1.55 "Outfit",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
     -webkit-font-smoothing:antialiased;
     display:flex; flex-direction:column; align-items:center;
-    min-height:100dvh; padding:0 20px 72px;
+    min-height:100dvh; padding:0 20px calc(72px + env(safe-area-inset-bottom));
     transition:background .25s ease, color .25s ease;
   }
   .wrap{width:100%; max-width:880px}
@@ -98,10 +108,14 @@
   .wordmark{font-weight:700; font-size:17px; letter-spacing:-.2px}
   .wordmark i{font-style:normal; color:var(--accent)}
   .lang-picker{margin-left:auto; position:relative; display:flex; align-items:center}
-  .lang-picker::before{content:'◉'; position:absolute; left:11px; color:var(--accent); font-size:10px; pointer-events:none}
-  .lang-picker select{height:36px; min-width:128px; padding:0 30px 0 28px; border-radius:10px;
-    background:transparent; color:var(--text); border:1px solid var(--line); cursor:pointer; font-weight:500}
-  .lang-picker select:hover{border-color:var(--accent)}
+  .lang-picker::before{content:'文'; position:absolute; left:11px; color:var(--accent); font-size:12px; font-weight:700; pointer-events:none}
+  .lang-picker::after{content:'⌄'; position:absolute; right:11px; top:6px; color:var(--muted); font-size:16px; pointer-events:none}
+  .lang-picker select{appearance:none; height:36px; min-width:146px; padding:0 31px 0 31px; border-radius:10px;
+    background:var(--panel); color:var(--text); border:1px solid var(--line); cursor:pointer; font:500 14px/1 "Outfit",sans-serif;
+    transition:border-color .2s, background-color .2s, transform .15s}
+  .lang-picker select:hover{border-color:var(--accent); background:var(--panel2)}
+  .lang-picker select:active{transform:translateY(1px)}
+  .lang-picker select:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
   .theme-btn{margin-left:auto; background:transparent; border:1px solid var(--line); color:var(--muted);
     width:36px; height:36px; padding:0; border-radius:10px; font-size:15px; cursor:pointer; flex:0 0 auto;
     transition:border-color .2s, color .2s}
@@ -310,32 +324,89 @@
     padding:12px 15px; border-radius:12px; font-size:13.5px; margin:16px 0; display:none}
   .banner.on{display:block}
 
+  /* indexable product guide */
+  .seo-home{margin-top:72px; border-top:1px solid var(--line); padding-top:56px}
+  .seo-home[hidden]{display:none}
+  .seo-kicker{margin:0 0 10px; color:var(--accent); font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase}
+  .seo-home h2{max-width:720px; margin:0; font-size:clamp(26px,4vw,38px); line-height:1.12; letter-spacing:-.8px}
+  .seo-lead{max-width:68ch; margin:18px 0 0; color:var(--muted); font-size:16px; line-height:1.75}
+  .seo-grid{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(240px,.65fr); gap:48px; margin-top:48px}
+  .seo-copy h3{margin:34px 0 10px; font-size:19px; letter-spacing:-.2px}
+  .seo-copy h3:first-child{margin-top:0}
+  .seo-copy p,.seo-copy li{color:var(--muted); line-height:1.75}
+  .seo-copy ul{padding-left:19px}
+  .seo-side{border-left:1px solid var(--line); padding-left:28px}
+  .seo-side h3{margin:0 0 14px; font-size:14px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em}
+  .seo-links{display:grid; gap:0}
+  .seo-links a{display:block; padding:13px 0; border-top:1px solid var(--line); color:var(--text); text-decoration:none; font-weight:600}
+  .seo-links a:first-child{border-top:0}
+  .seo-links a:hover{color:var(--accent)}
+  .seo-faq{margin-top:56px}
+  .seo-faq h3{font-size:22px; margin:0 0 16px}
+  .seo-faq details{border-top:1px solid var(--line); padding:16px 0}
+  .seo-faq summary{cursor:pointer; color:var(--text); font-weight:600}
+  .seo-faq p{max-width:70ch; color:var(--muted); line-height:1.7; margin:10px 0 0}
+
   footer{margin-top:44px; color:var(--muted2); font-size:12.5px; line-height:1.7}
   footer h2{font-size:13px; font-weight:600; color:var(--muted); margin:0 0 6px; letter-spacing:0}
   footer p{margin:4px 0; max-width:64ch}
   .foot-links{display:flex; gap:16px; flex-wrap:wrap; margin-top:8px; font-size:12.5px}
 
   @media (max-width:560px){
+    body{padding-left:16px; padding-right:16px}
+    .topbar{gap:10px; padding-top:max(14px,env(safe-area-inset-top))}
     .hero{padding:38px 0 30px}
+    .hero-cta{align-items:stretch}
+    .hero-hint{display:none}
     .card{padding:16px}
-    #live.on{position:relative; top:auto; grid-template-columns:auto minmax(70px,1fr) auto; gap:10px 12px}
+    #live.on{position:sticky; top:max(8px,env(safe-area-inset-top)); grid-template-columns:auto minmax(70px,1fr) auto;
+      gap:10px 12px; box-shadow:0 10px 30px color-mix(in srgb,var(--bg) 76%,transparent)}
     #live .timer{grid-column:1; grid-row:1}
     #live .meter{grid-column:2; grid-row:1}
-    #live .btn-stop{grid-column:3; grid-row:1; padding:10px 17px}
+    #live .btn-stop{grid-column:3; grid-row:1; min-height:44px; padding:10px 17px}
     #live .live-stat{grid-row:2; min-width:0; min-height:52px}
     #live .live-stat:not(.acc){grid-column:1 / 2}
     #live .live-stat.acc{grid-column:2 / 4}
     .timer{font-size:24px}
-    .lang-picker select{min-width:112px; max-width:140px}
+    .lang-picker select{min-width:132px; max-width:150px; height:44px}
+    .lang-picker::after{top:10px}
+    .theme-btn{width:44px; height:44px}
+    .btn-rec{min-height:56px; justify-content:center}
+    .btn-ghost{min-height:44px}
+    .read-top{align-items:center; margin-bottom:10px}
+    .read-top .btn-ghost{padding-inline:13px}
     .stats{grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px}
     .stat{min-height:72px; padding:12px}
     .stat.hero-stat{grid-column:1/-1; grid-row:auto; min-height:108px}
     .stat.hero-stat .v{font-size:30px}
-    .audio-player{grid-template-columns:42px auto minmax(80px,1fr) 36px; gap:9px; padding:10px}
+    .audio-player{grid-template-columns:44px auto minmax(64px,1fr) 44px; gap:8px; padding:10px}
+    .player-icon,.player-icon.secondary{width:44px; height:44px}
+    .player-range{height:32px; background:linear-gradient(transparent 14px,var(--line) 14px 18px,transparent 18px)}
+    .player-range::-webkit-slider-thumb{width:22px; height:22px; margin-top:-9px}
+    .player-range::-moz-range-thumb{width:16px; height:16px}
     .player-volume{display:none}
+    details.adv > summary{min-height:44px; display:flex; align-items:center}
+    .preset{min-height:44px; padding:9px 15px}
+    .check{min-height:44px}
+    .check input{width:20px; height:20px; flex:0 0 auto}
+    .ctl{max-width:none; width:100%}
+    .ctl input[type=range]{min-height:44px}
     .hist-item{grid-template-columns:1fr; gap:11px; padding:16px 0}
     .hist-btns{justify-content:flex-start}
     .hist-btns .act-load{flex:1}
+    .ibtn{min-height:44px}
+    .ibtn.act-play,.ibtn.del{width:44px}
+    .foot-links{gap:4px 16px}
+    .foot-links a{display:inline-flex; align-items:center; min-height:44px}
+    .seo-home{margin-top:52px; padding-top:40px}
+    .seo-grid{grid-template-columns:1fr; gap:38px; margin-top:36px}
+    .seo-side{border-left:0; border-top:1px solid var(--line); padding:28px 0 0}
+  }
+
+  @media (max-width:350px){
+    body{padding-left:12px; padding-right:12px}
+    .wordmark{font-size:16px}
+    .lang-picker select{min-width:120px; max-width:132px; font-size:13px}
   }
 </style>
 </head>
@@ -354,7 +425,7 @@
 
   <!-- hero -->
   <section id="hero" class="hero">
-    <h1 data-i18n-html="heroTitle">Record your voice.<br />See <em>every note</em> it hits.</h1>
+    <h1 data-i18n-html="heroTitle">Free online voice pitch analyzer.<br />See <em>every note</em> it hits.</h1>
     <p data-i18n="heroBody">Read a short passage aloud and VoiceScope maps your pitch in real time — frequency in hertz, musical notes, and how it moves over time. Everything runs in your browser; audio never leaves your device.</p>
     <div class="hero-cta">
       <button id="rec" class="btn-rec"><span class="rec-dot"></span><span data-i18n="start">Start recording</span></button>
@@ -410,7 +481,7 @@
       </div>
       <div class="hint" style="margin:8px 0 0" data-i18n="chartHint">▶ Click the chart to play from that point; click near the line to pause. Hover to see the time.</div>
       <div class="legend">
-        <span><i class="dot" style="background:rgba(180,188,196,.4)"></i> <span data-i18n="rawPoints">raw points</span></span>
+        <span><i class="dot" style="background:rgba(180,188,196,.4)"></i> <span data-i18n="rawPoints">processed detections</span></span>
         <span><i class="dot" style="background:var(--red)"></i> <span data-i18n="trimmedOutliers">trimmed outliers</span></span>
         <span><i class="swatch" style="background:var(--accent)"></i> EMA</span>
         <span><i class="swatch" style="background:var(--blue)"></i> MA</span>
@@ -501,14 +572,68 @@
     <div id="histList"></div>
   </div>
 
-  <footer>
+	  <section class="seo-home" aria-labelledby="seo-guide-title">
+	    <p class="seo-kicker">Free browser-based pitch analysis</p>
+	    <h2 id="seo-guide-title">Measure your speaking voice in hertz, notes, and time</h2>
+	    <p class="seo-lead">VoiceScope is a free online voice pitch analyzer for speech and singing. It records from your microphone, estimates fundamental frequency (F0), and turns each voiced moment into a frequency, musical note, and readable pitch contour. Processing stays in your browser.</p>
+
+	    <div class="seo-grid">
+	      <div class="seo-copy">
+	        <h3>What a voice pitch analyzer measures</h3>
+	        <p>Pitch is the perceptual counterpart of fundamental frequency: how quickly the vocal folds repeat a vibration. VoiceScope reports that estimate in hertz and maps it to the nearest equal-tempered note. Median pitch describes the centre of a recording, while the contour shows changes that a single average cannot reveal.</p>
+
+	        <h3>How to get a reliable voice frequency result</h3>
+	        <ul>
+	          <li>Use a quiet room and keep the microphone about 10–20 cm from your mouth.</li>
+	          <li>Speak naturally for at least 15 seconds instead of forcing an unusually low or high voice.</li>
+	          <li>Repeat the recording and compare medians; background noise and vocal warm-up can shift a result.</li>
+	          <li>Use Smart mode when clicks, breaths, or short background sounds create isolated pitch points.</li>
+	        </ul>
+
+	        <h3>Why VoiceScope keeps the full pitch contour</h3>
+	        <p>A short voice test often returns one number. VoiceScope also keeps the underlying time series, highlights trimmed outliers, lets you replay the exact recording, and stores recent sessions locally for comparison. That makes it useful for checking speaking pitch, vocal exercises, intonation, and detector errors rather than treating one number as a verdict.</p>
+
+	        <h3>Privacy and limits</h3>
+	        <p>Microphone analysis and recording history run locally on your device. VoiceScope measures F0, not attractiveness, health, gender, resonance, or the complete character of a voice. Results are a statistical and acoustic reference, not a medical diagnosis.</p>
+	      </div>
+
+	      <aside class="seo-side" aria-label="Voice analysis guides">
+	        <h3>Explore the guides</h3>
+	        <nav class="seo-links">
+	          <a href="voice-pitch-analyzer/">Voice pitch analyzer guide</a>
+	          <a href="voice-frequency-test/">Voice frequency test</a>
+	          <a href="how-deep-is-my-voice/">How deep is my voice?</a>
+	          <a href="voicecel-test/">Voicecel test explained</a>
+	          <a href="voicecel-alternative/">Voicecel alternative</a>
+	          <a href="methodology/">Methodology</a>
+	          <a href="accuracy/">Accuracy and limitations</a>
+	          <a href="faq/">Frequently asked questions</a>
+	        </nav>
+	      </aside>
+	    </div>
+
+	    <div class="seo-faq">
+	      <h3>Common questions</h3>
+	      <details><summary>What is the normal frequency of a speaking voice?</summary><p>Speaking F0 varies by person, age, physiology, language, emotion, and context. A range is more useful than a hard category. VoiceScope shows a descriptive statistical reference while keeping the raw recording available for review.</p></details>
+	      <details><summary>Does VoiceScope upload my microphone audio?</summary><p>No application server receives the recording. Analysis and history use browser APIs and local IndexedDB storage. An optional anonymous GoatCounter page-view request is separate from microphone processing.</p></details>
+	      <details><summary>Can it detect singing notes?</summary><p>Yes. A steady sung note normally produces a clear note and frequency. The tool is designed around voice F0 rather than instrument tuning, so it does not display cents deviation from concert pitch.</p></details>
+	      <details><summary>Why do some points disappear in Smart mode?</summary><p>Smart mode looks for short, locally inconsistent points with weak detector confidence. Sustained changes and clear short phrases are retained; isolated low-confidence glitches are marked as trimmed.</p></details>
+	    </div>
+	  </section>
+
+	  <footer>
     <h2 data-i18n="footerTitle">Online voice pitch analyzer</h2>
     <p data-i18n="footerBody">VoiceScope measures the fundamental frequency (F0), converts it to musical notes, and shows how pitch changes over time.</p>
     <p data-i18n="footerPrivacy">Recording and analysis happen locally with the YIN algorithm; nothing is uploaded. Results are a reference, not a medical assessment.</p>
-    <div class="foot-links">
-      <a href="https://github.com/Lemelson/VoiceScope" target="_blank" rel="noreferrer" data-i18n="source">Source code on GitHub</a>
-      <a href="https://github.com/Lemelson/VoiceScope#readme" target="_blank" rel="noreferrer" data-i18n="how">How it works</a>
-    </div>
+	    <div class="foot-links">
+	      <a href="https://github.com/Lemelson/VoiceScope" target="_blank" rel="noreferrer" data-i18n="source">Source code on GitHub</a>
+	      <a href="https://github.com/Lemelson/VoiceScope#readme" target="_blank" rel="noreferrer" data-i18n="how">How it works</a>
+	      <a href="about/" data-i18n="aboutLink">About</a>
+	      <a href="privacy/" data-i18n="privacyLink">Privacy</a>
+	      <a href="methodology/" data-i18n="methodologyLink">Methodology</a>
+	      <a href="accuracy/" data-i18n="accuracyLink">Accuracy</a>
+	      <a href="faq/" data-i18n="faqLink">FAQ</a>
+	    </div>
   </footer>
 </div>
 
@@ -522,10 +647,15 @@ const $ = s => document.querySelector(s);
 /* ---------- interface localization ---------- */
 const L10N = window.VoiceScopeI18n;
 let uiLang = 'en';
-try{
-  const savedLanguage = localStorage.getItem('vs-ui-lang');
-  if(savedLanguage && L10N.LANGUAGES.some(language=>language.code===savedLanguage)) uiLang = savedLanguage;
-}catch(_){}
+const requestedLanguage = new URLSearchParams(location.search).get('lang');
+if(requestedLanguage && L10N.matchLanguageTag(requestedLanguage)){
+  uiLang = L10N.normalizeLanguageTag(requestedLanguage);
+}else{
+  try{
+    const savedLanguage = localStorage.getItem('vs-ui-lang');
+    if(savedLanguage && L10N.LANGUAGES.some(language=>language.code===savedLanguage)) uiLang = savedLanguage;
+  }catch(_){}
+}
 const systemLanguage = L10N.preferredLanguage(navigator.languages || [navigator.language]);
 const t = (key, variables) => L10N.translate(uiLang, key, variables);
 
@@ -548,8 +678,11 @@ function applyTranslations(){
     element.innerHTML = t(element.dataset.i18nHtml);
   });
   $('#siteLang').setAttribute('aria-label', t('language'));
+  $('#siteLang').title = t('language');
   $('#themeBtn').title = t('theme');
   $('#themeBtn').setAttribute('aria-label', t('theme'));
+  const seoHome = document.querySelector('.seo-home');
+  if(seoHome) seoHome.hidden = uiLang !== 'en';
   updatePlayerControls();
 }
 

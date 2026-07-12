@@ -22,6 +22,13 @@ test("ships ten complete language bundles", () => {
   }
 });
 
+test("every language option has a native name and locale", () => {
+  for (const language of LANGUAGES) {
+    assert.ok(language.name);
+    assert.ok(language.locale);
+  }
+});
+
 test("ships reading passages for every interface language", () => {
   const sandbox = { window: {} };
   const source = fs.readFileSync(

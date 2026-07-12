@@ -12,7 +12,7 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -24,10 +24,16 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Run regression tests
+        run: node --test tests/*.test.js
+
       - name: Prepare static site
         run: |
           mkdir public
-          cp index.html i18n.js content.js analysis-core.js favicon.svg og-image.png robots.txt sitemap.xml public/
+          cp index.html i18n.js content.js analysis-core.js seo.css favicon.svg og-image.png robots.txt public/
+          HOME_LASTMOD="$(git log -1 --format=%cs -- index.html)" \
+          SITE_LASTMOD="$(git log -1 --format=%cs -- scripts/build-seo-pages.js)" \
+          node scripts/build-seo-pages.js public
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

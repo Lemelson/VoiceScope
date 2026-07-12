@@ -106,6 +106,40 @@ discarded instead of random artifacts — and adjust the default presets/percent
 node --test tests/*.test.js
 ```
 
+## Search pages and deployment
+
+The analyzer remains a single fast application. Search-intent, trust, and localized landing pages
+are generated as static HTML during the GitHub Pages workflow by `scripts/build-seo-pages.js`.
+The build currently publishes:
+
+- voice pitch analyzer, voice frequency test, voice depth, Voicecel test, and Voicecel alternative guides;
+- About, Privacy, Methodology, Accuracy, and FAQ pages;
+- localized landing pages for Russian, Spanish, German, French, Portuguese, Chinese, Japanese,
+  Korean, and Hindi;
+- a Russian long-tail page for `измерить частоту голоса`;
+- a sitemap containing every canonical URL and reciprocal `hreflang` alternates.
+
+Build the same artifact locally:
+
+```bash
+mkdir -p public
+cp index.html i18n.js content.js analysis-core.js seo.css favicon.svg og-image.png robots.txt public/
+HOME_LASTMOD="$(git log -1 --format=%cs -- index.html)" \
+SITE_LASTMOD="$(git log -1 --format=%cs -- scripts/build-seo-pages.js)" \
+node scripts/build-seo-pages.js public
+```
+
+After a production deploy, the site owner should:
+
+1. Verify the current URL or custom domain in Google Search Console and Yandex Webmaster.
+2. Submit `https://lemelson.github.io/VoiceScope/sitemap.xml` (or the custom-domain equivalent).
+3. Request indexing for the home page and the priority English and Russian landing pages.
+4. Monitor excluded URLs, impressions, queries, and click-through rate before changing titles.
+
+When moving to a custom domain, update the `SITE` constant in `scripts/build-seo-pages.js`, the
+canonical/alternate URLs in `index.html`, `robots.txt`, and the static reference `sitemap.xml` in
+the same commit. Relative CSS and favicon paths already work on either hosting layout.
+
 For the mobile recording layout regression, run the local server and open
 `http://localhost:8000/tests/mobile-recording-harness.html`. The harness repeatedly changes live
 pitch values and passes only when the reading text remains at a stable vertical position.
