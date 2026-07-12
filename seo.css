@@ -44,7 +44,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   min-height: 76px;
   border-bottom: 1px solid var(--line);
 }
-.brand { font-weight: 700; letter-spacing: -0.3px; text-decoration: none; }
+.brand { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; letter-spacing: -0.3px; text-decoration: none; }
 .brand i { color: var(--accent); font-style: normal; }
 .site-nav { display: flex; justify-content: center; align-items: center; gap: 22px; }
 .site-nav a, .site-nav summary, .language-nav a { color: var(--muted); font-size: 13px; font-weight: 600; text-decoration: none; }
@@ -190,10 +190,12 @@ p { margin: 0 0 17px; }
 .footer-links a:hover { color: var(--text); }
 
 @media (max-width: 820px) {
-  .site-header { grid-template-columns: 1fr auto; gap: 10px 16px; padding: 12px 0; }
+  .site-header { position: relative; grid-template-columns: 1fr auto; gap: 10px 16px; padding: 12px 0; }
   .site-nav { grid-column: 1 / -1; grid-row: 2; justify-content: flex-start; flex-wrap: wrap; gap: 8px; padding: 4px 0 2px; }
   .site-nav > a, .site-nav > details { flex: 0 0 auto; }
-  .nav-popover { position: fixed; top: 120px; left: 20px; right: 20px; width: auto; transform: none; }
+  .site-nav > a, .site-nav > details > summary { display: inline-flex; align-items: center; min-height: 40px; }
+  .nav-menu { position: static; }
+  .nav-popover { position: absolute; top: calc(100% + 8px); left: 0; right: 0; width: auto; transform: none; }
   .header-tools { justify-content: flex-end; }
   .header-cta { display: none; }
   .hero { grid-template-columns: 1fr; gap: 38px; padding: 64px 0 52px; }
@@ -209,7 +211,8 @@ p { margin: 0 0 17px; }
   .language-picker::after { top: 10px; }
   .theme-toggle { width: 44px; height: 44px; }
   .header-cta { min-height: 44px; padding: 0 13px; }
-  h1 { font-size: clamp(36px, 12vw, 51px); letter-spacing: -1.5px; }
+  .hero { padding-top: 52px; }
+  h1 { font-size: clamp(36px, 12vw, 44px); letter-spacing: -1.5px; }
   .hero-copy { font-size: 16px; }
   .hero-actions { align-items: stretch; }
   .button { width: 100%; min-height: 48px; }

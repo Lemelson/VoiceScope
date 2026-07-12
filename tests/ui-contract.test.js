@@ -50,3 +50,14 @@ test("mobile recording controls remain reachable and touch-friendly", () => {
   assert.match(html, /\.ibtn\{min-height:44px\}/);
   assert.match(html, /\.hero-hint\{display:none\}/);
 });
+
+test("mobile site navigation has practical touch targets", () => {
+  const app = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
+  const seo = fs.readFileSync(path.join(__dirname, "..", "seo.css"), "utf8");
+  assert.match(app, /@media \(max-width:820px\)\{/);
+  assert.match(app, /\.top-nav>a,\.top-nav>details>summary\{[^}]*min-height:40px/);
+  assert.match(app, /\.nav-popover\{position:absolute; top:calc\(100% \+ 8px\); left:0; right:0/);
+  assert.match(seo, /\.site-nav > a, \.site-nav > details > summary \{[^}]*min-height: 40px/);
+  assert.match(seo, /\.nav-popover \{ position: absolute; top: calc\(100% \+ 8px\); left: 0; right: 0/);
+  assert.match(seo, /h1 \{ font-size: clamp\(36px, 12vw, 44px\)/);
+});
