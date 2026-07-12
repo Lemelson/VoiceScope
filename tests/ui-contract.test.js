@@ -4,6 +4,24 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const html = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
+const pagesWorkflow = fs.readFileSync(
+  path.join(__dirname, "..", ".github", "workflows", "pages.yml"),
+  "utf8",
+);
+
+test("GitHub Pages publishes every local script loaded by the app", () => {
+  const localScripts = [...html.matchAll(/<script\s+src=["']([^"']+)["']/g)]
+    .map((match) => match[1])
+    .filter((source) => !/^https?:\/\//.test(source));
+
+  for (const source of localScripts) {
+    assert.match(
+      pagesWorkflow,
+      new RegExp(`\\b${source.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}\\b`),
+      `${source} must be copied into the Pages artifact`,
+    );
+  }
+});
 
 test("recording playback uses the cross-platform custom controls", () => {
   assert.doesNotMatch(html, /<audio[^>]*\scontrols(?:\s|>)/i);
