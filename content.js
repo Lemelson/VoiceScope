@@ -328,6 +328,42 @@ TEXTS_RU: [
   "Когда-то единственным способом поговорить с тем, кто далеко, было письмо. Человек садился за стол, брал бумагу и перо и подолгу обдумывал каждое слово. Письмо нельзя было быстро стереть и переписать, поэтому к нему относились серьёзно и вкладывали в него душу. Письма шли неделями, а иногда и месяцами. Их ждали с нетерпением, выбегали навстречу почтальону, а получив, перечитывали по многу раз и бережно хранили. По почерку можно было узнать настроение человека: где он торопился, где волновался, где выводил буквы спокойно и аккуратно. Сам почерк был как голос, у каждого свой, неповторимый. Сегодня мы обмениваемся сообщениями за секунды, и это огромное удобство. Но что-то важное при этом потерялось. Быстрое сообщение легко написать и так же легко забыть. А вот настоящее письмо, написанное от руки, хранит тепло того, кто его писал. Возможно, поэтому, разбирая старые бумаги, мы иногда находим пожелтевший конверт и замираем над ним. В неровных строчках оживает голос человека, которого, быть может, уже давно нет рядом."
 ],
 
+  /* Two natural reading passages for every additional interface language. */
+  TEXTS_BY_LANG: {
+    es: [
+      "A primera hora de la mañana, la ciudad todavía parece medio dormida. Las persianas de las tiendas siguen cerradas, los autobuses avanzan casi vacíos y el aire conserva el frescor de la noche. En una cafetería de la esquina, alguien enciende las luces y coloca las primeras tazas sobre la barra. Poco a poco aparecen los sonidos habituales: una bicicleta que cruza la plaza, unas llaves que giran en una puerta y el murmullo de dos vecinos que se saludan. El sol alcanza los tejados y cambia el color de las fachadas. Dentro de unos minutos las calles estarán llenas, pero durante este breve intervalo todo parece más sencillo. Caminar sin prisa a esa hora permite descubrir detalles que normalmente pasan desapercibidos: el olor del pan recién hecho, las hojas que se mueven sobre la acera y el eco de nuestros propios pasos.",
+      "Una biblioteca no es un lugar completamente silencioso. Si prestamos atención, escuchamos el roce de las páginas, el sonido suave de un lápiz y los pasos cuidadosos entre las estanterías. Cada libro guarda una voz distinta y espera con paciencia a que alguien lo abra. Algunas personas vienen para estudiar, otras buscan una historia que las acompañe durante el viaje de vuelta a casa. Cerca de la ventana, una lectora sonríe de repente; al otro lado de la sala, un estudiante toma notas con rapidez. Aunque nadie habla en voz alta, existe una conversación invisible entre autores y lectores. Al salir, llevamos algo más que un volumen prestado. Una idea, una pregunta o una imagen continúa con nosotros y transforma ligeramente la manera en que miramos el mundo.",
+    ],
+    de: [
+      "Am frühen Morgen wirkt die Stadt noch halb verschlafen. Die Rollläden der Geschäfte sind geschlossen, die Busse fahren fast leer durch die Straßen, und die Luft bewahrt die Kühle der Nacht. In einem kleinen Café an der Ecke wird das Licht eingeschaltet, und die ersten Tassen stehen schon auf der Theke. Nach und nach kehren die vertrauten Geräusche zurück: ein Fahrrad auf dem Platz, ein Schlüssel in einer Haustür und zwei Nachbarn, die sich leise begrüßen. Die Sonne erreicht die Dächer und verändert die Farbe der Fassaden. Bald werden die Straßen voller Menschen sein, doch für einen kurzen Augenblick erscheint alles ruhig und überschaubar. Wer jetzt ohne Eile geht, bemerkt Dinge, die später im Lärm verschwinden: den Duft von frischem Brot, Blätter auf dem Gehweg und den Klang der eigenen Schritte.",
+      "Eine Bibliothek ist niemals völlig still. Wer genau hinhört, bemerkt das Rascheln von Seiten, das leise Kratzen eines Stifts und vorsichtige Schritte zwischen den Regalen. Jedes Buch bewahrt eine andere Stimme und wartet geduldig darauf, geöffnet zu werden. Manche Menschen kommen zum Lernen, andere suchen eine Geschichte für den Heimweg. Am Fenster lächelt plötzlich eine Leserin; auf der anderen Seite des Raumes schreibt ein Student schnell einige Gedanken auf. Obwohl niemand laut spricht, entsteht ein unsichtbares Gespräch zwischen Autoren und Lesern. Beim Hinausgehen nehmen wir mehr mit als nur ein ausgeliehenes Buch. Eine Idee, eine Frage oder ein Bild begleitet uns weiter und verändert ein wenig, wie wir die Welt betrachten.",
+    ],
+    fr: [
+      "Tôt le matin, la ville semble encore à moitié endormie. Les rideaux des boutiques sont fermés, les autobus avancent presque vides et l’air garde la fraîcheur de la nuit. Dans un café au coin de la rue, quelqu’un allume les lumières et pose les premières tasses sur le comptoir. Peu à peu, les sons familiers reviennent : un vélo traverse la place, une clé tourne dans une porte et deux voisins se saluent doucement. Le soleil atteint les toits et change la couleur des façades. Dans quelques minutes, les rues seront pleines, mais pendant ce court instant tout paraît plus simple. Marcher sans se presser permet de remarquer ce qui disparaît d’habitude dans le bruit : l’odeur du pain chaud, les feuilles sur le trottoir et l’écho de ses propres pas.",
+      "Une bibliothèque n’est jamais tout à fait silencieuse. En écoutant bien, on entend le froissement des pages, le léger bruit d’un crayon et les pas prudents entre les rayons. Chaque livre conserve une voix différente et attend patiemment qu’une personne l’ouvre. Certains viennent étudier, d’autres cherchent une histoire pour le trajet du retour. Près de la fenêtre, une lectrice sourit soudain ; à l’autre bout de la salle, un étudiant prend des notes rapidement. Personne ne parle à voix haute, pourtant une conversation invisible relie les auteurs et les lecteurs. En partant, nous emportons plus qu’un livre emprunté. Une idée, une question ou une image continue de nous accompagner et change légèrement notre manière de regarder le monde.",
+    ],
+    pt: [
+      "Bem cedo, a cidade ainda parece meio adormecida. As portas das lojas continuam fechadas, os ônibus passam quase vazios e o ar guarda o frescor da noite. Em um café da esquina, alguém acende as luzes e coloca as primeiras xícaras no balcão. Aos poucos surgem os sons conhecidos: uma bicicleta atravessando a praça, uma chave girando na porta e dois vizinhos que se cumprimentam. O sol alcança os telhados e muda a cor das fachadas. Em poucos minutos as ruas estarão cheias, mas durante esse breve intervalo tudo parece mais simples. Caminhar sem pressa nesse horário revela detalhes que normalmente desaparecem no barulho: o cheiro de pão fresco, as folhas sobre a calçada e o eco dos nossos próprios passos.",
+      "Uma biblioteca nunca é completamente silenciosa. Quando prestamos atenção, ouvimos o movimento das páginas, o som leve de um lápis e passos cuidadosos entre as estantes. Cada livro guarda uma voz diferente e espera com paciência que alguém o abra. Algumas pessoas vêm estudar; outras procuram uma história para levar na viagem de volta para casa. Perto da janela, uma leitora sorri de repente; do outro lado da sala, um estudante anota uma ideia rapidamente. Mesmo sem conversas em voz alta, existe um diálogo invisível entre autores e leitores. Ao sair, levamos mais do que um livro emprestado. Uma pergunta, uma imagem ou uma nova ideia continua conosco e muda um pouco a maneira como observamos o mundo.",
+    ],
+    zh: [
+      "清晨，城市还没有完全醒来。商店的卷帘门紧闭，公交车里只有零星几位乘客，空气中仍留着夜晚的凉意。街角的咖啡馆亮起灯，有人把第一排杯子摆上吧台。熟悉的声音慢慢出现：自行车穿过广场，钥匙在门锁里转动，两位邻居轻声问候。阳光落到屋顶上，建筑的颜色也随之改变。再过一会儿，街道就会挤满匆忙的人群，但此刻一切显得简单而安静。若能放慢脚步，就会注意到平时被喧闹掩盖的细节：新鲜面包的香气、在人行道上滚动的树叶，以及自己脚步的回声。这样的早晨并不罕见，却总能给新的一天带来温柔而清晰的开端。",
+      "图书馆并不是完全安静的地方。仔细听，可以听见书页轻轻翻动、铅笔划过纸面，以及人们在书架之间放慢的脚步。每一本书都保存着不同的声音，耐心等待有人把它打开。有的人来这里学习，有的人只想找一个故事，陪伴自己回家的路。窗边的读者忽然微笑，房间另一侧的学生快速记下一句话。虽然没有人高声交谈，作者与读者之间却进行着看不见的对话。离开时，我们带走的不只是一本借来的书。一个想法、一个问题或一幅画面会继续陪伴我们，并悄悄改变我们观察世界的方式。",
+    ],
+    ja: [
+      "早朝の街は、まだ半分眠っているように見えます。店のシャッターは閉まり、バスにはわずかな乗客しかおらず、空気には夜の涼しさが残っています。角のカフェでは明かりがつき、最初のカップがカウンターに並べられます。やがて、広場を横切る自転車、ドアの鍵が回る音、挨拶を交わす近所の人たちの声が聞こえてきます。太陽が屋根に届くと、建物の壁も少しずつ色を変えます。もうすぐ通りは人でいっぱいになりますが、この短い時間だけはすべてが穏やかです。急がず歩けば、焼きたてのパンの香り、歩道を転がる葉、自分の足音の響きなど、いつもは気づかない小さなものが見えてきます。",
+      "図書館は完全に静かな場所ではありません。耳を澄ますと、ページをめくる音、鉛筆が紙を走る音、本棚の間を歩く静かな足音が聞こえます。どの本も異なる声を持ち、誰かに開かれるのを辛抱強く待っています。勉強のために来る人もいれば、帰り道を一緒に過ごす物語を探す人もいます。窓の近くで読者がふと笑い、部屋の反対側では学生が急いでメモを取っています。大きな声の会話はなくても、著者と読者の間には見えない対話があります。外へ出るとき、持ち帰るのは借りた本だけではありません。一つの考えや問い、心に残る場面が、その後の世界の見方を少し変えてくれます。",
+    ],
+    ko: [
+      "이른 아침의 도시는 아직 절반쯤 잠든 것처럼 보입니다. 가게의 문은 닫혀 있고 버스에는 사람이 거의 없으며 공기에는 밤의 서늘함이 남아 있습니다. 모퉁이 카페에 불이 켜지고 첫 번째 잔들이 카운터 위에 놓입니다. 곧 익숙한 소리가 하나씩 돌아옵니다. 자전거가 광장을 지나고, 열쇠가 현관문에서 돌아가며, 이웃 두 사람이 조용히 인사를 나눕니다. 햇빛이 지붕에 닿으면 건물의 색도 조금씩 달라집니다. 잠시 후 거리는 바쁜 사람들로 가득해지겠지만, 이 짧은 순간만큼은 모든 것이 단순하고 평온합니다. 천천히 걸으면 갓 구운 빵 냄새, 보도 위의 나뭇잎, 자신의 발걸음이 만드는 울림처럼 평소 놓치던 작은 것들이 보입니다.",
+      "도서관은 완전히 조용한 곳이 아닙니다. 귀를 기울이면 책장이 넘어가는 소리, 연필이 종이를 스치는 소리, 서가 사이를 조심스럽게 걷는 발소리가 들립니다. 책마다 서로 다른 목소리가 있고 누군가 펼쳐 주기를 오래 기다립니다. 어떤 사람은 공부하러 오고, 어떤 사람은 집으로 돌아가는 길에 함께할 이야기를 찾습니다. 창가의 독자가 갑자기 미소를 짓고, 방 건너편의 학생은 빠르게 메모를 적습니다. 아무도 큰 소리로 말하지 않지만 작가와 독자 사이에는 보이지 않는 대화가 이어집니다. 밖으로 나갈 때 우리는 빌린 책만 가져가는 것이 아닙니다. 하나의 생각과 질문, 기억에 남은 장면이 계속 따라오며 세상을 보는 방식을 조금 바꾸어 놓습니다.",
+    ],
+    hi: [
+      "सुबह बहुत जल्दी शहर अभी आधा सोया हुआ लगता है। दुकानों के शटर बंद हैं, बसों में बहुत कम यात्री हैं और हवा में रात की ठंडक बाकी है। सड़क के कोने वाले कैफ़े में रोशनी जलती है और पहली प्यालियाँ काउंटर पर रखी जाती हैं। धीरे-धीरे परिचित आवाज़ें लौटती हैं: चौक से गुजरती साइकिल, दरवाज़े में घूमती चाबी और एक-दूसरे को नमस्ते कहते दो पड़ोसी। धूप छतों तक पहुँचती है और इमारतों का रंग बदलने लगता है। कुछ ही देर में सड़कें लोगों से भर जाएँगी, लेकिन इस छोटे से समय में सब कुछ शांत और सरल दिखाई देता है। बिना जल्दी किए चलें तो ताज़ी रोटी की खुशबू, फुटपाथ पर उड़ते पत्ते और अपने कदमों की गूँज जैसी छोटी चीज़ें भी साफ़ सुनाई देती हैं।",
+      "पुस्तकालय पूरी तरह शांत जगह नहीं है। ध्यान से सुनने पर पन्ने पलटने की सरसराहट, कागज़ पर चलती पेंसिल और अलमारियों के बीच सँभलकर रखे कदम सुनाई देते हैं। हर किताब में एक अलग आवाज़ सुरक्षित है और वह धैर्य से किसी के खोलने की प्रतीक्षा करती है। कुछ लोग पढ़ाई करने आते हैं, जबकि कुछ घर लौटते समय साथ ले जाने के लिए कोई कहानी ढूँढ़ते हैं। खिड़की के पास बैठी पाठिका अचानक मुस्कुराती है और कमरे के दूसरी ओर एक छात्र तेज़ी से नोट लिखता है। कोई ऊँची आवाज़ में बात नहीं करता, फिर भी लेखकों और पाठकों के बीच एक अदृश्य संवाद चलता रहता है। बाहर निकलते समय हम केवल उधार ली हुई किताब नहीं ले जाते; कोई विचार, प्रश्न या चित्र हमारे साथ चलता है और दुनिया को देखने का ढंग थोड़ा बदल देता है।",
+    ],
+  },
+
 /* Illustrative speaking-F0 model used only for the on-screen percentile guide. */
 NORMS: {
   men:   { mean:116, sd:16, label:"men" },
@@ -335,13 +371,13 @@ NORMS: {
 },
 /* Descriptive speaking-F0 zones. These are not singing voice types. */
 ZONES: [
-  { max:80,       name:"Very low speaking F0",   hint:"around the 1st percentile of a typical male model" },
-  { max:100,      name:"Low male F0",            hint:"lower than roughly 84% of men in a simple model" },
-  { max:132,      name:"Typical male range",     hint:"the central ~68% of a typical male model" },
-  { max:155,      name:"Upper male range",       hint:"above the average male speaking value" },
-  { max:185,      name:"Overlap zone",           hint:"one F0 value alone doesn't determine sex or voice type" },
-  { max:255,      name:"Typical female range",   hint:"reference range for conversational speech" },
-  { max:Infinity, name:"High speaking F0",       hint:"may reflect age, speaking style, or intonation" }
+  { id:"veryLow",  max:80,       labelKey:"zone0", hintKey:"zoneHint0" },
+  { id:"low",      max:100,      labelKey:"zone1", hintKey:"zoneHint1" },
+  { id:"lowerMid", max:132,      labelKey:"zone2", hintKey:"zoneHint2" },
+  { id:"mid",      max:155,      labelKey:"zone3", hintKey:"zoneHint3" },
+  { id:"upperMid", max:185,      labelKey:"zone4", hintKey:"zoneHint4" },
+  { id:"high",     max:255,      labelKey:"zone5", hintKey:"zoneHint5" },
+  { id:"veryHigh", max:Infinity, labelKey:"zone6", hintKey:"zoneHint6" }
 ],
 
 REFERENCE: `
@@ -399,3 +435,6 @@ VoiceScope использует нейтральные формулировки 
 `
 
 };
+
+window.VS_CONTENT.TEXTS_BY_LANG.en = window.VS_CONTENT.TEXTS_EN;
+window.VS_CONTENT.TEXTS_BY_LANG.ru = window.VS_CONTENT.TEXTS_RU;

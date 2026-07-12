@@ -70,6 +70,52 @@ test("global fallback removes a short extreme run next to unvoiced gaps", () => 
   assert.deepEqual(mask.slice(33, 37), [true, true, true, true]);
 });
 
+test("smart filtering preserves a clear short phrase in a different register", () => {
+  const baseline = 43;
+  const values = [
+    ...Array(30).fill(baseline),
+    null, null, null,
+    55, 55.2, 54.8, 55,
+    null, null, null,
+    ...Array(30).fill(baseline)
+  ];
+  const reliability = values.map((value, index) => {
+    if(value == null) return null;
+    return index >= 33 && index < 37 ? 0.82 : 0.96;
+  });
+
+  const mask = localMadOutlierMask(values, {
+    radius: 8,
+    maxRun: 6,
+    reliability
+  });
+
+  assert.deepEqual(mask.slice(33, 37), [false, false, false, false]);
+});
+
+test("smart filtering removes the same isolated burst when detection is unreliable", () => {
+  const baseline = 43;
+  const values = [
+    ...Array(30).fill(baseline),
+    null, null, null,
+    55, 55.2, 54.8, 55,
+    null, null, null,
+    ...Array(30).fill(baseline)
+  ];
+  const reliability = values.map((value, index) => {
+    if(value == null) return null;
+    return index >= 33 && index < 37 ? 0.61 : 0.96;
+  });
+
+  const mask = localMadOutlierMask(values, {
+    radius: 8,
+    maxRun: 6,
+    reliability
+  });
+
+  assert.deepEqual(mask.slice(33, 37), [true, true, true, true]);
+});
+
 test("local MAD preserves sustained pitch changes", () => {
   const baseline = 43;
   const sustained = 55;

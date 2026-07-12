@@ -80,8 +80,9 @@
    * Hybrid MAD detector for brief anomalies.
    *
    * The primary test uses stable context on both sides. A conservative global
-   * fallback catches very short extreme runs next to pauses. Both tests retain
-   * long candidate runs so a sustained pitch change is not treated as noise.
+   * fallback catches very short extreme runs next to pauses. When detector
+   * reliability is available, clear pitch changes are protected and only
+   * low-confidence anomalies are removed. Long runs are always retained.
    */
   function localMadOutlierMask(values, options = {}) {
     const radius = options.radius ?? 31;
@@ -93,7 +94,22 @@
     const globalSigma = options.globalSigma ?? 4;
     const globalMinDeviation = options.globalMinDeviation ?? 8;
     const globalMaxRun = options.globalMaxRun ?? maxRun;
+    const reliability = options.reliability;
+    const reliabilityFloor = options.reliabilityFloor ?? 0.75;
+    const reliabilityDrop = options.reliabilityDrop ?? 0.12;
     const candidates = new Array(values.length).fill(false);
+
+    const reliableValues = reliability
+      ? reliability.filter(value => Number.isFinite(value))
+      : [];
+    const typicalReliability = reliableValues.length ? median(reliableValues) : null;
+    function isUnreliable(index) {
+      if (!reliability) return true;
+      const value = reliability[index];
+      if (!Number.isFinite(value)) return true;
+      return value < reliabilityFloor &&
+        (typicalReliability == null || value < typicalReliability - reliabilityDrop);
+    }
 
     for (let index = 0; index < values.length; index++) {
       const value = values[index];
@@ -118,7 +134,7 @@
       const deviations = context.map(item => Math.abs(item - centre)).sort((a, b) => a - b);
       const mad = percentile(deviations, 50);
       const threshold = Math.max(minDeviation, 1.4826 * sigma * mad);
-      candidates[index] = Math.abs(value - centre) > threshold;
+      candidates[index] = Math.abs(value - centre) > threshold && isUnreliable(index);
     }
 
     const result = new Array(values.length).fill(false);
@@ -153,6 +169,9 @@
       const globalCandidates = values.map(value =>
         value != null && Math.abs(value - centre) > threshold
       );
+      for (let index = 0; index < globalCandidates.length; index++) {
+        globalCandidates[index] = globalCandidates[index] && isUnreliable(index);
+      }
       addShortRuns(globalCandidates, globalMaxRun);
     }
 

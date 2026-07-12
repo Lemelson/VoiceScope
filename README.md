@@ -15,8 +15,9 @@ All analysis runs locally in your browser. Audio is never uploaded to GitHub or 
 - **Outlier trimming**: a median filter removes single-frame octave spikes; percentile trimming
   cuts hiss (too high) and random dips (too low); a hybrid MAD mode targets short glitches only.
 - **Neutral statistics** (median, mean, range, spread) instead of labels.
-- **Reading passages** (`content.js`) in English or Russian — pick the language before recording,
-  shuffle with "Another text". Each passage is ~1–1.5 minutes read aloud.
+- **10 interface languages** — English is the default and remains first in the selector; the
+  browser/OS language is promoted to the second option when supported. Reading passages follow
+  the selected language and can be shuffled with "Another text".
 - **Playback with a chart playhead**, WAV download, and a local recording history.
 - Light/dark theme, remembered between visits.
 
@@ -50,12 +51,13 @@ Then open http://localhost:8000 and allow microphone access.
 ## Processing profiles and fine-tuning
 Quick **profiles** above the chart: Raw · Gentle · Smart (default) · Strict · Maximum.
 Each sets sensitivity, MA window, EMA span and trimming mode at once. Smart uses the hybrid
-MAD trimmer, which removes short glitches by local context instead of blindly cutting
-percentiles. Any manual tweak in Analysis settings switches to a Custom profile.
+MAD trimmer, which combines local pitch context with YIN confidence instead of blindly cutting
+percentiles. Clear short phrases are preserved while low-confidence glitches are removed. Any
+manual tweak in Analysis settings switches to a Custom profile.
 
 - **Outlier trimming**: Off / Light 1% / Medium 3% / Strict 5% / Aggressive 10% /
   Smart (hybrid MAD — compares each frame against neighbouring speech and additionally catches
-  short global extremes near pauses; sustained pitch changes are preserved).
+  low-confidence global extremes near pauses; clear and sustained pitch changes are preserved).
 - **Sensitivity** — confidence threshold of the pitch detector (lower = catches more quiet/noisy
   material; higher = only clear tone).
 - **MA window** — width of the centred moving average.
@@ -100,5 +102,5 @@ discarded instead of random artifacts — and adjust the default presets/percent
 ## Tests
 
 ```bash
-node --test tests/analysis-core.test.js
+node --test tests/*.test.js
 ```

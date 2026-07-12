@@ -14,6 +14,14 @@
 <meta property="og:type" content="website" />
 <meta property="og:locale" content="en_US" />
 <meta property="og:locale:alternate" content="ru_RU" />
+<meta property="og:locale:alternate" content="es_ES" />
+<meta property="og:locale:alternate" content="de_DE" />
+<meta property="og:locale:alternate" content="fr_FR" />
+<meta property="og:locale:alternate" content="pt_BR" />
+<meta property="og:locale:alternate" content="zh_CN" />
+<meta property="og:locale:alternate" content="ja_JP" />
+<meta property="og:locale:alternate" content="ko_KR" />
+<meta property="og:locale:alternate" content="hi_IN" />
 <meta property="og:site_name" content="VoiceScope" />
 <meta property="og:title" content="VoiceScope — free online voice pitch analyzer" />
 <meta property="og:description" content="Record your voice and see its fundamental frequency, notes and pitch contour over time. Runs entirely in your browser — a private voicecel alternative." />
@@ -45,7 +53,7 @@
   "keywords": "voice pitch analyzer, fundamental frequency, F0, pitch detection, vocal range, voicecel alternative, высота голоса, частота голоса",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "codeRepository": "https://github.com/Lemelson/VoiceScope",
-  "inLanguage": ["en", "ru"],
+  "inLanguage": ["en", "ru", "es", "de", "fr", "pt", "zh", "ja", "ko", "hi"],
   "featureList": [
     "Fundamental frequency (F0) analysis in hertz",
     "Note detection and pitch contour over time",
@@ -71,6 +79,8 @@
     --shadow:0 1px 2px rgba(25,30,40,.04), 0 4px 14px rgba(25,30,40,.05); --field-bg:#f7f7f5;
   }
   *{box-sizing:border-box}
+  .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
+    clip:rect(0,0,0,0); white-space:nowrap; border:0}
   html{scroll-behavior:smooth}
   html,body{margin:0;padding:0}
   body{
@@ -87,6 +97,11 @@
   .topbar{display:flex; align-items:center; gap:12px; padding:22px 0 0}
   .wordmark{font-weight:700; font-size:17px; letter-spacing:-.2px}
   .wordmark i{font-style:normal; color:var(--accent)}
+  .lang-picker{margin-left:auto; position:relative; display:flex; align-items:center}
+  .lang-picker::before{content:'◉'; position:absolute; left:11px; color:var(--accent); font-size:10px; pointer-events:none}
+  .lang-picker select{height:36px; min-width:128px; padding:0 30px 0 28px; border-radius:10px;
+    background:transparent; color:var(--text); border:1px solid var(--line); cursor:pointer; font-weight:500}
+  .lang-picker select:hover{border-color:var(--accent)}
   .theme-btn{margin-left:auto; background:transparent; border:1px solid var(--line); color:var(--muted);
     width:36px; height:36px; padding:0; border-radius:10px; font-size:15px; cursor:pointer; flex:0 0 auto;
     transition:border-color .2s, color .2s}
@@ -267,6 +282,7 @@
     .card{padding:16px}
     #live.on{gap:14px}
     .timer{font-size:24px}
+    .lang-picker select{min-width:112px; max-width:140px}
   }
 </style>
 </head>
@@ -274,6 +290,10 @@
 <div class="wrap">
   <header class="topbar">
     <div class="wordmark">Voice<i>Scope</i></div>
+    <label class="lang-picker" id="langPicker">
+      <span class="sr-only" data-i18n="language">Language</span>
+      <select id="siteLang" aria-label="Language"></select>
+    </label>
     <button id="themeBtn" class="theme-btn" title="Toggle theme" aria-label="Toggle theme">☀</button>
   </header>
 
@@ -281,11 +301,11 @@
 
   <!-- hero -->
   <section id="hero" class="hero">
-    <h1>Record your voice.<br />See <em>every note</em> it hits.</h1>
-    <p>Read a short passage aloud and VoiceScope maps your pitch in real time — frequency in hertz, musical notes, and how it moves over time. Everything runs in your browser; audio never leaves your device.</p>
+    <h1 data-i18n-html="heroTitle">Record your voice.<br />See <em>every note</em> it hits.</h1>
+    <p data-i18n="heroBody">Read a short passage aloud and VoiceScope maps your pitch in real time — frequency in hertz, musical notes, and how it moves over time. Everything runs in your browser; audio never leaves your device.</p>
     <div class="hero-cta">
-      <button id="rec" class="btn-rec"><span class="rec-dot"></span>Start recording</button>
-      <span class="hero-hint">or press <kbd>Space</kbd> · stop whenever you like</span>
+      <button id="rec" class="btn-rec"><span class="rec-dot"></span><span data-i18n="start">Start recording</span></button>
+      <span class="hero-hint" data-i18n-html="shortcut">or press <kbd>Space</kbd> · stop whenever you like</span>
     </div>
   </section>
 
@@ -293,35 +313,31 @@
   <div id="live" class="card">
     <div class="timer" id="timer">00:00</div>
     <div class="meter"><i id="meterFill"></i></div>
-    <div class="live-stat"><span>now</span><b id="liveNote">—</b><span id="liveHz"></span></div>
-    <div class="live-stat acc"><span>median so far</span><b id="liveMed">—</b><span id="liveMedHz"></span></div>
-    <button id="stop" class="btn-stop">■ Stop</button>
+    <div class="live-stat"><span data-i18n="now">now</span><b id="liveNote">—</b><span id="liveHz"></span></div>
+    <div class="live-stat acc"><span data-i18n="medianSoFar">median so far</span><b id="liveMed">—</b><span id="liveMedHz"></span></div>
+    <button id="stop" class="btn-stop" data-i18n="stop">■ Stop</button>
   </div>
 
   <!-- reading material -->
   <div id="reader" class="card">
     <div id="liveChartStage" class="live-chart-stage">
       <div class="live-chart-head">
-        <strong>Your pitch, live</strong>
-        <span>the chart compresses as the recording grows</span>
+        <strong data-i18n="liveTitle">Your pitch, live</strong>
+        <span data-i18n="liveHint">the chart compresses as the recording grows</span>
       </div>
       <canvas id="liveChart"></canvas>
     </div>
     <div class="read-top">
-      <strong>Read this aloud</strong>
-      <div class="seg" role="group" aria-label="Reading language">
-        <button id="langEn" data-lang="en">English</button>
-        <button id="langRu" data-lang="ru">Русский</button>
-      </div>
+      <strong data-i18n="readAloud">Read this aloud</strong>
       <div class="grow"></div>
-      <button id="shuffle" class="btn-ghost">↺ Another text</button>
+      <button id="shuffle" class="btn-ghost" data-i18n="anotherText">↺ Another text</button>
     </div>
     <div id="readText" class="rtext"></div>
   </div>
 
   <!-- results -->
   <div id="results">
-    <div class="sec-label">Results</div>
+    <div class="sec-label" data-i18n="results">Results</div>
     <div class="card">
       <div class="stats" id="stats"></div>
       <div id="classbox"></div>
@@ -329,7 +345,7 @@
 
     <div class="card">
       <div class="presets-bar">
-        <span class="presets-label">Profile</span>
+        <span class="presets-label" data-i18n="profile">Profile</span>
         <div class="presets" id="presets"></div>
       </div>
       <div class="preset-desc" id="presetDesc"></div>
@@ -339,63 +355,63 @@
         <div id="playhead" class="vline play"></div>
         <div id="hovertip" class="vtip"></div>
       </div>
-      <div class="hint" style="margin:8px 0 0">▶ Click the chart to play from that point; click near the line to pause. Hover to see the time.</div>
+      <div class="hint" style="margin:8px 0 0" data-i18n="chartHint">▶ Click the chart to play from that point; click near the line to pause. Hover to see the time.</div>
       <div class="legend">
-        <span><i class="dot" style="background:rgba(180,188,196,.4)"></i> raw points</span>
-        <span><i class="dot" style="background:var(--red)"></i> trimmed outliers</span>
+        <span><i class="dot" style="background:rgba(180,188,196,.4)"></i> <span data-i18n="rawPoints">raw points</span></span>
+        <span><i class="dot" style="background:var(--red)"></i> <span data-i18n="trimmedOutliers">trimmed outliers</span></span>
         <span><i class="swatch" style="background:var(--accent)"></i> EMA</span>
         <span><i class="swatch" style="background:var(--blue)"></i> MA</span>
       </div>
 
       <details class="adv" id="adv">
-        <summary>Analysis settings</summary>
+        <summary data-i18n="analysisSettings">Analysis settings</summary>
         <div class="adv-body">
-          <div class="exp" style="color:var(--muted2); font-size:12px">Changing anything below switches the profile to <b style="color:var(--muted)">Custom</b> — your own preset.</div>
+          <div class="exp" style="color:var(--muted2); font-size:12px" data-i18n-html="customHint">Changing anything below switches the profile to <b>Custom</b> — your own preset.</div>
           <div class="row" style="gap:16px">
-            <label class="check"><input id="optRaw" type="checkbox" checked /> points</label>
+            <label class="check"><input id="optRaw" type="checkbox" checked /> <span data-i18n="points">points</span></label>
             <label class="check"><input id="optEma" type="checkbox" checked /> EMA</label>
             <label class="check"><input id="optMa" type="checkbox" /> MA</label>
             <div class="ctl" style="min-width:260px">
-              <span class="lab">Outlier trimming <span id="trimDesc" class="pen"></span></span>
+              <span class="lab"><span data-i18n="outlierTrimming">Outlier trimming</span> <span id="trimDesc" class="pen"></span></span>
               <select id="trimMode">
-                <option value="off">Off — show everything as is</option>
-                <option value="p1">Light — trim 1% at the edges</option>
-                <option value="p3">Medium — trim 3% at the edges</option>
-                <option value="p5">Strict — trim 5% at the edges</option>
-                <option value="p10">Aggressive — trim 10% at the edges</option>
-                <option value="mad">Smart (hybrid MAD) — short glitches</option>
+                <option value="off" data-i18n="trimOff">Off — show everything as is</option>
+                <option value="p1" data-i18n="trimLight">Light — trim 1% at the edges</option>
+                <option value="p3" data-i18n="trimMedium">Medium — trim 3% at the edges</option>
+                <option value="p5" data-i18n="trimStrict">Strict — trim 5% at the edges</option>
+                <option value="p10" data-i18n="trimAggressive">Aggressive — trim 10% at the edges</option>
+                <option value="mad" data-i18n="trimSmart">Smart (hybrid MAD) — short glitches</option>
               </select>
-              <span class="exp">Percentile trimming removes the given % of the lowest and highest values across the whole recording. "Smart" looks for short glitches against neighbouring frames and also cuts very short global extremes near pauses; sustained pitch changes are kept.</span>
+              <span class="exp" data-i18n="trimExplain">Percentile modes cut both edges of the whole recording. Smart removes brief, low-confidence jumps using nearby speech while preserving clear pitch changes.</span>
             </div>
           </div>
           <div class="adv-grid">
             <div class="ctl">
-              <span class="lab">Sensitivity <b id="sensVal">0.55</b></span>
+              <span class="lab"><span data-i18n="sensitivity">Sensitivity</span> <b id="sensVal">0.55</b></span>
               <input id="sens" type="range" min="0.30" max="0.90" step="0.05" value="0.55" />
-              <span class="exp">Confidence threshold of the pitch detector. <b>Lower</b> catches more quiet/unclear sounds (and noise). <b>Higher</b> keeps only clear, stable tone. If your voice gets lost — lower it; if it picks up junk — raise it.</span>
+              <span class="exp" data-i18n="sensitivityExplain">Pitch-confidence threshold. Lower catches more quiet sounds and noise; higher keeps only clear tone.</span>
             </div>
             <div class="ctl">
-              <span class="lab">MA window <b id="maWindowVal">72 ms</b></span>
+              <span class="lab"><span data-i18n="maWindow">MA window</span> <b id="maWindowVal">72 ms</b></span>
               <input id="maWindow" type="range" min="24" max="800" step="8" value="72" />
-              <span class="exp">How much time the moving average smooths over. The window is centred on each point.</span>
+              <span class="exp" data-i18n="maExplain">How much time the centred moving average smooths over.</span>
             </div>
             <div class="ctl">
-              <span class="lab">EMA span <b id="emaSpanVal">72 ms</b></span>
+              <span class="lab"><span data-i18n="emaSpan">EMA span</span> <b id="emaSpanVal">72 ms</b></span>
               <input id="emaSpan" type="range" min="24" max="800" step="8" value="72" />
-              <span class="exp">Equivalent span of the exponential moving average. Smaller reacts faster; larger smooths more.</span>
+              <span class="exp" data-i18n="emaExplain">Exponential smoothing span. Smaller reacts faster; larger is smoother.</span>
             </div>
             <div class="ctl">
-              <span class="lab"><label class="check" style="color:var(--text)"><input id="optOctave" type="checkbox" checked /> Octave correction</label></span>
-              <span class="exp">Fixes spurious jumps of exactly 2× up/down when the detector confuses the octave. Makes the contour smoother.</span>
+              <span class="lab"><label class="check" style="color:var(--text)"><input id="optOctave" type="checkbox" checked /> <span data-i18n="octaveCorrection">Octave correction</span></label></span>
+              <span class="exp" data-i18n="octaveExplain">Fixes brief false 2× jumps when the detector confuses an octave.</span>
             </div>
             <div class="ctl">
-              <span class="lab">Min duration <b id="minRunVal">3</b></span>
+              <span class="lab"><span data-i18n="minDuration">Min duration</span> <b id="minRunVal">3</b></span>
               <input id="minRun" type="range" min="0" max="12" step="1" value="3" />
-              <span class="exp">Drops voiced bursts shorter than N frames — usually clicks, breaths and artifacts, not voice. 0 — keep all.</span>
+              <span class="exp" data-i18n="minExplain">Drops voiced bursts shorter than N frames — usually clicks, breaths, or artifacts.</span>
             </div>
             <div class="ctl">
-              <span class="lab"><label class="check" style="color:var(--text)"><input id="optAdaptive" type="checkbox" checked /> Adaptive silence floor</label></span>
-              <span class="exp">Estimates the background noise level from quiet sections and cuts anything below it. Helps in a noisy room.</span>
+              <span class="lab"><label class="check" style="color:var(--text)"><input id="optAdaptive" type="checkbox" checked /> <span data-i18n="adaptiveSilence">Adaptive silence floor</span></label></span>
+              <span class="exp" data-i18n="adaptiveExplain">Estimates background noise from quiet sections and removes anything quieter.</span>
             </div>
           </div>
         </div>
@@ -404,9 +420,9 @@
 
     <div class="card">
       <div class="row" style="margin-bottom:8px">
-        <strong style="font-weight:600">Recording</strong>
+        <strong style="font-weight:600" data-i18n="recording">Recording</strong>
         <div class="grow"></div>
-        <a id="download" class="btn-ghost" download="voicescope.wav" style="text-decoration:none">↓ Download WAV</a>
+        <a id="download" class="btn-ghost" download="voicescope.wav" style="text-decoration:none" data-i18n="downloadWav">↓ Download WAV</a>
       </div>
       <audio id="player" controls></audio>
     </div>
@@ -415,37 +431,86 @@
   <!-- history -->
   <div class="card" id="histCard">
     <div class="row" style="margin-bottom:6px">
-      <strong style="font-weight:600">History</strong>
+      <strong style="font-weight:600" data-i18n="history">History</strong>
       <span class="pen" id="histUsage" style="font-size:12px"></span>
       <div class="grow"></div>
-      <button id="exportData" class="btn-ghost">⤓ Export JSON</button>
-      <button id="clearHist" class="btn-ghost">Clear</button>
+      <button id="exportData" class="btn-ghost" data-i18n="exportJson">⤓ Export JSON</button>
+      <button id="clearHist" class="btn-ghost" data-i18n="clear">Clear</button>
     </div>
-    <div class="hint" style="margin:0 0 8px">Your last 30 recordings are stored locally in this browser (up to 1 GB); older ones are removed automatically. Export downloads the pitch contours as JSON.</div>
+    <div class="hint" style="margin:0 0 8px" data-i18n="historyHint">Your last 30 recordings are stored locally in this browser (up to 1 GB); older ones are removed automatically. Export downloads the pitch contours as JSON.</div>
     <div id="histList"></div>
   </div>
 
   <footer>
-    <h2>Online voice pitch analyzer</h2>
-    <p>VoiceScope measures the fundamental frequency (F0) of your voice, converts it to musical notes, and shows how your pitch changed over time — useful for comparing recordings, watching intonation, and finding your comfortable speaking range. It's a clean, private alternative to voicecel.</p>
-    <p>Recording and analysis happen locally with the YIN autocorrelation algorithm; nothing is uploaded. Results are a reference, not a medical assessment.</p>
+    <h2 data-i18n="footerTitle">Online voice pitch analyzer</h2>
+    <p data-i18n="footerBody">VoiceScope measures the fundamental frequency (F0), converts it to musical notes, and shows how pitch changes over time.</p>
+    <p data-i18n="footerPrivacy">Recording and analysis happen locally with the YIN algorithm; nothing is uploaded. Results are a reference, not a medical assessment.</p>
     <div class="foot-links">
-      <a href="https://github.com/Lemelson/VoiceScope" target="_blank" rel="noreferrer">Source code on GitHub</a>
-      <a href="https://github.com/Lemelson/VoiceScope#readme" target="_blank" rel="noreferrer">How it works</a>
+      <a href="https://github.com/Lemelson/VoiceScope" target="_blank" rel="noreferrer" data-i18n="source">Source code on GitHub</a>
+      <a href="https://github.com/Lemelson/VoiceScope#readme" target="_blank" rel="noreferrer" data-i18n="how">How it works</a>
     </div>
   </footer>
 </div>
 
+<script src="i18n.js"></script>
 <script src="content.js"></script>
 <script src="analysis-core.js"></script>
 <script>
 "use strict";
 const $ = s => document.querySelector(s);
 
+/* ---------- interface localization ---------- */
+const L10N = window.VoiceScopeI18n;
+let uiLang = 'en';
+try{
+  const savedLanguage = localStorage.getItem('vs-ui-lang');
+  if(savedLanguage && L10N.LANGUAGES.some(language=>language.code===savedLanguage)) uiLang = savedLanguage;
+}catch(_){}
+const systemLanguage = L10N.preferredLanguage(navigator.languages || [navigator.language]);
+const t = (key, variables) => L10N.translate(uiLang, key, variables);
+
+function buildLanguageMenu(){
+  const select = $('#siteLang');
+  select.innerHTML = L10N.orderedLanguages(systemLanguage)
+    .map(language=>`<option value="${language.code}">${language.name}</option>`).join('');
+  select.value = uiLang;
+}
+
+function applyTranslations(){
+  document.documentElement.lang = uiLang;
+  document.title = t('metaTitle');
+  const description = document.querySelector('meta[name="description"]');
+  if(description) description.content = t('metaDescription');
+  document.querySelectorAll('[data-i18n]').forEach(element=>{
+    element.textContent = t(element.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(element=>{
+    element.innerHTML = t(element.dataset.i18nHtml);
+  });
+  $('#siteLang').setAttribute('aria-label', t('language'));
+  $('#themeBtn').title = t('theme');
+  $('#themeBtn').setAttribute('aria-label', t('theme'));
+}
+
+function setUiLanguage(language, persist){
+  uiLang = L10N.normalizeLanguageTag(language);
+  if(persist !== false){ try{ localStorage.setItem('vs-ui-lang', uiLang); }catch(_){} }
+  $('#siteLang').value = uiLang;
+  applyTranslations();
+  renderReading(true);
+  buildPresets();
+  markActivePreset();
+  updateTrimDesc();
+  localizeHistoryItems();
+  if(lastDraw){
+    const statRange = renderStats(lastDraw.pts);
+    lastDraw.statRange = statRange;
+    renderChart(lastDraw.pts, lastDraw.band, statRange);
+  }
+}
+
 /* ---------- reading material ---------- */
-let readLang = 'en';
-try{ readLang = localStorage.getItem('vs-lang') || 'en'; }catch(_){}
-let ruIdx = -1, enIdx = -1;
+const readingIndices = {};
 function pickIdx(len, prev){
   if(len <= 1) return 0;
   let i; do { i = Math.floor(Math.random()*len); } while(i === prev);
@@ -454,23 +519,13 @@ function pickIdx(len, prev){
 function renderReading(fresh){
   const C = window.VS_CONTENT;
   if(!C){ $('#reader').style.display='none'; return; }
-  if(fresh !== false){
-    if(readLang === 'ru') ruIdx = pickIdx(C.TEXTS_RU.length, ruIdx);
-    else enIdx = pickIdx(C.TEXTS_EN.length, enIdx);
+  const texts = C.TEXTS_BY_LANG[uiLang];
+  if(!texts || !texts.length){ $('#reader').style.display='none'; return; }
+  $('#reader').style.display='';
+  if(fresh !== false || readingIndices[uiLang] == null){
+    readingIndices[uiLang] = pickIdx(texts.length, readingIndices[uiLang] ?? -1);
   }
-  if(ruIdx < 0) ruIdx = pickIdx(C.TEXTS_RU.length, -1);
-  if(enIdx < 0) enIdx = pickIdx(C.TEXTS_EN.length, -1);
-  $('#readText').textContent = readLang === 'ru' ? C.TEXTS_RU[ruIdx] : C.TEXTS_EN[enIdx];
-  markLang();
-}
-function markLang(){
-  document.querySelectorAll('.seg button').forEach(b=>
-    b.classList.toggle('active', b.dataset.lang === readLang));
-}
-function setLang(l){
-  readLang = l;
-  try{ localStorage.setItem('vs-lang', l); }catch(_){}
-  renderReading(false);
+  $('#readText').textContent = texts[readingIndices[uiLang]];
 }
 
 /* ---------- note / pitch helpers ---------- */
@@ -602,7 +657,7 @@ async function startRecording(){
   $('#rec').disabled = true;
   if(histAudio) histAudio.pause();
   if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-    showBanner('Microphone unavailable. Open this page over https or localhost in a modern browser.');
+    showBanner(t('micUnavailable'));
     recordingStarting = false;
     $('#rec').disabled = false;
     return;
@@ -610,7 +665,7 @@ async function startRecording(){
 
   const lockAcquired = await acquireRecordingLock();
   if(!lockAcquired){
-    showBanner('Recording is already running in another VoiceScope tab. Stop it there first.');
+    showBanner(t('recordingElsewhere'));
     recordingStarting = false;
     $('#rec').disabled = false;
     return;
@@ -621,7 +676,7 @@ async function startRecording(){
       audio:{ echoCancellation:false, noiseSuppression:false, autoGainControl:false }
     });
   }catch(e){
-    showBanner('Could not access the microphone: ' + e.message);
+    showBanner(t('micDenied', { error:e.message }));
     releaseRecordingLock();
     recordingStarting = false;
     $('#rec').disabled = false;
@@ -808,7 +863,7 @@ function stopRecording(){
   if(audioCtx) audioCtx.close();
 
   if(recordedSamples.length < recRate*0.3){
-    showBanner('That recording was too short. Try again.');
+    showBanner(t('recordingTooShort'));
     return;
   }
   runAnalysis();
@@ -911,7 +966,11 @@ function postProcess(){
   let band = null;
   if(mode === 'mad'){
     const mask = window.VoiceScopeAnalysis.localMadOutlierMask(
-      pts.map(p=>p.voiced ? p.midi : null)
+      pts.map(p=>p.voiced ? p.midi : null),
+      {
+        reliability:pts.map(p=>p.voiced ? p.conf : null),
+        reliabilityFloor:Math.min(0.82, confT + 0.15)
+      }
     );
     for(let i=0;i<pts.length;i++){
       if(pts[i].voiced && mask[i]){ pts[i].outlier = true; pts[i].kept = false; }
@@ -936,8 +995,11 @@ function erf(x){
 function normCdf(x, mean, sd){ return 0.5*(1+erf((x-mean)/(sd*Math.SQRT2))); }
 function classifyHz(hz){
   const Z = (window.VS_CONTENT && window.VS_CONTENT.ZONES) || [];
-  for(const z of Z){ if(hz <= z.max) return z; }
-  return Z[Z.length-1] || { name:'—', hint:'' };
+  for(let index=0; index<Z.length; index++){
+    if(hz <= Z[index].max) return { ...Z[index], index };
+  }
+  const index = Z.length-1;
+  return index >= 0 ? { ...Z[index], index } : { index:-1 };
 }
 function scaleHtml(medHz){
   const LO=70, HI=320;
@@ -950,7 +1012,7 @@ function scaleHtml(medHz){
   for(let i=0;i<bounds.length-1;i++){
     const l=pos(bounds[i]), r=pos(bounds[i+1]);
     const isCurrent = medHz >= bounds[i] && medHz < bounds[i+1];
-    const zone = Z[i] ? Z[i].name : '';
+    const zone = Z[i] ? t(Z[i].labelKey) : '';
     segs += `<div class="segm${isCurrent?' cur':''}" title="${zone}${zone?': ':''}${bounds[i]}–${bounds[i+1]} Hz" style="left:${l}%; width:${r-l}%; background:${cols[i]}; opacity:${isCurrent?.95:.4}"></div>`;
   }
   const ticks = [80,100,132,155,185,255].map(v=>`<span class="tk" style="left:${pos(v)}%">${v}</span>`).join('');
@@ -959,27 +1021,30 @@ function scaleHtml(medHz){
 }
 function zoneRangeHz(z){
   const Z = (window.VS_CONTENT && window.VS_CONTENT.ZONES) || [];
-  const i = Z.indexOf(z);
+  const i = z.index;
   if(i < 0) return '';
   const lo = i === 0 ? null : Z[i-1].max;
   const hi = z.max === Infinity ? null : z.max;
-  if(lo == null) return `below ${hi} Hz`;
-  if(hi == null) return `above ${lo} Hz`;
+  if(lo == null) return t('below', { hz:hi });
+  if(hi == null) return t('above', { hz:lo });
   return `${lo}–${hi} Hz`;
 }
 function renderClassBox(medHz){
   const N = window.VS_CONTENT && window.VS_CONTENT.NORMS;
   const z = classifyHz(medHz);
   const range = zoneRangeHz(z);
-  let html = `<div class="class-line">Your median pitch of ${medHz.toFixed(0)} Hz lands in <b>${z.name}</b>${range ? ` (${range})` : ''} <span class="pen">— ${z.hint}</span></div>`;
+  let html = `<div class="class-line">${t('classLine', {
+    hz:medHz.toFixed(0), zone:t(z.labelKey), range:range ? ` (${range})` : '',
+    hint:t(z.hintKey)
+  })}</div>`;
   if(N){
     const lowerThanMen = Math.round((1-normCdf(medHz, N.men.mean, N.men.sd))*100);
     const lowerThanWomen = Math.round((1-normCdf(medHz, N.women.mean, N.women.sd))*100);
     const menPercentile = Math.round(normCdf(medHz, N.men.mean, N.men.sd)*100);
-    html += `<div class="pctl">Deeper than roughly ${lowerThanMen}% of men and ${lowerThanWomen}% of women — the ${menPercentile}th percentile of a simple male-voice model.</div>`;
+    html += `<div class="pctl">${t('percentileLine', { men:lowerThanMen, women:lowerThanWomen, percentile:menPercentile })}</div>`;
   }
   html += scaleHtml(medHz);
-  html += `<div class="pctl">A statistical reference, not a diagnosis.</div>`;
+  html += `<div class="pctl">${t('reference')}</div>`;
   $('#classbox').innerHTML = html;
 }
 
@@ -991,8 +1056,8 @@ function renderStats(pts){
   const dur = lastAnalysis.duration;
 
   if(!kept.length){
-    $('#stats').innerHTML = '<div class="stat"><div class="k">Result</div><div class="v">No voice detected</div></div>';
-    $('#classbox').innerHTML = '<div class="pctl">Lower the sensitivity or speak louder / closer to the microphone.</div>';
+    $('#stats').innerHTML = `<div class="stat"><div class="k">${t('result')}</div><div class="v">${t('noVoice')}</div></div>`;
+    $('#classbox').innerHTML = `<div class="pctl">${t('noVoiceHint')}</div>`;
     lastStats = null;
     return null;
   }
@@ -1004,13 +1069,13 @@ function renderStats(pts){
   lastStats = { medHz, medNote: midiName(medMidi), meanHz, dur };
 
   const cells = [
-    ['Median pitch', `${medHz.toFixed(0)} <small>Hz · ${midiName(medMidi)}</small>`, true],
-    ['Mean', `${meanHz.toFixed(0)} <small>Hz · ${midiName(meanMidi)}</small>`, false],
-    ['Range', `${midiName(minMidi)}–${midiName(maxMidi)}`, false],
-    ['Spread', `${(maxMidi-minMidi).toFixed(1)} <small>semitones</small>`, false],
-    ['Voiced', `${voicedPct.toFixed(0)}<small>%</small>`, false],
-    ['Length', `${dur.toFixed(1)}<small> s</small>`, false],
-    ['Trimmed', `${outliers}<small> frames</small>`, false],
+    [t('medianPitch'), `${medHz.toFixed(0)} <small>Hz · ${midiName(medMidi)}</small>`, true],
+    [t('mean'), `${meanHz.toFixed(0)} <small>Hz · ${midiName(meanMidi)}</small>`, false],
+    [t('range'), `${midiName(minMidi)}–${midiName(maxMidi)}`, false],
+    [t('spread'), `${(maxMidi-minMidi).toFixed(1)} <small>${t('semitones')}</small>`, false],
+    [t('voiced'), `${voicedPct.toFixed(0)}<small>%</small>`, false],
+    [t('length'), `${dur.toFixed(1)}<small> s</small>`, false],
+    [t('trimmed'), `${outliers}<small> ${t('frames')}</small>`, false],
   ];
   $('#stats').innerHTML = cells.map(([k,v,hero])=>
     `<div class="stat${hero?' hero-stat':''}"><div class="k">${k}</div><div class="v">${v}</div></div>`
@@ -1254,22 +1319,16 @@ function encodeWAV(samples, rate){
 
 /* ---------- presets ---------- */
 const PRESETS = [
-  { id:'raw',    name:'Raw',     sens:0.40, maMs:24,  emaMs:24,  trim:'off',
-    desc:'No cleanup — every detected frame, exactly as measured.' },
-  { id:'gentle', name:'Gentle',  sens:0.50, maMs:56,  emaMs:56,  trim:'p1',
-    desc:'Light smoothing; trims the extreme 1% of values.' },
-  { id:'smart',  name:'Smart',   sens:0.55, maMs:72,  emaMs:72,  trim:'mad',
-    desc:'Recommended. Removes short glitches by local context and keeps real pitch changes.' },
-  { id:'strict', name:'Strict',  sens:0.65, maMs:104, emaMs:104, trim:'p5',
-    desc:'Stronger smoothing; trims the extreme 5% of values.' },
-  { id:'max',    name:'Maximum', sens:0.72, maMs:136, emaMs:136, trim:'p10',
-    desc:'Heaviest cleanup — smoothest contour, may hide quick moves.' },
+  { id:'raw',    nameKey:'presetRaw',     descKey:'presetRawDesc',     sens:0.40, maMs:24,  emaMs:24,  trim:'off' },
+  { id:'gentle', nameKey:'presetGentle',  descKey:'presetGentleDesc',  sens:0.50, maMs:56,  emaMs:56,  trim:'p1' },
+  { id:'smart',  nameKey:'presetSmart',   descKey:'presetSmartDesc',   sens:0.55, maMs:72,  emaMs:72,  trim:'mad' },
+  { id:'strict', nameKey:'presetStrict',  descKey:'presetStrictDesc',  sens:0.65, maMs:104, emaMs:104, trim:'p5' },
+  { id:'max',    nameKey:'presetMaximum', descKey:'presetMaximumDesc', sens:0.72, maMs:136, emaMs:136, trim:'p10' },
 ];
-const CUSTOM_DESC = 'Your own settings — adjust anything in Analysis settings below.';
 let activePreset = 'smart';
 function buildPresets(){
-  $('#presets').innerHTML = PRESETS.map(p=>`<button class="preset" data-id="${p.id}">${p.name}</button>`).join('')
-    + `<button class="preset" data-id="custom" style="display:none">Custom</button>`;
+  $('#presets').innerHTML = PRESETS.map(p=>`<button class="preset" data-id="${p.id}">${t(p.nameKey)}</button>`).join('')
+    + `<button class="preset" data-id="custom" style="display:none">${t('presetCustom')}</button>`;
   $('#presets').querySelectorAll('.preset').forEach(b=>{
     if(b.dataset.id === 'custom'){
       b.addEventListener('click', ()=>{ $('#adv').open = true; $('#adv').scrollIntoView({behavior:'smooth', block:'nearest'}); });
@@ -1284,7 +1343,7 @@ function markActivePreset(){
     if(b.dataset.id === 'custom') b.style.display = activePreset==='custom' ? '' : 'none';
   });
   const p = PRESETS.find(x=>x.id===activePreset);
-  $('#presetDesc').textContent = p ? p.desc : CUSTOM_DESC;
+  $('#presetDesc').textContent = p ? t(p.descKey) : t('customDesc');
 }
 function applyPreset(id, rerender){
   const p = PRESETS.find(x=>x.id===id); if(!p) return;
@@ -1298,7 +1357,7 @@ function applyPreset(id, rerender){
   if(rerender && lastAnalysis) postProcessAndRender();
 }
 function updateTrimDesc(){
-  const map = { off:'', p1:'(±1%)', p3:'(±3%)', p5:'(±5%)', p10:'(±10%)', mad:'(auto)' };
+  const map = { off:'', p1:'(±1%)', p3:'(±3%)', p5:'(±5%)', p10:'(±10%)', mad:`(${t('automatic')})` };
   $('#trimDesc').textContent = map[$('#trimMode').value] || '';
 }
 function snapshotSettings(){
@@ -1310,6 +1369,11 @@ function snapshotSettings(){
 function updateSmoothingLabels(){
   $('#maWindowVal').textContent = `${$('#maWindow').value} ms`;
   $('#emaSpanVal').textContent = `${$('#emaSpan').value} ms`;
+}
+function presetName(id){
+  const preset = PRESETS.find(item=>item.id===id);
+  if(preset) return t(preset.nameKey);
+  return id === 'custom' ? t('presetCustom') : id;
 }
 
 /* ---------- history (IndexedDB) ---------- */
@@ -1385,32 +1449,47 @@ function loadRecording(rec){
   postProcessAndRender();
   $('#results').scrollIntoView({ behavior:'smooth', block:'start' });
 }
-async function refreshHistory(){
-  if(!window.indexedDB){ $('#histCard').style.display='none'; return; }
-  let recs;
-  try{ recs = await dbAll(); }
-  catch(e){ $('#histCard').style.display='none'; return; }
-  recs.sort((a,b)=>b.date-a.date);
+function localizeHistoryItems(){
+  const card = $('#histCard');
+  const count = +(card.dataset.count || 0);
+  const total = +(card.dataset.totalBytes || 0);
+  $('#histUsage').textContent = count ? `${count}/30 · ${fmtBytes(total)} ${t('of')} 1 GB` : '';
+  const empty = $('#histList .hist-empty');
+  if(empty) empty.textContent = t('historyEmpty');
+  const language = L10N.LANGUAGES.find(item=>item.code===uiLang);
+  $('#histList').querySelectorAll('.hist-item').forEach(element=>{
+    const when = new Date(+element.dataset.date).toLocaleString(language ? language.locale : 'en-GB', {
+      day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'
+    });
+    element.querySelector('.hist-when').textContent = when;
+    element.querySelector('.hist-meta').textContent = `${(+element.dataset.duration).toFixed(1)} s · ${fmtBytes(+element.dataset.bytes)} · ${presetName(element.dataset.preset)}`;
+    element.querySelector('.act-play').setAttribute('aria-label', t('play'));
+    element.querySelector('.act-load').textContent = t('open');
+    element.querySelector('.act-del').setAttribute('aria-label', t('delete'));
+  });
+}
+function renderHistory(recs){
   const total = recs.reduce((s,r)=>s+(r.bytes||0),0);
-  $('#histUsage').textContent = recs.length ? `${recs.length}/30 · ${fmtBytes(total)} of 1 GB` : '';
+  $('#histCard').dataset.count = recs.length;
+  $('#histCard').dataset.totalBytes = total;
   if(!recs.length){
-    $('#histList').innerHTML = '<div class="hist-empty">No recordings yet — they will appear here automatically after you record.</div>';
+    $('#histList').innerHTML = `<div class="hist-empty">${t('historyEmpty')}</div>`;
+    localizeHistoryItems();
     return;
   }
   $('#histList').innerHTML = recs.map(r=>{
-    const d = new Date(r.date);
-    const when = d.toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
-    return `<div class="hist-item" data-id="${r.id}">
-      <span class="hist-when">${when}</span>
+    return `<div class="hist-item" data-id="${r.id}" data-date="${r.date}" data-duration="${r.dur}" data-bytes="${r.bytes||0}" data-preset="${r.settings?r.settings.preset:'?'}">
+      <span class="hist-when"></span>
       <span class="hist-med">${r.medianHz.toFixed(0)} <small>Hz · ${r.medianNote}</small></span>
-      <span class="hist-meta">${r.dur.toFixed(1)} s · ${fmtBytes(r.bytes||0)} · ${r.settings?r.settings.preset:'?'}</span>
+      <span class="hist-meta"></span>
       <span class="hist-btns">
-        <button class="ibtn act-play" aria-label="Play">▶</button>
-        <button class="ibtn act-load">Open</button>
+        <button class="ibtn act-play" aria-label="${t('play')}">▶</button>
+        <button class="ibtn act-load">${t('open')}</button>
         <button class="ibtn act-wav">WAV</button>
-        <button class="ibtn del act-del" aria-label="Delete">✕</button>
+        <button class="ibtn del act-del" aria-label="${t('delete')}">✕</button>
       </span></div>`;
   }).join('');
+  localizeHistoryItems();
   $('#histList').querySelectorAll('.hist-item').forEach(el=>{
     const id = +el.dataset.id;
     el.querySelector('.act-play').onclick = ()=>toggleHistPlay(id);
@@ -1422,6 +1501,14 @@ async function refreshHistory(){
     };
   });
   updateHistPlayBtns();
+}
+async function refreshHistory(){
+  if(!window.indexedDB){ $('#histCard').style.display='none'; return; }
+  let recs;
+  try{ recs = await dbAll(); }
+  catch(e){ $('#histCard').style.display='none'; return; }
+  recs.sort((a,b)=>b.date-a.date);
+  renderHistory(recs);
 }
 
 let histAudio = null, histPlayingId = null;
@@ -1469,7 +1556,7 @@ async function exportData(){
   a.href = URL.createObjectURL(blob); a.download = 'voicescope-data.json'; a.click();
 }
 async function clearHistory(){
-  if(!confirm('Delete all saved recordings?')) return;
+  if(!confirm(t('deleteAll'))) return;
   try{ const recs = await dbAll(); for(const r of recs) await dbDel(r.id); }catch(e){}
   refreshHistory();
 }
@@ -1481,8 +1568,7 @@ function hideBanner(){ $('#banner').classList.remove('on'); }
 $('#rec').addEventListener('click', startRecording);
 $('#stop').addEventListener('click', stopRecording);
 $('#shuffle').addEventListener('click', ()=>renderReading(true));
-$('#langEn').addEventListener('click', ()=>setLang('en'));
-$('#langRu').addEventListener('click', ()=>setLang('ru'));
+$('#siteLang').addEventListener('change', event=>setUiLanguage(event.target.value));
 $('#exportData').addEventListener('click', exportData);
 $('#clearHist').addEventListener('click', clearHistory);
 $('#themeBtn').addEventListener('click', toggleTheme);
@@ -1522,6 +1608,8 @@ window.addEventListener('resize', ()=>{ clearTimeout(resizeT); resizeT=setTimeou
 let savedTheme = 'dark';
 try{ savedTheme = localStorage.getItem('vs-theme') || 'dark'; }catch(_){}
 applyTheme(savedTheme);
+buildLanguageMenu();
+applyTranslations();
 buildPresets();
 applyPreset('smart', false);
 updateTrimDesc();
@@ -1529,7 +1617,7 @@ renderReading(true);
 refreshHistory();
 
 if(!window.isSecureContext && location.protocol!=='file:'){
-  showBanner('Microphone access requires https or localhost.');
+  showBanner(t('secureRequired'));
 }
 </script>
 <!-- GoatCounter analytics (dedicated site for VoiceScope) -->
