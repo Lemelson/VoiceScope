@@ -20,6 +20,197 @@
     return percentile([...values].sort((a, b) => a - b), 50);
   }
 
+  function encodePitchEvidence(frames) {
+    return Uint8Array.from(frames, frame =>
+      (frame.thresholdHit === true ? 1 : 0) |
+      (frame.boundaryMinimum === true ? 2 : 0)
+    );
+  }
+
+  function decodePitchEvidence(encoded, index) {
+    if (!encoded || index < 0 || index >= encoded.length) {
+      return { thresholdHit: undefined, boundaryMinimum: undefined };
+    }
+    const flags = encoded[index];
+    return {
+      thresholdHit: Boolean(flags & 1),
+      boundaryMinimum: Boolean(flags & 2)
+    };
+  }
+
+  function medianFromHistogram(counts, total, scale = 1) {
+    if (!counts?.length || total <= 0) return NaN;
+    const lowerRank = Math.floor((total - 1) / 2);
+    const upperRank = Math.ceil((total - 1) / 2);
+    let cumulative = 0;
+    let lowerValue = null;
+    let upperValue = null;
+    for (let index = 0; index < counts.length; index++) {
+      cumulative += counts[index];
+      if (lowerValue == null && cumulative > lowerRank) lowerValue = index / scale;
+      if (cumulative > upperRank) {
+        upperValue = index / scale;
+        break;
+      }
+    }
+    if (lowerValue == null || upperValue == null) return NaN;
+    return (lowerValue + upperValue) / 2;
+  }
+
+  /**
+   * Classify pitch frames while rejecting a quiet, persistent background tone.
+   *
+   * A stationary frequency alone is not enough to call something noise: a sung
+   * note can be stationary too. A tone is removed only when it is spread across
+   * a substantial part of the recording, lives in the low-energy population,
+   * and is clearly quieter or less reliable than the stronger signal. Loud
+   * frames at the same frequency are retained.
+   */
+  function adaptiveVoicingMask(frames, options = {}) {
+    const confidenceThreshold = options.confidenceThreshold ?? 0.55;
+    const minFrequency = options.minFrequency ?? 55;
+    const maxFrequency = options.maxFrequency ?? 600;
+    const adaptive = options.adaptive !== false;
+    const observedRms = frames
+      .map(frame => frame?.rms)
+      .filter(value => Number.isFinite(value))
+      .sort((a, b) => a - b);
+    const adaptiveFloor = observedRms.length
+      ? Math.max(1e-5, Math.min(0.003, percentile(observedRms, 5) * 0.8))
+      : 0.003;
+    const absoluteFloor = options.absoluteFloor ?? (adaptive ? adaptiveFloor : 0.004);
+    const reliableConfidence = options.reliableConfidence ??
+      Math.min(0.85, confidenceThreshold + 0.27);
+    const baseMask = frames.map(frame =>
+      Number.isFinite(frame?.f0) &&
+      Number.isFinite(frame?.conf) &&
+      Number.isFinite(frame?.rms) &&
+      frame.f0 >= minFrequency &&
+      frame.f0 <= maxFrequency &&
+      frame.conf >= confidenceThreshold &&
+      frame.rms >= absoluteFloor
+    );
+    const noiseMask = new Array(frames.length).fill(false);
+
+    function result(maskDetails = {}) {
+      return {
+        mask: baseMask.map((voiced, index) => voiced && !noiseMask[index]),
+        noiseMask,
+        noiseToneFrames: noiseMask.filter(Boolean).length,
+        silenceFloor: absoluteFloor,
+        ...maskDetails
+      };
+    }
+
+    const baseIndices = [];
+    for (let index = 0; index < frames.length; index++) {
+      if (baseMask[index]) baseIndices.push(index);
+    }
+    if (!adaptive || frames.length < 80 || baseIndices.length < 24 || !observedRms.length) {
+      return result();
+    }
+
+    const baseRms = baseIndices.map(index => frames[index].rms).sort((a, b) => a - b);
+    const noiseReference = percentile(observedRms, 10);
+    const strongSignalReference = percentile(baseRms, 90);
+    const quietCeiling = Math.max(
+      absoluteFloor,
+      Math.min(noiseReference * 2.2, strongSignalReference * 0.55)
+    );
+    if (!Number.isFinite(quietCeiling) || strongSignalReference <= quietCeiling * 1.35) {
+      return result();
+    }
+    const strongVoiceMask = frames.map((frame, index) =>
+      baseMask[index] && frame.rms >= strongSignalReference * 0.65
+    );
+    function isNearStrongVoice(index, frequency) {
+      const radius = options.strongVoiceContextFrames ?? 12;
+      const pitchRadius = options.strongVoiceContextSemitones ?? 3;
+      const midi = 69 + 12 * Math.log2(frequency / 440);
+      const start = Math.max(0, index - radius);
+      const end = Math.min(frames.length - 1, index + radius);
+      for (let cursor = start; cursor <= end; cursor++) {
+        if (!strongVoiceMask[cursor]) continue;
+        const nearbyMidi = 69 + 12 * Math.log2(frames[cursor].f0 / 440);
+        if (Math.abs(nearbyMidi - midi) <= pitchRadius) return true;
+      }
+      return false;
+    }
+
+    // Three quarters of a semitone is wide enough for detector jitter but much
+    // narrower than normal speech movement. Binning in MIDI space makes the
+    // tolerance relative, so it works at any pitch instead of targeting 60 Hz.
+    const binWidth = options.binWidthSemitones ?? 0.75;
+    const frequencyBinKey = frame =>
+      Math.round((69 + 12 * Math.log2(frame.f0 / 440)) / binWidth);
+    const quietIndices = baseIndices.filter(index => frames[index].rms <= quietCeiling);
+    const bins = new Map();
+    for (const index of quietIndices) {
+      const frame = frames[index];
+      const key = frequencyBinKey(frame);
+      let bin = bins.get(key);
+      if (!bin) {
+        bin = { indices: [], rms: [], confidence: [], fallbackCount: 0 };
+        bins.set(key, bin);
+      }
+      bin.indices.push(index);
+      bin.rms.push(frame.rms);
+      bin.confidence.push(frame.conf);
+      if (frame.thresholdHit === false) {
+        bin.fallbackCount++;
+      }
+    }
+
+    // About half a second at the application's 8 ms hop. Requiring several
+    // separated time regions prevents repeated short phrase endings from
+    // looking like a continuous appliance tone.
+    const minimumFrames = options.minimumToneFrames ?? Math.max(
+      63,
+      Math.ceil(frames.length * 0.015)
+    );
+    for (const [key, bin] of bins.entries()) {
+      if (bin.indices.length < minimumFrames) continue;
+      const first = bin.indices[0];
+      const last = bin.indices[bin.indices.length - 1];
+      const temporalCoverage = (last - first + 1) / frames.length;
+      const quietOccupancy = bin.indices.length / Math.max(1, quietIndices.length);
+      const occupiedRegions = new Set(bin.indices.map(index =>
+        Math.min(7, Math.floor(index / Math.max(1, frames.length) * 8))
+      )).size;
+      if (temporalCoverage < 0.35 && bin.indices.length < frames.length * 0.10) continue;
+      if (occupiedRegions < 4) continue;
+      if (quietOccupancy < 0.12) continue;
+
+      const binRms = median(bin.rms);
+      const binConfidence = median(bin.confidence);
+      const energyContrast = strongSignalReference / Math.max(binRms, 1e-9);
+      const fallbackShare = bin.fallbackCount / bin.indices.length;
+      const weakPitchEvidence = binConfidence < reliableConfidence || fallbackShare >= 0.25;
+      if (energyContrast < 1.8 || !weakPitchEvidence) continue;
+
+      for (const index of bin.indices) {
+        const frame = frames[index];
+        const clearPitchEvidence =
+          frame.thresholdHit === true && frame.conf >= reliableConfidence;
+        if (!clearPitchEvidence && !isNearStrongVoice(index, frame.f0)) {
+          noiseMask[index] = true;
+        }
+      }
+      for (const index of baseIndices) {
+        const frame = frames[index];
+        if (frequencyBinKey(frame) === key &&
+            frame.thresholdHit === false &&
+            frame.boundaryMinimum === true &&
+            frame.rms <= binRms * 1.8 &&
+            !isNearStrongVoice(index, frame.f0)) {
+          noiseMask[index] = true;
+        }
+      }
+    }
+
+    return result({ quietCeiling });
+  }
+
   /**
    * Correct only short, locally bracketed octave errors.
    *
@@ -179,9 +370,13 @@
   }
 
   return {
+    adaptiveVoicingMask,
     correctOctaveOutliers,
+    decodePitchEvidence,
+    encodePitchEvidence,
     localMadOutlierMask,
     median,
+    medianFromHistogram,
     percentile
   };
 });

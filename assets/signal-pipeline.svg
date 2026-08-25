@@ -33,6 +33,6 @@
         <text x="112" y="198" fill="#7f8a95" font-size="13" text-anchor="middle">Hz + notes + time</text>
       </g>
     </g>
-    <text x="56" y="520" fill="#8d98a4" font-size="17">Confidence threshold · silence floor · octave correction · Smart MAD</text>
+    <text x="56" y="520" fill="#8d98a4" font-size="17">Confidence threshold · steady-tone filter · octave correction · Smart MAD</text>
   </g>
 </svg>

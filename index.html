@@ -587,8 +587,8 @@
               <span class="exp" data-i18n="minExplain">Drops voiced bursts shorter than N frames — usually clicks, breaths, or artifacts.</span>
             </div>
             <div class="ctl">
-              <span class="lab"><label class="check" style="color:var(--text)"><input id="optAdaptive" type="checkbox" checked /> <span data-i18n="adaptiveSilence">Adaptive silence floor</span></label></span>
-              <span class="exp" data-i18n="adaptiveExplain">Estimates background noise from quiet sections and removes anything quieter.</span>
+              <span class="lab"><label class="check" style="color:var(--text)"><input id="optAdaptive" type="checkbox" checked /> <span data-i18n="adaptiveSilence">Filter steady background tones</span></label></span>
+              <span class="exp" data-i18n="adaptiveExplain">Removes quiet, persistent pitch detections while preserving louder speech and clear sustained notes.</span>
             </div>
           </div>
         </div>
@@ -833,10 +833,11 @@ function yin(buf, rate, tauMin, tauMax, thresh){
   }
   // absolute threshold: first dip below thresh
   let best = -1;
+  let thresholdHit = false;
   for(let tau=tauMin; tau<tauMax; tau++){
     if(d[tau] < thresh){
       while(tau+1 < tauMax && d[tau+1] < d[tau]) tau++;
-      best = tau; break;
+      best = tau; thresholdHit = true; break;
     }
   }
   if(best === -1){ // fallback: global min in range
@@ -852,7 +853,12 @@ function yin(buf, rate, tauMin, tauMax, thresh){
     const denom = 2*(2*s1 - s2 - s0);
     if(denom !== 0) betterTau = best + (s2 - s0)/denom;
   }
-  return { f0: rate/betterTau, conf: 1 - d[best] };
+  return {
+    f0: rate/betterTau,
+    conf:1-d[best],
+    thresholdHit,
+    boundaryMinimum:best<=tauMin+1 || best>=tauMax-2
+  };
 }
 
 /* ---------- analysis params ---------- */
@@ -885,7 +891,10 @@ let recordedSamples = null, params = null;
 let startedAt = 0, rafId = 0;
 let lastAnalysis = null, lastDraw = null, chartGeom = null;
 let livePitchPoints = [];
-let liveVoicedMidis = [], lastMedUpdate = 0;
+let liveMidiBins = new Int32Array(1280), liveVoicedCount = 0;
+let lastMedUpdate = 0, lastLiveClassificationAt = 0;
+let liveRawPoints = [], liveDecimationTail = new Float32Array(0);
+let liveSignalBuffer = new Float32Array(0), liveSignalBase = 0;
 let recordingLockRelease = null, recordingLockTask = null;
 
 async function acquireRecordingLock(){
@@ -952,8 +961,11 @@ async function startRecording(){
   processor = audioCtx.createScriptProcessor(4096, 1, 1);
   muteGain = audioCtx.createGain(); muteGain.gain.value = 0;
 
-  recChunks = []; recLen = 0; livePitchPoints = [];
-  liveVoicedMidis = []; lastMedUpdate = 0;
+  recChunks = []; recLen = 0; livePitchPoints = []; liveRawPoints = [];
+  liveDecimationTail = new Float32Array(0);
+  liveSignalBuffer = new Float32Array(0); liveSignalBase = 0;
+  liveMidiBins = new Int32Array(1280); liveVoicedCount = 0;
+  lastMedUpdate = 0; lastLiveClassificationAt = 0;
   $('#liveMed').textContent = '—'; $('#liveMedHz').textContent = '';
   processor.onaudioprocess = e => {
     const ch = e.inputBuffer.getChannelData(0);
@@ -993,32 +1005,103 @@ function liveProcess(buf){
   $('#meterFill').style.width = pct.toFixed(0)+'%';
   // live note
   try{
-    const sig = decimate(buf, params.D);
-    if(sig.length >= params.frameLen){
-      const chunkStart = (recLen - buf.length) / recRate;
-      let latest = null;
-      for(let i=0; i+params.frameLen<=sig.length; i+=params.hop){
-        const frame = sig.subarray(i, i+params.frameLen);
-        const r = yin(frame, params.aRate, params.tauMin, params.tauMax, 0.15);
-        const voiced = r.conf >= 0.5 && r.f0 >= 55 && r.f0 <= 600 && rms > 0.004;
-        const midi = voiced ? hzToMidi(r.f0) : null;
-        livePitchPoints.push({ t: chunkStart + (i+params.frameLen/2)/params.aRate, midi });
-        if(voiced){ latest = r; liveVoicedMidis.push(midi); }
-      }
-      $('#liveNote').textContent = latest ? midiName(hzToMidi(latest.f0)) : '—';
-      $('#liveHz').textContent = latest ? latest.f0.toFixed(0) + ' Hz' : '';
-      updateLiveMedian();
-      drawLiveChart();
+    const combined = new Float32Array(liveDecimationTail.length + buf.length);
+    combined.set(liveDecimationTail);
+    combined.set(buf, liveDecimationTail.length);
+    const groups = Math.floor(combined.length / params.D);
+    const decimated = new Float32Array(groups);
+    for(let group=0; group<groups; group++){
+      let sum = 0;
+      for(let offset=0; offset<params.D; offset++) sum += combined[group*params.D+offset];
+      decimated[group] = sum / params.D;
     }
+    liveDecimationTail = combined.slice(groups * params.D);
+
+    const pending = new Float32Array(liveSignalBuffer.length + decimated.length);
+    pending.set(liveSignalBuffer);
+    pending.set(decimated, liveSignalBuffer.length);
+    liveSignalBuffer = pending;
+
+    let nextStart = 0;
+    while(nextStart + params.frameLen <= liveSignalBuffer.length){
+      const frame = liveSignalBuffer.subarray(nextStart, nextStart + params.frameLen);
+      let frameRms = 0;
+      for(let index=0; index<frame.length; index++) frameRms += frame[index]*frame[index];
+      frameRms = Math.sqrt(frameRms/frame.length);
+      const r = yin(frame, params.aRate, params.tauMin, params.tauMax, 0.15);
+      liveRawPoints.push({
+        t:(liveSignalBase + nextStart + params.frameLen/2)/params.aRate,
+        f0:r.f0, conf:r.conf, rms:frameRms,
+        thresholdHit:r.thresholdHit, boundaryMinimum:r.boundaryMinimum
+      });
+      nextStart += params.hop;
+    }
+    if(nextStart){
+      liveSignalBuffer = liveSignalBuffer.slice(nextStart);
+      liveSignalBase += nextStart;
+    }
+
+    const classificationNow = performance.now();
+    if(classificationNow-lastLiveClassificationAt < 250 && livePitchPoints.length) return;
+    lastLiveClassificationAt = classificationNow;
+
+    // Revisit only the most recent minute. Older frames have already seen a
+    // full minute of context, so freezing them keeps live work bounded during
+    // genuinely long recordings; Stop still runs the exact full offline pass.
+    const liveWindowFrames = Math.max(
+      80,
+      Math.ceil(params.aRate/params.hop*60)
+    );
+    const windowStart = Math.max(0, liveRawPoints.length-liveWindowFrames);
+    const windowRaw = liveRawPoints.slice(windowStart);
+    const classification = window.VoiceScopeAnalysis.adaptiveVoicingMask(
+      windowRaw,
+      {
+        confidenceThreshold:+$('#sens').value,
+        adaptive:$('#optAdaptive').checked
+      }
+    );
+    while(livePitchPoints.length < liveRawPoints.length){
+      const point = liveRawPoints[livePitchPoints.length];
+      livePitchPoints.push({ t:point.t, midi:null });
+    }
+    for(let localIndex=0; localIndex<windowRaw.length; localIndex++){
+      const index = windowStart+localIndex;
+      const previousMidi = livePitchPoints[index].midi;
+      if(previousMidi!=null){
+        const previousBin = Math.max(0, Math.min(1279, Math.round(previousMidi*10)));
+        liveMidiBins[previousBin]--; liveVoicedCount--;
+      }
+      const midi = classification.mask[localIndex] ? hzToMidi(windowRaw[localIndex].f0) : null;
+      livePitchPoints[index] = { t:windowRaw[localIndex].t, midi };
+      if(midi!=null){
+        const bin = Math.max(0, Math.min(1279, Math.round(midi*10)));
+        liveMidiBins[bin]++; liveVoicedCount++;
+      }
+    }
+    const latestIndex = classification.mask.lastIndexOf(true);
+    const latestRawIndex = latestIndex >= 0 ? windowStart+latestIndex : -1;
+    const newest = liveRawPoints.at(-1);
+    const latest = latestIndex >= 0 && newest &&
+      newest.t-liveRawPoints[latestRawIndex].t <= 0.15
+      ? liveRawPoints[latestRawIndex]
+      : null;
+    $('#liveNote').textContent = latest ? midiName(hzToMidi(latest.f0)) : '—';
+    $('#liveHz').textContent = latest ? latest.f0.toFixed(0) + ' Hz' : '';
+    updateLiveMedian();
+    drawLiveChart();
   }catch(_){}
 }
 
 function updateLiveMedian(){
   const now = performance.now();
-  if(now - lastMedUpdate < 1000 || liveVoicedMidis.length < 20) return;
+  if(now-lastMedUpdate < 1000 || liveVoicedCount < 20) return;
   lastMedUpdate = now;
-  const sorted = [...liveVoicedMidis].sort((a,b)=>a-b);
-  const medMidi = percentile(sorted, 50);
+  const medMidi = window.VoiceScopeAnalysis.medianFromHistogram(
+    liveMidiBins,
+    liveVoicedCount,
+    10
+  );
   $('#liveMed').textContent = midiName(medMidi);
   $('#liveMedHz').textContent = midiToHz(medMidi).toFixed(0) + ' Hz';
 }
@@ -1045,11 +1128,25 @@ function drawLiveChart(){
   const plotW=cssW-padL-padR, plotH=cssH-padT-padB;
   const elapsed = Math.max(0.1, (performance.now()-startedAt)/1000);
   const duration = Math.max(3, elapsed);
-  const voiced = livePitchPoints.filter(p=>p.midi!=null);
+  const maxDisplayPoints = Math.max(1000, Math.round(plotW*2));
+  const displayStride = Math.max(1, Math.ceil(livePitchPoints.length/maxDisplayPoints));
+  const displayPoints = [];
+  for(let start=0; start<livePitchPoints.length; start+=displayStride){
+    let selected = null;
+    const end = Math.min(livePitchPoints.length, start+displayStride);
+    for(let index=start; index<end; index++){
+      if(livePitchPoints[index].midi!=null){ selected=livePitchPoints[index]; break; }
+    }
+    displayPoints.push(selected || { t:livePitchPoints[end-1].t, midi:null });
+  }
+  const voiced = displayPoints.filter(p=>p.midi!=null);
   let lo=48, hi=66;
-  if(voiced.length){
-    lo=Math.min(...voiced.map(p=>p.midi))-3;
-    hi=Math.max(...voiced.map(p=>p.midi))+3;
+  if(liveVoicedCount){
+    let lowBin = 0, highBin = liveMidiBins.length-1;
+    while(lowBin<liveMidiBins.length && liveMidiBins[lowBin]<=0) lowBin++;
+    while(highBin>=0 && liveMidiBins[highBin]<=0) highBin--;
+    lo=lowBin/10-3;
+    hi=highBin/10+3;
     if(hi-lo<18){ const mid=(lo+hi)/2; lo=mid-9; hi=mid+9; }
   }
   const x=t=>padL+(t/duration)*plotW;
@@ -1089,7 +1186,7 @@ function drawLiveChart(){
   let prev=null, ema=null;
   ctx.strokeStyle=getCss('--accent'); ctx.lineWidth=2.5; ctx.lineCap='round'; ctx.lineJoin='round';
   ctx.beginPath();
-  for(const p of livePitchPoints){
+  for(const p of displayPoints){
     if(p.midi==null){ prev=null; ema=null; continue; }
     ema=ema==null?p.midi:.35*p.midi+.65*ema;
     const px=x(p.t), py=y(ema);
@@ -1143,7 +1240,11 @@ function runAnalysis(){
     for(let k=0;k<p.frameLen;k++) rms += frame[k]*frame[k];
     rms = Math.sqrt(rms/p.frameLen);
     const r = yin(frame, p.aRate, p.tauMin, p.tauMax, 0.15);
-    raw.push({ t:(i + p.frameLen/2)/p.aRate, f0:r.f0, conf:r.conf, rms });
+    raw.push({
+      t:(i + p.frameLen/2)/p.aRate,
+      f0:r.f0, conf:r.conf, rms,
+      thresholdHit:r.thresholdHit, boundaryMinimum:r.boundaryMinimum
+    });
   }
   lastAnalysis = { raw, duration: recordedSamples.length/recRate };
   setupPlayback();
@@ -1174,19 +1275,14 @@ function postProcess(){
   const adaptive = $('#optAdaptive').checked;
   const raw = lastAnalysis.raw;
 
-  // adaptive silence floor: estimate noise from quietest frames, but never let it
-  // climb into the speech level — cap it at a fraction of the median (loud) RMS.
-  let silence = 0.004;
-  if(adaptive && raw.length){
-    const rmsSorted = raw.map(p=>p.rms).sort((a,b)=>a-b);
-    const floor = percentile(rmsSorted, 5);
-    const med = percentile(rmsSorted, 50) || 0.01;
-    silence = Math.max(0.003, Math.min(floor * 2.5, med * 0.30));
-  }
+  const classification = window.VoiceScopeAnalysis.adaptiveVoicingMask(
+    raw,
+    { confidenceThreshold:confT, adaptive }
+  );
 
   const lowM = hzToMidi(55), highM = hzToMidi(600);
-  const pts = raw.map(p => {
-    const voiced = p.conf >= confT && p.f0 >= 55 && p.f0 <= 600 && p.rms >= silence;
+  const pts = raw.map((p, index) => {
+    const voiced = classification.mask[index];
     return { t:p.t, f0:p.f0, conf:p.conf, voiced,
              midi: voiced ? hzToMidi(p.f0) : null, outlier:false, kept:voiced };
   });
@@ -1720,6 +1816,7 @@ async function saveRecording(){
     const f0   = Float32Array.from(raw.map(p=>p.f0));
     const conf = Float32Array.from(raw.map(p=>p.conf));
     const rms  = Float32Array.from(raw.map(p=>p.rms));
+    const pitchEvidence = window.VoiceScopeAnalysis.encodePitchEvidence(raw);
     const wav  = encodeWAV(recordedSamples, recRate);
     const id = Date.now();
     const dt = raw.length>1 ? (raw[1].t - raw[0].t) : 0.008;
@@ -1728,8 +1825,9 @@ async function saveRecording(){
       medianHz:lastStats.medHz, medianNote:lastStats.medNote,
       settings:snapshotSettings(),
       t0: raw.length ? raw[0].t : 0, dt,
-      f0, conf, rms, wav,
-      bytes: wav.size + f0.byteLength*3
+      f0, conf, rms, pitchEvidence, wav,
+      bytes: wav.size + f0.byteLength + conf.byteLength +
+        rms.byteLength + pitchEvidence.byteLength
     };
     await dbPut(rec);
     await pruneDB();
@@ -1747,7 +1845,15 @@ async function pruneDB(){
 }
 function loadRecording(rec){
   const n = rec.f0.length, raw = [];
-  for(let i=0;i<n;i++) raw.push({ t: rec.t0 + i*rec.dt, f0:rec.f0[i], conf:rec.conf[i], rms:rec.rms[i] });
+  for(let i=0;i<n;i++){
+    const evidence = window.VoiceScopeAnalysis.decodePitchEvidence(rec.pitchEvidence, i);
+    raw.push({
+      t:rec.t0+i*rec.dt,
+      f0:rec.f0[i], conf:rec.conf[i], rms:rec.rms[i],
+      thresholdHit:evidence.thresholdHit,
+      boundaryMinimum:evidence.boundaryMinimum
+    });
+  }
   lastAnalysis = { raw, duration: rec.dur };
   recordedSamples = null; // loaded item: don't re-save on render
   const url = URL.createObjectURL(rec.wav);

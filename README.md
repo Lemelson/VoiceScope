@@ -67,7 +67,7 @@ manual tweak in Analysis settings switches to a Custom profile.
   against unchanged neighbouring frames on both sides, so a noisy burst can't drag subsequent
   normal speech to the wrong octave.
 - **Min duration** — drops very short bursts (clicks, artifacts).
-- **Adaptive silence floor** — estimates background noise and cuts anything quieter.
+- **Steady background-tone filter** — detects quiet, persistent pitch readings relative to louder speech while preserving clear sustained notes.
 
 ## F0 reference
 The results include a descriptive speaking-F0 zone and percentile estimates based on a simple

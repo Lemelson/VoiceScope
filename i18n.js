@@ -70,9 +70,9 @@
       minDuration: "Min duration",
       minExplain:
         "Drops voiced bursts shorter than N frames — usually clicks, breaths, or artifacts.",
-      adaptiveSilence: "Adaptive silence floor",
+      adaptiveSilence: "Filter steady background tones",
       adaptiveExplain:
-        "Estimates background noise from quiet sections and removes anything quieter.",
+        "Removes quiet, persistent pitch detections while preserving louder speech and clear sustained notes.",
       recording: "Recording",
       downloadWav: "↓ Download WAV",
       history: "History",
@@ -210,9 +210,9 @@
       minDuration: "Мин. длительность",
       minExplain:
         "Убирает участки голоса короче N кадров — обычно это щелчки, вдохи или помехи.",
-      adaptiveSilence: "Адаптивный порог тишины",
+      adaptiveSilence: "Фильтровать постоянный фоновый шум",
       adaptiveExplain:
-        "Определяет уровень фонового шума по тихим участкам и убирает более тихие звуки.",
+        "Убирает тихие устойчивые частоты, сохраняя более громкую речь и чистые протяжные ноты.",
       recording: "Запись",
       downloadWav: "↓ Скачать WAV",
       history: "История",
@@ -351,9 +351,9 @@
       minDuration: "Duración mínima",
       minExplain:
         "Elimina tramos de voz menores que N cuadros: clics, respiraciones o artefactos.",
-      adaptiveSilence: "Umbral de silencio adaptativo",
+      adaptiveSilence: "Filtrar tonos de fondo constantes",
       adaptiveExplain:
-        "Estima el ruido de fondo y elimina lo que queda por debajo.",
+        "Elimina tonos bajos y persistentes, pero conserva la voz más fuerte y las notas sostenidas claras.",
       recording: "Grabación",
       downloadWav: "↓ Descargar WAV",
       history: "Historial",
@@ -491,9 +491,9 @@
       minDuration: "Mindestdauer",
       minExplain:
         "Entfernt Sprachsegmente unter N Frames, meist Klicks, Atem oder Artefakte.",
-      adaptiveSilence: "Adaptiver Ruhepegel",
+      adaptiveSilence: "Gleichmäßige Hintergrundtöne filtern",
       adaptiveExplain:
-        "Schätzt Hintergrundrauschen und entfernt leisere Signale.",
+        "Entfernt leise, anhaltende Tonerkennungen und erhält lautere Sprache sowie klare gehaltene Töne.",
       recording: "Aufnahme",
       downloadWav: "↓ WAV laden",
       history: "Verlauf",
@@ -632,9 +632,9 @@
       minDuration: "Durée minimale",
       minExplain:
         "Supprime les segments vocaux de moins de N trames, souvent clics, souffles ou artefacts.",
-      adaptiveSilence: "Seuil de silence adaptatif",
+      adaptiveSilence: "Filtrer les sons de fond constants",
       adaptiveExplain:
-        "Estime le bruit de fond et retire ce qui est plus faible.",
+        "Supprime les sons faibles et persistants, tout en préservant la parole plus forte et les notes tenues nettes.",
       recording: "Enregistrement",
       downloadWav: "↓ Télécharger WAV",
       history: "Historique",
@@ -773,8 +773,8 @@
       minDuration: "Duração mínima",
       minExplain:
         "Remove trechos vocais menores que N quadros, geralmente cliques, respiração ou artefatos.",
-      adaptiveSilence: "Piso de silêncio adaptativo",
-      adaptiveExplain: "Estima o ruído de fundo e remove o que estiver abaixo.",
+      adaptiveSilence: "Filtrar tons de fundo constantes",
+      adaptiveExplain: "Remove tons baixos e persistentes, preservando a fala mais alta e notas sustentadas claras.",
       recording: "Gravação",
       downloadWav: "↓ Baixar WAV",
       history: "Histórico",
@@ -906,8 +906,8 @@
       octaveExplain: "修正检测器混淆八度造成的短暂 2 倍跳变。",
       minDuration: "最短时长",
       minExplain: "移除短于 N 帧的有声片段，通常是点击、呼吸或伪影。",
-      adaptiveSilence: "自适应静音阈值",
-      adaptiveExplain: "从安静片段估算背景噪声并移除更弱信号。",
+      adaptiveSilence: "过滤持续的背景音",
+      adaptiveExplain: "移除安静且持续的音高检测，同时保留更响亮的语音和清晰的持续音。",
       recording: "录音",
       downloadWav: "↓ 下载 WAV",
       history: "历史",
@@ -1038,9 +1038,9 @@
       minDuration: "最短時間",
       minExplain:
         "N フレーム未満の有声音を除外。多くはクリック、息、アーティファクトです。",
-      adaptiveSilence: "適応無音しきい値",
+      adaptiveSilence: "持続する背景音を除去",
       adaptiveExplain:
-        "静かな部分から背景ノイズを推定し、それより小さい音を除外します。",
+        "静かで持続する音高検出を除外し、より大きな声と明瞭なロングトーンは保持します。",
       recording: "録音",
       downloadWav: "↓ WAV を保存",
       history: "履歴",
@@ -1172,9 +1172,9 @@
       minDuration: "최소 길이",
       minExplain:
         "N 프레임보다 짧은 유성 구간을 제거합니다. 보통 클릭, 숨소리, 잡음입니다.",
-      adaptiveSilence: "적응형 무음 기준",
+      adaptiveSilence: "지속적인 배경음 필터링",
       adaptiveExplain:
-        "조용한 구간에서 배경 소음을 추정해 더 작은 소리를 제거합니다.",
+        "작고 지속적인 음높이 감지를 제거하면서 더 큰 음성과 선명한 지속음을 보존합니다.",
       recording: "녹음",
       downloadWav: "↓ WAV 다운로드",
       history: "기록",
@@ -1307,8 +1307,8 @@
       octaveExplain: "ऑक्टेव भ्रम से बने छोटे 2× गलत उछाल ठीक करता है।",
       minDuration: "न्यूनतम अवधि",
       minExplain: "N फ़्रेम से छोटे आवाज़ खंड हटाता है—आमतौर पर क्लिक, साँस या विकृति।",
-      adaptiveSilence: "अनुकूली मौन सीमा",
-      adaptiveExplain: "शांत हिस्सों से पृष्ठभूमि शोर आँककर उससे धीमा संकेत हटाता है।",
+      adaptiveSilence: "स्थिर पृष्ठभूमि टोन फ़िल्टर करें",
+      adaptiveExplain: "धीमे और लगातार पिच संकेत हटाता है, जबकि तेज़ आवाज़ और साफ़ लंबी ध्वनियाँ सुरक्षित रहती हैं।",
       recording: "रिकॉर्डिंग",
       downloadWav: "↓ WAV डाउनलोड",
       history: "इतिहास",
