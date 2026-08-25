@@ -1283,7 +1283,7 @@ function postProcess(){
   const lowM = hzToMidi(55), highM = hzToMidi(600);
   const pts = raw.map((p, index) => {
     const voiced = classification.mask[index];
-    return { t:p.t, f0:p.f0, conf:p.conf, voiced,
+    return { t:p.t, f0:p.f0, conf:p.conf, thresholdHit:p.thresholdHit, voiced,
              midi: voiced ? hzToMidi(p.f0) : null, outlier:false, kept:voiced };
   });
 
@@ -1328,7 +1328,8 @@ function postProcess(){
       pts.map(p=>p.voiced ? p.midi : null),
       {
         reliability:pts.map(p=>p.voiced ? p.conf : null),
-        reliabilityFloor:Math.min(0.82, confT + 0.15)
+        thresholdHits:pts.map(p=>p.voiced ? p.thresholdHit : null),
+        reliabilityFloor:Math.min(0.82, confT + 0.20)
       }
     );
     for(let i=0;i<pts.length;i++){

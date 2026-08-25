@@ -264,6 +264,85 @@ test("adaptive voicing preserves repeated quiet phrase endings near strong speec
   }
 });
 
+test("adaptive voicing removes short loud fallback bursts from a proven background cluster", () => {
+  const frames = Array.from({ length: 600 }, (_, index) => {
+    const speaking = (index >= 100 && index < 220) ||
+      (index >= 350 && index < 500);
+    if (speaking) {
+      return {
+        f0: 105 + (index % 37) * 0.7,
+        conf: 0.92,
+        rms: 0.030,
+        thresholdHit: true,
+        boundaryMinimum: false
+      };
+    }
+    if (index >= 300 && index < 311) {
+      return {
+        f0: index === 310 ? 69 : 64,
+        conf: index === 302 ? 0.90 : 0.78,
+        rms: 0.025,
+        thresholdHit: index === 302,
+        boundaryMinimum: false
+      };
+    }
+    return {
+      f0: 60.2,
+      conf: 0.62,
+      rms: 0.005,
+      thresholdHit: false,
+      boundaryMinimum: true
+    };
+  });
+
+  const result = adaptiveVoicingMask(frames, {
+    confidenceThreshold: 0.55,
+    adaptive: true
+  });
+
+  assert.equal(result.mask.slice(300, 311).some(Boolean), false);
+  assert.equal(result.mask.slice(100, 220).every(Boolean), true);
+  assert.equal(result.mask.slice(350, 500).every(Boolean), true);
+});
+
+test("adaptive voicing preserves a short clear note near a proven background cluster", () => {
+  const frames = Array.from({ length: 600 }, (_, index) => {
+    const speaking = index >= 350 && index < 500;
+    if (speaking) {
+      return {
+        f0: 105 + (index % 37) * 0.7,
+        conf: 0.92,
+        rms: 0.030,
+        thresholdHit: true,
+        boundaryMinimum: false
+      };
+    }
+    if (index >= 300 && index < 310) {
+      return {
+        f0: 65,
+        conf: 0.94,
+        rms: 0.025,
+        thresholdHit: true,
+        boundaryMinimum: false
+      };
+    }
+    return {
+      f0: 60.2,
+      conf: 0.62,
+      rms: 0.005,
+      thresholdHit: false,
+      boundaryMinimum: true
+    };
+  });
+
+  const result = adaptiveVoicingMask(frames, {
+    confidenceThreshold: 0.55,
+    adaptive: true
+  });
+
+  assert.equal(result.mask.slice(300, 310).every(Boolean), true);
+});
+
 test("pitch evidence survives compact history serialization", () => {
   const frames = [
     { thresholdHit: false, boundaryMinimum: true },
@@ -463,6 +542,89 @@ test("smart filtering removes the same isolated burst when detection is unreliab
   });
 
   assert.deepEqual(mask.slice(33, 37), [true, true, true, true]);
+});
+
+test("smart filtering removes a short low-confidence subharmonic below one octave", () => {
+  const baseline = 43;
+  const values = [
+    ...Array(60).fill(baseline),
+    null, null, null,
+    36.4, 36.5, 36.6,
+    null, null, null
+  ];
+  const reliability = values.map((value, index) => {
+    if (value == null) return null;
+    if (index === 63) return 0.62;
+    if (index === 64) return 0.74;
+    if (index === 65) return 0.60;
+    return 0.93;
+  });
+
+  const mask = localMadOutlierMask(values, {
+    radius: 8,
+    maxRun: 6,
+    reliability
+  });
+
+  assert.deepEqual(mask.slice(63, 66), [true, true, true]);
+});
+
+test("smart filtering preserves a clear short subharmonic", () => {
+  const values = [
+    ...Array(60).fill(43),
+    null, null, null,
+    36.4, 36.5, 36.6,
+    null, null, null
+  ];
+  const reliability = values.map(value => value == null ? null : 0.93);
+  const thresholdHits = values.map((value, index) =>
+    value == null ? null : index >= 63 && index <= 65
+  );
+
+  const mask = localMadOutlierMask(values, {
+    reliability,
+    reliabilityFloor: 0.95,
+    thresholdHits
+  });
+
+  assert.equal(mask.slice(63, 66).some(Boolean), false);
+});
+
+test("smart filtering preserves a coherent low-confidence phrase near pauses", () => {
+  const values = [
+    ...Array(60).fill(43),
+    null, null, null,
+    ...Array(20).fill(36.5),
+    null, null, null
+  ];
+  const reliability = values.map((value, index) =>
+    value == null ? null : (index >= 63 ? 0.77 : 0.93)
+  );
+
+  const mask = localMadOutlierMask(values, {
+    reliability,
+    reliabilityFloor: 0.78
+  });
+
+  assert.equal(mask.slice(63, 83).some(Boolean), false);
+});
+
+test("smart filtering preserves a short coherent register change", () => {
+  const values = [
+    ...Array(60).fill(43),
+    ...Array(20).fill(39),
+    ...Array(60).fill(43)
+  ];
+  const reliability = values.map((_, index) =>
+    index >= 60 && index < 80 ? 0.77 : 0.93
+  );
+
+  const mask = localMadOutlierMask(values, {
+    reliability,
+    reliabilityFloor: 0.78
+  });
+
+  assert.equal(mask.slice(60, 80).some(Boolean), false);
 });
 
 test("local MAD preserves sustained pitch changes", () => {

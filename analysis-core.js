@@ -121,7 +121,9 @@
       return result();
     }
     const strongVoiceMask = frames.map((frame, index) =>
-      baseMask[index] && frame.rms >= strongSignalReference * 0.65
+      baseMask[index] &&
+      frame.rms >= strongSignalReference * 0.65 &&
+      (frame.thresholdHit === true || frame.conf >= reliableConfidence)
     );
     function isNearStrongVoice(index, frequency) {
       const radius = options.strongVoiceContextFrames ?? 12;
@@ -206,6 +208,57 @@
           noiseMask[index] = true;
         }
       }
+
+      // Speech can raise the RMS of the proven background tone for a few
+      // frames, making it look louder. Remove only very short bursts near the
+      // learned tone, including an isolated threshold hit inside the burst.
+      // Sustained same-pitch voice and normal phrase endings remain protected
+      // by the strict run-length limit.
+      const toneCentreMidi = key * binWidth;
+      const burstRadius = options.backgroundBurstRadiusSemitones ?? 3;
+      const maxBurstFrames = options.maxBackgroundBurstFrames ?? 12;
+      function isBackgroundBurstCandidate(index) {
+        if (!baseMask[index] || noiseMask[index]) return false;
+        const frame = frames[index];
+        if (frame.rms <= quietCeiling) return false;
+        const midi = 69 + 12 * Math.log2(frame.f0 / 440);
+        return Math.abs(midi - toneCentreMidi) <= burstRadius;
+      }
+      let burstStart = 0;
+      while (burstStart < frames.length) {
+        if (!isBackgroundBurstCandidate(burstStart)) {
+          burstStart++;
+          continue;
+        }
+        let burstEnd = burstStart + 1;
+        while (burstEnd < frames.length && isBackgroundBurstCandidate(burstEnd)) {
+          burstEnd++;
+        }
+        const burstIndices = [];
+        for (let index = burstStart; index < burstEnd; index++) {
+          burstIndices.push(index);
+        }
+        const weakEvidence = index => {
+          const frame = frames[index];
+          return frame.thresholdHit !== true || frame.conf < reliableConfidence;
+        };
+        const weakCount = burstIndices.filter(weakEvidence).length;
+        const clearIndices = burstIndices.filter(index => !weakEvidence(index));
+        const isolatedClearHit = clearIndices.length === 0 ||
+          (clearIndices.length === 1 &&
+            clearIndices[0] > burstStart &&
+            clearIndices[0] < burstEnd - 1 &&
+            weakEvidence(clearIndices[0] - 1) &&
+            weakEvidence(clearIndices[0] + 1));
+        if (burstEnd - burstStart <= maxBurstFrames &&
+            weakCount / burstIndices.length >= 0.75 &&
+            isolatedClearHit) {
+          for (let index = burstStart; index < burstEnd; index++) {
+            noiseMask[index] = true;
+          }
+        }
+        burstStart = burstEnd;
+      }
     }
 
     return result({ quietCeiling });
@@ -281,11 +334,12 @@
     const maxSideDifference = options.maxSideDifference ?? 3.5;
     const sigma = options.sigma ?? 3;
     const minDeviation = options.minDeviation ?? 3;
-    const maxRun = options.maxRun ?? 24;
+    const maxRun = options.maxRun ?? 6;
     const globalSigma = options.globalSigma ?? 4;
-    const globalMinDeviation = options.globalMinDeviation ?? 8;
+    const globalMinDeviation = options.globalMinDeviation ?? 6;
     const globalMaxRun = options.globalMaxRun ?? maxRun;
     const reliability = options.reliability;
+    const thresholdHits = options.thresholdHits;
     const reliabilityFloor = options.reliabilityFloor ?? 0.75;
     const reliabilityDrop = options.reliabilityDrop ?? 0.12;
     const candidates = new Array(values.length).fill(false);
@@ -295,6 +349,7 @@
       : [];
     const typicalReliability = reliableValues.length ? median(reliableValues) : null;
     function isUnreliable(index) {
+      if (thresholdHits?.[index] === true) return false;
       if (!reliability) return true;
       const value = reliability[index];
       if (!Number.isFinite(value)) return true;

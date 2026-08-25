@@ -36,6 +36,17 @@ test("history keeps download in Recording and omits per-item WAV actions", () =>
   assert.match(html, /class="hist-zone"/);
 });
 
+test("Smart filtering receives YIN threshold evidence from post-processing", () => {
+  assert.match(
+    html,
+    /return \{ t:p\.t, f0:p\.f0, conf:p\.conf, thresholdHit:p\.thresholdHit, voiced,/,
+  );
+  assert.match(
+    html,
+    /thresholdHits:pts\.map\(p=>p\.voiced \? p\.thresholdHit : null\)/,
+  );
+});
+
 test("mobile live status uses a stable grid instead of wrapping flex content", () => {
   assert.match(html, /#live\.on\{display:grid;/);
   assert.match(html, /#live \.live-stat\{grid-row:2;/);
