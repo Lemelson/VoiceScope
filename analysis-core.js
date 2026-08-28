@@ -106,6 +106,76 @@
     for (let index = 0; index < frames.length; index++) {
       if (baseMask[index]) baseIndices.push(index);
     }
+
+    // YIN's fallback always returns a frequency, even for broadband household
+    // noise. In a long recording with no real voice, scattered fallback points
+    // and one short pitched mechanical sound can otherwise become a plausible
+    // contour. Reject that recording only when pitch-evidence flags are present
+    // for every accepted frame and there is neither enough clear voice evidence
+    // nor a coherent sustained note. Legacy history without evidence skips this
+    // guard, and short recordings keep the existing low-latency behaviour.
+    const minimumEvidenceRecordingFrames =
+      options.minimumEvidenceRecordingFrames ?? 375;
+    const minimumClearSpeechFrames =
+      options.minimumClearSpeechFrames ?? 75;
+    const minimumStableClearFrames =
+      options.minimumStableClearFrames ?? 8;
+    const minimumStableFallbackFrames =
+      options.minimumStableFallbackFrames ?? 50;
+    const stablePitchSpreadSemitones =
+      options.stablePitchSpreadSemitones ?? 1.5;
+    const hasCompletePitchEvidence = baseIndices.length > 0 &&
+      baseIndices.every(index => typeof frames[index].thresholdHit === "boolean");
+
+    function hasStableRun(predicate, minimumFrames) {
+      let start = 0;
+      while (start < frames.length) {
+        if (!baseMask[start] || !predicate(frames[start])) {
+          start++;
+          continue;
+        }
+        let end = start + 1;
+        while (end < frames.length && baseMask[end] && predicate(frames[end])) {
+          end++;
+        }
+        if (end - start >= minimumFrames) {
+          const midi = [];
+          for (let index = start; index < end; index++) {
+            midi.push(69 + 12 * Math.log2(frames[index].f0 / 440));
+          }
+          midi.sort((a, b) => a - b);
+          if (percentile(midi, 90) - percentile(midi, 10) <= stablePitchSpreadSemitones) {
+            return true;
+          }
+        }
+        start = end;
+      }
+      return false;
+    }
+
+    if (adaptive &&
+        frames.length >= minimumEvidenceRecordingFrames &&
+        hasCompletePitchEvidence) {
+      const clearSpeechFrames = baseIndices.filter(index =>
+        frames[index].thresholdHit === true &&
+        frames[index].conf >= reliableConfidence
+      ).length;
+      const hasStableClearNote = hasStableRun(
+        frame => frame.thresholdHit === true,
+        minimumStableClearFrames
+      );
+      const hasStableFallbackNote = hasStableRun(
+        frame => frame.thresholdHit === false,
+        minimumStableFallbackFrames
+      );
+      if (clearSpeechFrames < minimumClearSpeechFrames &&
+          !hasStableClearNote &&
+          !hasStableFallbackNote) {
+        for (const index of baseIndices) noiseMask[index] = true;
+        return result({ noiseOnlyRejected: true });
+      }
+    }
+
     if (!adaptive || frames.length < 80 || baseIndices.length < 24 || !observedRms.length) {
       return result();
     }

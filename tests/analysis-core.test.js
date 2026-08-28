@@ -343,6 +343,84 @@ test("adaptive voicing preserves a short clear note near a proven background clu
   assert.equal(result.mask.slice(300, 310).every(Boolean), true);
 });
 
+test("adaptive voicing rejects a long noise-only recording with one pitched mechanical sweep", () => {
+  const frames = Array.from({ length: 1426 }, (_, index) => {
+    if (index >= 100 && index < 144) {
+      const progress = (index - 100) / 43;
+      return {
+        f0: 97 + progress * 17,
+        conf: 0.96,
+        rms: 0.016,
+        thresholdHit: true,
+        boundaryMinimum: false
+      };
+    }
+    const fallback = index % 4 === 0;
+    return {
+      f0: 60 + (index * 17 % 43),
+      conf: fallback ? 0.64 : 0.40,
+      rms: fallback ? 0.0013 : 0.0008,
+      thresholdHit: false,
+      boundaryMinimum: index % 3 === 0
+    };
+  });
+
+  const result = adaptiveVoicingMask(frames, {
+    confidenceThreshold: 0.55,
+    adaptive: true
+  });
+
+  assert.equal(result.mask.some(Boolean), false);
+});
+
+test("adaptive voicing rejects diffuse fallback detections in a noise-only recording", () => {
+  const frames = Array.from({ length: 1426 }, (_, index) => {
+    const fallback = index % 4 === 0 || index % 29 === 0;
+    return {
+      f0: 60 + (index * 23 % 47),
+      conf: fallback ? 0.66 : 0.38,
+      rms: fallback ? 0.0012 : 0.0007,
+      thresholdHit: index % 127 === 0,
+      boundaryMinimum: index % 2 === 0
+    };
+  });
+
+  const result = adaptiveVoicingMask(frames, {
+    confidenceThreshold: 0.55,
+    adaptive: true
+  });
+
+  assert.equal(result.mask.some(Boolean), false);
+});
+
+test("adaptive voicing keeps a sufficiently supported short spoken phrase", () => {
+  const frames = Array.from({ length: 1426 }, (_, index) => {
+    if (index >= 500 && index < 580) {
+      return {
+        f0: 95 + (index - 500) * 0.35,
+        conf: 0.94,
+        rms: 0.018,
+        thresholdHit: true,
+        boundaryMinimum: false
+      };
+    }
+    return {
+      f0: 60 + (index * 19 % 41),
+      conf: 0.40,
+      rms: 0.0008,
+      thresholdHit: false,
+      boundaryMinimum: true
+    };
+  });
+
+  const result = adaptiveVoicingMask(frames, {
+    confidenceThreshold: 0.55,
+    adaptive: true
+  });
+
+  assert.equal(result.mask.slice(500, 580).every(Boolean), true);
+});
+
 test("pitch evidence survives compact history serialization", () => {
   const frames = [
     { thresholdHit: false, boundaryMinimum: true },

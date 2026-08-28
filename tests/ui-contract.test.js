@@ -47,6 +47,13 @@ test("Smart filtering receives YIN threshold evidence from post-processing", () 
   );
 });
 
+test("microphone capture requests local noise suppression without gain or echo processing", () => {
+  assert.match(
+    html,
+    /audio:\{\s*echoCancellation:false,\s*noiseSuppression:true,\s*autoGainControl:false\s*\}/,
+  );
+});
+
 test("mobile live status uses a stable grid instead of wrapping flex content", () => {
   assert.match(html, /#live\.on\{display:grid;/);
   assert.match(html, /#live \.live-stat\{grid-row:2;/);

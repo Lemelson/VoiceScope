@@ -944,7 +944,7 @@ async function startRecording(){
 
   try{
     stream = await navigator.mediaDevices.getUserMedia({
-      audio:{ echoCancellation:false, noiseSuppression:false, autoGainControl:false }
+      audio:{ echoCancellation:false, noiseSuppression:true, autoGainControl:false }
     });
   }catch(e){
     showBanner(t('micDenied', { error:e.message }));

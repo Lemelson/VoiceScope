@@ -94,10 +94,12 @@ trimming is too aggressive or too weak — i.e. whether real low/high voice segm
 discarded instead of random artifacts — and adjust the default presets/percentiles accordingly.
 
 ## How it works
-1. PCM capture from the microphone (no noise suppression/AGC, to avoid distorting the pitch).
+1. PCM capture from the microphone with the browser's local background-noise suppression enabled;
+   echo cancellation and automatic gain control stay off so they do not reshape the pitch.
 2. Decimation to ~16 kHz, frame-by-frame YIN (~33 ms window, 8 ms hop) → frequency + confidence.
-3. Filtering: confidence threshold, 55–600 Hz range, median filter, local octave correction,
-   min-run, then percentile or local-MAD trimming.
+3. Filtering: confidence threshold, 55–600 Hz range, a recording-level speech-evidence gate,
+   steady-tone rejection, median filter, local octave correction, min-run, then percentile or
+   local-MAD trimming.
 4. Hz → notes (MIDI), MA/EMA in semitone space, canvas rendering.
 
 ## Tests
